@@ -84,7 +84,7 @@ function buscarLoja() {
 }
 
 function cadastrarLoja() {
-    window.location.href = "cadastrar_loja.html"; // Redireciona para a página de cadastro de loja (caso exista)
+    window.location.href = "cadastrar_loja.html";
 }
 
 
@@ -110,10 +110,10 @@ function showUsuarios() {
             </thead>
             <tbody id="userTableBody">
                 <tr>
-                    <td>SupervisorESG</td>
-                    <td>Supervisor</td>
+                    <td>Usuário 1</td>
+                    <td>Logista</td>
                     <td>Feb 21, 2024</td>
-                    <td>supervisorESG@sfiec.org.br</td>
+                    <td>usuario1@verdecard.com.br</td>
                     <td>
                         <button class="btn btn-sm btn-outline-primary">Editar</button>
                         <button class="btn btn-sm btn-outline-danger">Excluir</button>
