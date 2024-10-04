@@ -29,7 +29,7 @@ header::after {
 .sidebar {
     height: 100vh;
     padding: 2rem 1rem;
-    background-color: #f7e800;
+    background-color: #f5d307;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     position: fixed;
     top: 0;
