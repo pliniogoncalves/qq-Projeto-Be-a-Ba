@@ -71,6 +71,11 @@ header::after {
     color: white;
 }
 
+.btn-custom.active {
+    background-color: #1f5d3d;
+    color: white;
+}
+
 /* Hamburger Menu */
 .hamburger {
     font-size: 2rem;

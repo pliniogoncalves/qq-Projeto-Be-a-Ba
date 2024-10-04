@@ -44,6 +44,8 @@ function showLojas() {
         
         <button class="btn btn-primary" onclick="cadastrarLoja()">Cadastrar Nova Loja</button>
     `;
+
+    setActiveButton('Lojas');
 }
 
 function buscarLoja() {
@@ -104,6 +106,8 @@ function showUsuarios() {
         
         <button class="btn btn-primary" onclick="cadastrarUsuario()">Cadastrar Novo Usuário</button>
     `;
+
+    setActiveButton('Usuários');
 }
 
 function buscarUsuario() {
@@ -133,6 +137,8 @@ function showPerfis() {
         <h2>Gestão de Perfis de Acesso</h2>
         <p>Gerencie os perfis de acesso dos usuários.</p>
     `;
+
+    setActiveButton('Perfis de Acesso');
 }
 
 function showAjuda() {
@@ -141,6 +147,8 @@ function showAjuda() {
         <h2>Ajuda</h2>
         <p>Encontre respostas para suas dúvidas.</p>
     `;
+
+    setActiveButton('Ajuda');
 }
 
 function showConfiguracoes() {
@@ -149,4 +157,26 @@ function showConfiguracoes() {
         <h2>Configurações</h2>
         <p>Altere as configurações do sistema.</p>
     `;
+
+    setActiveButton('Configurações');
 }
+
+function setActiveButton(activeSection) {
+    // Remove a classe 'active' de todos os botões
+    const buttons = document.querySelectorAll('.nav-item .btn-custom');
+    buttons.forEach(button => {
+        button.classList.remove('active');
+    });
+
+    const bottomButtons = document.querySelectorAll('.bottom-links .btn-custom, .bottom-links .btn-danger');
+    bottomButtons.forEach(button => {
+        button.classList.remove('active');
+    });
+
+    // Adiciona a classe 'active' ao botão da seção ativa
+    const activeButton = [...buttons, ...bottomButtons].find(button => button.textContent.trim() === activeSection);
+    if (activeButton) {
+        activeButton.classList.add('active');
+    }
+}
+
