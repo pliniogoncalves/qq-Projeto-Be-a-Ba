@@ -86,34 +86,35 @@ header::after {
     color: white;
 }
 
+/* User Info */
 .user-info {
     display: flex;
     align-items: center;
     padding: 10px;
-    border-top: 1px solid #269447; /* Linha acima */
-    margin-top: 570px; /* Adiciona um espaço entre o botão "Sair" e a seção do usuário */
+    border-top: 1px solid #269447;
+    margin-top: 570px;
 }
 
 .user-avatar {
     width: 50px; 
     height: 50px; 
     border-radius: 50%; 
-    background-color: #269447; /* Cor do fundo da bola */
+    background-color: #269447;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
     font-weight: bold;
-    margin-right: 10px; /* Espaçamento entre a bola e o nome */
+    margin-right: 10px;
 }
 
 .user-details {
-    flex-grow: 1; /* Para que ocupe o espaço restante */
+    flex-grow: 1;
 }
 
 .user-name {
-    margin: 0; /* Para remover margens padrão do parágrafo */
-    font-size: 1rem; /* Tamanho da fonte do nome */
+    margin: 0;
+    font-size: 1rem;
     color: #269447;
 }
 

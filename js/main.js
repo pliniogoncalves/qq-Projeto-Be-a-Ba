@@ -17,7 +17,6 @@ document.addEventListener('click', function(event) {
     const sidebar = document.getElementById('sidebar');
     const hamburger = document.querySelector('.hamburger');
     
-    // Verifica se o menu está ativo e se o clique foi fora da sidebar ou do botão de toggle
     if (sidebar.classList.contains('active') && !sidebar.contains(event.target) && !hamburger.contains(event.target)) {
         sidebar.classList.remove('active');
         document.getElementById('mainContent').classList.remove('active');
@@ -27,7 +26,7 @@ document.addEventListener('click', function(event) {
 function showLojas() {
     const content = document.getElementById('mainContent');
     content.innerHTML = `
-        <h1 class="h2">Lista de Lojas</h1>
+        <h1>Lista de Lojas</h1>
         <p>Veja a lista de Lojas cadastradas e suas respectivas situações.</p>
 
         <div class="input-group mb-4">
@@ -91,8 +90,8 @@ function cadastrarLoja() {
 function showUsuarios() {
     const content = document.getElementById('mainContent');
     content.innerHTML = `
-        <h1 class="h4 mb-4">Lista de Usuários</h1>
-        
+        <h1>Lista de Usuários</h1>
+        <p>Veja a lista de usuários cadastradas e suas respectivas situações.</p>
         <div class="input-group mb-4">
             <input type="text" class="form-control" id="userSearchInput" placeholder="Procurar por usuário">
             <button class="btn btn-custom" type="button" onclick="buscarUsuario()">Buscar</button>
