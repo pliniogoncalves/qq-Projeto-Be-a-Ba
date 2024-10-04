@@ -1,0 +1,152 @@
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('mainContent');
+    sidebar.classList.toggle('active');
+    mainContent.classList.toggle('active');
+}
+
+function showLojas() {
+    const content = document.getElementById('mainContent');
+    content.innerHTML = `
+        <h1 class="h2">Lista de Lojas</h1>
+        <p>Veja a lista de Lojas cadastradas e suas respectivas situações.</p>
+
+        <div class="input-group mb-4">
+            <input type="text" class="form-control" id="lojaSearchInput" placeholder="Procurar por loja">
+            <button class="btn btn-custom" type="button" onclick="buscarLoja()">Buscar</button>
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Loja</th>
+                    <th>Talões</th>
+                    <th>Data do Pedido</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="lojaTableBody">
+                <tr>
+                    <td>Loja 1</td>
+                    <td>68</td>
+                    <td>Dez 6, 2023</td>
+                    <td><span class="badge bg-success">Talões Enviados</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary">Visualizar</button>
+                        <button class="btn btn-sm btn-outline-secondary">Extrato</button>
+                        <button class="btn btn-sm btn-outline-info">Relatório</button>
+                    </td>
+                </tr>
+                <!-- Adicione mais lojas conforme necessário -->
+            </tbody>
+        </table>
+        
+        <button class="btn btn-primary" onclick="cadastrarLoja()">Cadastrar Nova Loja</button>
+    `;
+}
+
+function buscarLoja() {
+    const searchInput = document.getElementById('lojaSearchInput').value.toLowerCase();
+    const tableBody = document.getElementById('lojaTableBody');
+    const rows = tableBody.getElementsByTagName('tr');
+
+    for (let i = 0; i < rows.length; i++) {
+        const nomeLoja = rows[i].getElementsByTagName('td')[0].textContent.toLowerCase();
+        
+        if (nomeLoja.includes(searchInput)) {
+            rows[i].style.display = '';
+        } else {
+            rows[i].style.display = 'none';
+        }
+    }
+}
+
+function cadastrarLoja() {
+    window.location.href = "cadastrar_loja.html"; // Redireciona para a página de cadastro de loja (caso exista)
+}
+
+
+function showUsuarios() {
+    const content = document.getElementById('mainContent');
+    content.innerHTML = `
+        <h1 class="h4 mb-4">Lista de Usuários</h1>
+        
+        <div class="input-group mb-4">
+            <input type="text" class="form-control" id="userSearchInput" placeholder="Procurar por usuário">
+            <button class="btn btn-custom" type="button" onclick="buscarUsuario()">Buscar</button>
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Função</th>
+                    <th>Data de Cadastro</th>
+                    <th>E-mail</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="userTableBody">
+                <tr>
+                    <td>SupervisorESG</td>
+                    <td>Supervisor</td>
+                    <td>Feb 21, 2024</td>
+                    <td>supervisorESG@sfiec.org.br</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary">Editar</button>
+                        <button class="btn btn-sm btn-outline-danger">Excluir</button>
+                    </td>
+                </tr>
+                <!-- Adicione mais usuários conforme necessário -->
+            </tbody>
+        </table>
+        
+        <button class="btn btn-primary" onclick="cadastrarUsuario()">Cadastrar Novo Usuário</button>
+    `;
+}
+
+function buscarUsuario() {
+    const searchInput = document.getElementById('userSearchInput').value.toLowerCase();
+    const tableBody = document.getElementById('userTableBody');
+    const rows = tableBody.getElementsByTagName('tr');
+
+    for (let i = 0; i < rows.length; i++) {
+        const nomeUsuario = rows[i].getElementsByTagName('td')[0].textContent.toLowerCase();
+        
+        if (nomeUsuario.includes(searchInput)) {
+            rows[i].style.display = '';
+        } else {
+            rows[i].style.display = 'none';
+        }
+    }
+}
+
+// Redireciona para a página de cadastro de usuários
+function cadastrarUsuario() {
+    window.location.href = "cadastrar_usuario.html";
+}
+
+function showPerfis() {
+    const content = document.getElementById('mainContent');
+    content.innerHTML = `
+        <h2>Gestão de Perfis de Acesso</h2>
+        <p>Gerencie os perfis de acesso dos usuários.</p>
+    `;
+}
+
+function showAjuda() {
+    const content = document.getElementById('mainContent');
+    content.innerHTML = `
+        <h2>Ajuda</h2>
+        <p>Encontre respostas para suas dúvidas.</p>
+    `;
+}
+
+function showConfiguracoes() {
+    const content = document.getElementById('mainContent');
+    content.innerHTML = `
+        <h2>Configurações</h2>
+        <p>Altere as configurações do sistema.</p>
+    `;
+}
