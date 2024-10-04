@@ -49,7 +49,7 @@ header::after {
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    margin-bottom: 20px;
+    margin-bottom: 105px;
     width: 80%; 
 }
 
@@ -86,12 +86,43 @@ header::after {
     color: white;
 }
 
+.user-info {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-top: 1px solid #269447; /* Linha acima */
+    margin-top: 570px; /* Adiciona um espaço entre o botão "Sair" e a seção do usuário */
+}
+
+.user-avatar {
+    width: 50px; 
+    height: 50px; 
+    border-radius: 50%; 
+    background-color: #269447; /* Cor do fundo da bola */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    margin-right: 10px; /* Espaçamento entre a bola e o nome */
+}
+
+.user-details {
+    flex-grow: 1; /* Para que ocupe o espaço restante */
+}
+
+.user-name {
+    margin: 0; /* Para remover margens padrão do parágrafo */
+    font-size: 1rem; /* Tamanho da fonte do nome */
+    color: #269447;
+}
+
 @media (max-width: 768px) {
     .sidebar {
         transform: translateX(-100%);
     }
     .sidebar.active {
-        transform: translateX(0); /* Mostra a sidebar quando ativa */
+        transform: translateX(0);
     }
     .content {
         margin-left: 0;
