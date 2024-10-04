@@ -1,9 +1,28 @@
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
     const mainContent = document.getElementById('mainContent');
+    
+    // Alterna a classe 'active' para mostrar/esconder a sidebar
     sidebar.classList.toggle('active');
-    mainContent.classList.toggle('active');
+    
+    // Se a sidebar estiver ativa, o conteúdo será empurrado
+    if (sidebar.classList.contains('active')) {
+        mainContent.classList.add('active');
+    } else {
+        mainContent.classList.remove('active');
+    }
 }
+
+document.addEventListener('click', function(event) {
+    const sidebar = document.getElementById('sidebar');
+    const hamburger = document.querySelector('.hamburger');
+    
+    // Verifica se o menu está ativo e se o clique foi fora da sidebar ou do botão de toggle
+    if (sidebar.classList.contains('active') && !sidebar.contains(event.target) && !hamburger.contains(event.target)) {
+        sidebar.classList.remove('active');
+        document.getElementById('mainContent').classList.remove('active');
+    }
+});
 
 function showLojas() {
     const content = document.getElementById('mainContent');
@@ -126,7 +145,6 @@ function buscarUsuario() {
     }
 }
 
-// Redireciona para a página de cadastro de usuários
 function cadastrarUsuario() {
     window.location.href = "cadastrar_usuario.html";
 }

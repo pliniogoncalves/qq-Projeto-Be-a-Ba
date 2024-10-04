@@ -90,6 +90,9 @@ header::after {
     .sidebar {
         transform: translateX(-100%);
     }
+    .sidebar.active {
+        transform: translateX(0); /* Mostra a sidebar quando ativa */
+    }
     .content {
         margin-left: 0;
     }
