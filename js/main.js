@@ -23,6 +23,16 @@ document.addEventListener('click', function(event) {
     }
 });
 
+function showDashboard() {
+    const content = document.getElementById('mainContent');
+    content.innerHTML = `
+        <h2>Dashboard</h2>
+        <p>Visualize o Dashboard.</p>
+    `;
+
+    setActiveButton('Dashboard');
+}
+
 function showLojas() {
     const content = document.getElementById('mainContent');
     content.innerHTML = `
@@ -60,7 +70,9 @@ function showLojas() {
             </tbody>
         </table>
         
-        <button class="btn btn-primary" onclick="cadastrarLoja()">Cadastrar Nova Loja</button>
+        <div class="text-center mb-4">
+            <button class="btn btn-custom" type="button" onclick="cadastrarLoja()">Cadastrar Nova Loja</button>
+        </div>
     `;
 
     setActiveButton('Lojas');
@@ -91,38 +103,40 @@ function showUsuarios() {
     const content = document.getElementById('mainContent');
     content.innerHTML = `
         <h1>Lista de Usuários</h1>
-        <p>Veja a lista de usuários cadastradas e suas respectivas situações.</p>
-        <div class="input-group mb-4">
-            <input type="text" class="form-control" id="userSearchInput" placeholder="Procurar por usuário">
-            <button class="btn btn-custom" type="button" onclick="buscarUsuario()">Buscar</button>
-        </div>
+<p>Veja a lista de usuários cadastrados e suas respectivas situações.</p>
+<div class="input-group mb-4">
+    <input type="text" class="form-control" id="userSearchInput" placeholder="Procurar por usuário">
+    <button class="btn btn-custom" type="button" onclick="buscarUsuario()">Buscar</button>
+</div>
 
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>Função</th>
-                    <th>Data de Cadastro</th>
-                    <th>E-mail</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody id="userTableBody">
-                <tr>
-                    <td>Usuário 1</td>
-                    <td>Logista</td>
-                    <td>Feb 21, 2024</td>
-                    <td>usuario1@verdecard.com.br</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-primary">Editar</button>
-                        <button class="btn btn-sm btn-outline-danger">Excluir</button>
-                    </td>
-                </tr>
-                <!-- Adicione mais usuários conforme necessário -->
-            </tbody>
-        </table>
-        
-        <button class="btn btn-primary" onclick="cadastrarUsuario()">Cadastrar Novo Usuário</button>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Função</th>
+            <th>Data de Cadastro</th>
+            <th>E-mail</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody id="userTableBody">
+        <tr>
+            <td>Usuário 1</td>
+            <td>Logista</td>
+            <td>Feb 21, 2024</td>
+            <td>usuario1@verdecard.com.br</td>
+            <td>
+                <i class="fas fa-edit" style="cursor: pointer; margin-right: 10px;" onclick="editarUsuario('Usuário 1')"></i>
+                <i class="fas fa-trash" style="cursor: pointer;" onclick="excluirUsuario('Usuário 1')"></i>
+            </td>
+        </tr>
+        <!-- Adicione mais usuários conforme necessário -->
+    </tbody>
+</table>
+
+<div class="text-center mb-4">
+    <button class="btn btn-custom" type="button" onclick="cadastrarUsuario()">Cadastrar Novo Usuário</button>
+</div>
     `;
 
     setActiveButton('Usuários');
