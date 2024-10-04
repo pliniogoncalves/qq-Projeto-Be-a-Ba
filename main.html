@@ -10,8 +10,9 @@
             background-color: #f8f9fa;
         }
 
+        /* Header com fundo verde e linha amarela abaixo */
         header {
-            background-color: #28a745;
+            background-color: #269447; /* Verde */
             color: white;
             text-align: center;
             padding: 20px 0;
@@ -27,7 +28,7 @@
             display: block;
             width: 100%;
             height: 5px;
-            background-color: #f7e800;
+            background-color: #f7e800; /* Amarelo */
             position: absolute;
             bottom: 0;
             left: 0;
@@ -54,11 +55,11 @@
         .sidebar .nav-link {
             font-size: 1.1rem;
             margin: 0.5rem 0;
-            color: #269447; /* Cor dos links */
+            color: #269447; /* Cor personalizada para links */
         }
 
         .sidebar .nav-link:hover {
-            color: #218838; /* Cor ao passar o mouse */
+            color: #283826; /* Cor ao passar o mouse nos links */
         }
 
         .content {
@@ -74,6 +75,20 @@
             margin: 20px;          
         }
 
+        .btn-custom {
+            background-color: #269447; /* Cor personalizada para botões */
+            color: white; /* Cor do texto nos botões */
+        }
+
+        .btn-custom:hover {
+            background-color: #20512e; /* Cor ao passar o mouse nos botões */
+            color: white; /* Manter texto branco ao passar o mouse */
+        }
+
+        .nav-item {
+            margin-top: 1rem; /* Aumentar espaço acima dos botões */
+        }
+
         .hamburger {
             font-size: 2rem;
             cursor: pointer;
@@ -82,16 +97,6 @@
             top: 15px;
             color: white;
             display: none; /* Esconder por padrão */
-        }
-
-        .btn-custom {
-            background-color: #269447;
-            color: white;
-        }
-
-        .btn-custom:hover {
-            background-color: #218838; /* Cor ao passar o mouse */
-            color: white;
         }
 
         @media (max-width: 768px) {
@@ -125,13 +130,13 @@
                     </a>
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Indicadores</a>
+                            <a class="btn btn-custom w-100 mb-2" aria-current="page" href="#">Indicadores</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Lojas</a>
+                            <a class="btn btn-custom w-100 mb-2" href="#">Lojas</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Usuários</a>
+                            <a class="btn btn-custom w-100" href="#">Usuários</a>
                         </li>
                     </ul>
                 </div>
@@ -149,7 +154,7 @@
 
                 <div class="input-group mb-4">
                     <input type="text" class="form-control" placeholder="Procurar por loja">
-                    <button class="btn btn-custom" type="button">Buscar</button> <!-- Altera a cor do botão Buscar -->
+                    <button class="btn btn-custom" type="button">Buscar</button>
                 </div>
 
                 <table class="table table-striped">
