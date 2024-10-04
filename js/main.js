@@ -193,7 +193,6 @@ function showConfiguracoes() {
 }
 
 function setActiveButton(activeSection) {
-    // Remove a classe 'active' de todos os botões
     const buttons = document.querySelectorAll('.nav-item .btn-custom');
     buttons.forEach(button => {
         button.classList.remove('active');
@@ -204,7 +203,6 @@ function setActiveButton(activeSection) {
         button.classList.remove('active');
     });
 
-    // Adiciona a classe 'active' ao botão da seção ativa
     const activeButton = [...buttons, ...bottomButtons].find(button => button.textContent.trim() === activeSection);
     if (activeButton) {
         activeButton.classList.add('active');

@@ -9,11 +9,9 @@ document.getElementById('userForm').addEventListener('submit', function(event) {
     const funcao = document.getElementById('function').value;
     const empresa = document.getElementById('company').value;
 
-    // Simulação de envio de dados (logar no console)
     console.log({
         username, email, password, cpf, role, funcao, empresa
     });
 
-    // Redireciona para a lista de usuários após o cadastro
     window.location.href = "exibir_usuario.html";
 });
