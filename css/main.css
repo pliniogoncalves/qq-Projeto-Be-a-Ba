@@ -103,6 +103,14 @@ header::after {
     transition: margin-left 0.3s ease;
 }
 
+.form-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
 /* Custom Button */
 .btn-custom {
     background-color: #269447;
@@ -117,6 +125,12 @@ header::after {
 .btn-custom.active {
     background-color: #1f5d3d;
     color: white;
+}
+
+.btn-submit {
+    background-color: #269447;
+    color: white;
+    width: 100%;
 }
 
 /* Hamburger Menu */

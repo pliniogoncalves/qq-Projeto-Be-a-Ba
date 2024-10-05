@@ -101,7 +101,44 @@ function buscarLoja() {
 }
 
 function cadastrarLoja() {
-    window.location.href = "cadastrar_loja.html";
+    //window.location.href = "cadastrar_loja.html";
+    const content = document.getElementById('mainContent');
+    content.innerHTML = `
+        <div class="form-container">
+        <h1 class="h4 mb-4">Nova Loja</h1>
+        <form id="storeForm">
+            <div class="mb-3">
+                <label for="storeName" class="form-label">Nome da Loja</label>
+                <input type="text" class="form-control" id="storeName" placeholder="Digite o nome da loja" required>
+            </div>
+            <div class="mb-3">
+                <label for="storeAddress" class="form-label">Endereço</label>
+                <input type="text" class="form-control" id="storeAddress" placeholder="Digite o endereço da loja" required>
+            </div>
+            <div class="mb-3">
+                <label for="storeManager" class="form-label">Gerente da Loja</label>
+                <input type="text" class="form-control" id="storeManager" placeholder="Digite o nome do gerente" required>
+            </div>
+            <div class="mb-3">
+                <label for="storeEmail" class="form-label">E-mail</label>
+                <input type="email" class="form-control" id="storeEmail" placeholder="Digite o e-mail da loja" required>
+            </div>
+            <div class="mb-3">
+                <label for="storePhone" class="form-label">Telefone</label>
+                <input type="text" class="form-control" id="storePhone" placeholder="Digite o telefone da loja" required>
+            </div>
+            <div class="mb-3">
+                <label for="storeStatus" class="form-label">Status da Loja</label>
+                <select id="storeStatus" class="form-select">
+                    <option selected>Selecione o status</option>
+                    <option value="active">Ativa</option>
+                    <option value="inactive">Inativa</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-submit">Cadastrar Loja</button>
+        </form>
+    </div>
+    `;
 }
 
 function showUsuarios() {
@@ -173,7 +210,52 @@ function buscarUsuario() {
 }
 
 function cadastrarUsuario() {
-    window.location.href = "cadastrar_usuario.html";
+    //window.location.href = "cadastrar_usuario.html";
+    const content = document.getElementById('mainContent');
+    content.innerHTML = `
+    <div class="form-container">
+        <h1 class="h4 mb-4">Novo Usuário</h1>
+        <form id="userForm">
+            <div class="mb-3">
+                <label for="username" class="form-label">Nome do Usuário</label>
+                <input type="text" class="form-control" id="username" placeholder="Digite o nome de usuário">
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">E-mail</label>
+                <input type="email" class="form-control" id="email" placeholder="Digite o e-mail">
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Senha</label>
+                <input type="password" class="form-control" id="password" placeholder="Digite a senha">
+            </div>
+            <div class="mb-3">
+                <label for="matricula" class="form-label">Matrícula</label>
+                <input type="text" class="form-control" id="matricula" placeholder="Digite a Matrícula">
+            </div>
+            <div class="mb-3">
+                <label for="role" class="form-label">Cargo</label>
+                <input type="text" class="form-control" id="role" placeholder="Digite o cargo">
+            </div>
+            <div class="mb-3">
+                <label for="function" class="form-label">Função</label>
+                <select id="function" class="form-select">
+                    <option selected>Selecione uma função</option>
+                    <option value="1">Admin</option>
+                    <option value="2">Usuário</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="company" class="form-label">Loja</label>
+                <select id="company" class="form-select">
+                    <option selected>Selecione uma empresa</option>
+                    <option value="1">Loja 1</option>
+                    <option value="2">Loja 2</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-submit">Cadastrar Usuário</button>
+        </form>
+    </div>
+    `;
 }
 
 function showPerfis() {
