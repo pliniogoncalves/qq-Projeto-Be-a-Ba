@@ -1,15 +1,15 @@
-window.showLojas = function() {
+window.showTaloes = function() {
     const content = document.getElementById('mainContent');
     content.innerHTML = `
-        <h1 class="text-center">Lista de Lojas</h1>
-        <p class="text-center">Veja a lista de Lojas cadastradas e suas respectivas situações.</p>
+        <h1 class="text-center">Lista de Taloes</h1>
+        <p class="text-center">Veja a lista de Taloes solicitados e suas respectivas situações.</p>
 
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-8 col-sm-12 mb-4">
                     <div class="input-group">
-                        <input type="text" class="form-control" id="lojaSearchInput" placeholder="Procurar por loja">
-                        <button class="btn btn-custom" type="button" onclick="buscarLoja()">Buscar</button>
+                        <input type="text" class="form-control" id="talaoSearchInput" placeholder="Procurar por talao">
+                        <button class="btn btn-custom" type="button" onclick="buscarTalao()">Buscar</button>
                     </div>
                 </div>
             </div>
@@ -19,16 +19,16 @@ window.showLojas = function() {
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Loja</th>
+                        <th>talao</th>
                         <th>Talões</th>
                         <th>Data</th>
                         <th>Status</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
-                <tbody id="lojaTableBody">
+                <tbody id="talaoTableBody">
                     <tr>
-                        <td>Loja 1</td>
+                        <td>talao 1</td>
                         <td>68</td>
                         <td>Dez 6, 2023</td>
                         <td><span class="badge bg-success">Talões Enviados</span></td>
@@ -38,28 +38,28 @@ window.showLojas = function() {
                             <button class="btn btn-sm btn-outline-info">Relatório</button>
                         </td>
                     </tr>
-                    <!-- Adicione mais lojas conforme necessário -->
+                    <!-- Adicione mais talaos conforme necessário -->
                 </tbody>
             </table>
         </div>
 
         <div class="text-center mb-4">
-            <button class="btn btn-custom" type="button" onclick="cadastrarLoja()">Cadastrar Nova Loja</button>
+            <button class="btn btn-custom" type="button" onclick="cadastrarTalao()">Cadastrar Nova talao</button>
         </div>
     `;
 
-    setActiveButton('Lojas');
+    setActiveButton('talaos');
 }
 
- window.buscarLoja = function() {
-    const searchInput = document.getElementById('lojaSearchInput').value.toLowerCase();
-    const tableBody = document.getElementById('lojaTableBody');
+ window.buscarTalao = function() {
+    const searchInput = document.getElementById('talaoSearchInput').value.toLowerCase();
+    const tableBody = document.getElementById('talaoTableBody');
     const rows = tableBody.getElementsByTagName('tr');
 
     for (let i = 0; i < rows.length; i++) {
-        const nomeLoja = rows[i].getElementsByTagName('td')[0].textContent.toLowerCase();
+        const nometalao = rows[i].getElementsByTagName('td')[0].textContent.toLowerCase();
         
-        if (nomeLoja.includes(searchInput)) {
+        if (nometalao.includes(searchInput)) {
             rows[i].style.display = '';
         } else {
             rows[i].style.display = 'none';
@@ -67,41 +67,41 @@ window.showLojas = function() {
     }
 }
 
-window.cadastrarLoja = function() {
+window.cadastrarTalao = function() {
     const content = document.getElementById('mainContent');
     content.innerHTML = `
         <div class="form-container">
-        <h1 class="h4 mb-4">Nova Loja</h1>
+        <h1 class="h4 mb-4">Nova talao</h1>
         <form id="storeForm">
             <div class="mb-3">
-                <label for="storeName" class="form-label">Nome da Loja</label>
-                <input type="text" class="form-control" id="storeName" placeholder="Digite o nome da loja" required>
+                <label for="storeName" class="form-label">Nome do Talão</label>
+                <input type="text" class="form-control" id="storeName" placeholder="Digite o nome da talao" required>
             </div>
             <div class="mb-3">
                 <label for="storeAddress" class="form-label">Endereço</label>
-                <input type="text" class="form-control" id="storeAddress" placeholder="Digite o endereço da loja" required>
+                <input type="text" class="form-control" id="storeAddress" placeholder="Digite o endereço da talao" required>
             </div>
             <div class="mb-3">
-                <label for="storeManager" class="form-label">Gerente da Loja</label>
+                <label for="storeManager" class="form-label">Gerente da talao</label>
                 <input type="text" class="form-control" id="storeManager" placeholder="Digite o nome do gerente" required>
             </div>
             <div class="mb-3">
                 <label for="storeEmail" class="form-label">E-mail</label>
-                <input type="email" class="form-control" id="storeEmail" placeholder="Digite o e-mail da loja" required>
+                <input type="email" class="form-control" id="storeEmail" placeholder="Digite o e-mail da talao" required>
             </div>
             <div class="mb-3">
                 <label for="storePhone" class="form-label">Telefone</label>
-                <input type="text" class="form-control" id="storePhone" placeholder="Digite o telefone da loja" required>
+                <input type="text" class="form-control" id="storePhone" placeholder="Digite o telefone da talao" required>
             </div>
             <div class="mb-3">
-                <label for="storeStatus" class="form-label">Status da Loja</label>
+                <label for="storeStatus" class="form-label">Status da talao</label>
                 <select id="storeStatus" class="form-select">
                     <option selected>Selecione o status</option>
                     <option value="active">Ativa</option>
                     <option value="inactive">Inativa</option>
                 </select>
             </div>
-            <button type="submit" class="btn btn-submit">Cadastrar Loja</button>
+            <button type="submit" class="btn btn-submit">Cadastrar talao</button>
         </form>
     </div>
     `;
