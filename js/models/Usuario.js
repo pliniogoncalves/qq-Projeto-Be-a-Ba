@@ -21,6 +21,7 @@ export class Usuario {
       const novoUsuario = new Usuario(nome, matricula, email, senha, perfil, loja);
       Usuario.usuarios.push(novoUsuario);
       Usuario.salvarNoLocalStorage();
+      alert(`Usuário ${nome} criado com sucesso!`);
       return novoUsuario;
     }
   
@@ -40,6 +41,7 @@ export class Usuario {
         usuario.perfil = novoPerfil || usuario.perfil;
         usuario.loja = novaLoja || usuario.loja;
         Usuario.salvarNoLocalStorage();
+        alert(`Usuário ${usuario.nome} atualizado com sucesso!`);
       }
     }
   
@@ -47,6 +49,7 @@ export class Usuario {
     static excluirUsuario(id) {
       Usuario.usuarios = Usuario.usuarios.filter(user => user.id !== id);
       Usuario.salvarNoLocalStorage();
+      alert(`Usuário removido com sucesso!`);
     }
 
     // Função para solicitar talões
