@@ -90,6 +90,14 @@ window.cadastrarUsuario = function() {
               <option value="AdminRoot">Admin Root</option>
             </select>
           </div>
+          <div class="mb-3">
+            <label for="loja" class="form-label">Loja</label>
+            <select id="loja" class="form-select">
+              <option value="Loja 1">Loja 1</option>
+              <option value="Loja 2">Loja 2</option>
+              <option value="Loja 3">Loja 3</option>
+            </select>
+          </div>
           <button type="button" class="btn btn-submit" onclick="submitCadastro()">Cadastrar Usuário</button>
         </form>
       </div>
@@ -102,10 +110,11 @@ window.submitCadastro = function() {
     const email = document.getElementById('email').value;
     const senha = document.getElementById('senha').value;
     const perfil = document.getElementById('funcao').value;
+    const loja = document.getElementById('loja').value;
   
     if (nome && matricula && email && senha) {
-      Usuario.criarUsuario(nome, matricula, email, senha, perfil);
-      showUsuarios();  // Voltar para a lista de usuários após o cadastro
+      Usuario.criarUsuario(nome, matricula, email, senha, perfil, loja);
+      showUsuarios();
     } else {
       alert("Preencha todos os campos.");
     }
@@ -120,23 +129,35 @@ window.editarUsuario = function(id) {
         <h1 class="h4 mb-4">Editar Usuário</h1>
         <form id="userForm">
           <div class="mb-3">
-            <label for="username" class="form-label">Nome do Usuário</label>
-            <input type="text" class="form-control" id="username" value="${usuario.nome}">
+            <label for="nome" class="form-label">Nome do Usuário</label>
+            <input type="text" class="form-control" id="nome" value="${usuario.nome}">
+          </div>
+          <div class="mb-3">
+            <label for="matricula" class="form-label">Matrícula</label>
+            <input type="text" class="form-control" id="matricula" value="${usuario.matricula}">
           </div>
           <div class="mb-3">
             <label for="email" class="form-label">E-mail</label>
             <input type="email" class="form-control" id="email" value="${usuario.email}">
           </div>
           <div class="mb-3">
-            <label for="password" class="form-label">Senha</label>
-            <input type="password" class="form-control" id="password" placeholder="Digite a nova senha (opcional)">
+            <label for="senha" class="form-label">Senha</label>
+            <input type="password" class="form-control" id="senha" placeholder="Digite a nova senha (opcional)">
           </div>
           <div class="mb-3">
-            <label for="role" class="form-label">Função</label>
-            <select id="role" class="form-select">
+            <label for="funcao" class="form-label">Função</label>
+            <select id="funcao" class="form-select">
               <option value="Estoque" ${usuario.perfil === 'Estoque' ? 'selected' : ''}>Estoque</option>
               <option value="Gerente" ${usuario.perfil === 'Gerente' ? 'selected' : ''}>Gerente</option>
               <option value="AdminRoot" ${usuario.perfil === 'AdminRoot' ? 'selected' : ''}>Admin Root</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="loja" class="form-label">Função</label>
+            <select id="loja" class="form-select">
+              <option value="Loja 1" ${usuario.loja === 'Loja 1' ? 'selected' : ''}>Loja 1</option>
+              <option value="Loja 2" ${usuario.loja === 'Loja 2' ? 'selected' : ''}>Loja 2</option>
+              <option value="Loja 3" ${usuario.loja === 'Loja 3' ? 'selected' : ''}>Loja 3</option>
             </select>
           </div>
           <button type="button" class="btn btn-submit" onclick="submitEdicao(${id})">Salvar Alterações</button>
@@ -146,19 +167,21 @@ window.editarUsuario = function(id) {
 }
   
 window.submitEdicao = function(id) {
-    const nome = document.getElementById('username').value;
+    const nome = document.getElementById('nome').value;
+    const matricula = document.getElementById('matricula').value;
     const email = document.getElementById('email').value;
-    const senha = document.getElementById('password').value || null;
-    const perfil = document.getElementById('role').value;
+    const senha = document.getElementById('senha').value || null;
+    const perfil = document.getElementById('funcao').value;
+    const loja = document.getElementById('loja').value;
   
-    Usuario.atualizarUsuario(id, nome, email, senha, perfil);
-    showUsuarios();  // Voltar para a lista de usuários após a edição
+    Usuario.atualizarUsuario(id, nome, matricula, email, senha, perfil, loja);
+    showUsuarios();
 }
 
 window.excluirUsuario = function(id) {
     if (confirm("Você tem certeza que deseja excluir este usuário?")) {
       Usuario.excluirUsuario(id);
-      showUsuarios();  // Atualizar a lista de usuários após a exclusão
+      showUsuarios();
     }
 }
 
