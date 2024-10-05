@@ -19,13 +19,13 @@
 
         <form>
             <div class="mb-3">
-                <label for="email" class="form-label">Matrícula</label>
-                <input type="email" class="form-control" id="email" placeholder="Insira sua matrícula" required>
+                <label for="matricula" class="form-label">Matrícula</label>
+                <input type="number" class="form-control" id="matricula" placeholder="Insira sua Matrícula" required>
             </div>
             <div class="mb-3">
-                <label for="password" class="form-label">Senha</label>
+                <label for="senha" class="form-label">Senha</label>
                 <div class="input-group">
-                    <input type="password" class="form-control" id="password" placeholder="Insira sua senha" required>
+                    <input type="password" class="form-control" id="senha" placeholder="Insira sua Senha" required>
                     <button class="btn btn-outline-secondary" type="button" id="togglePassword">
                         <i class="bi bi-eye-slash" id="eyeIcon"></i>
                     </button>
@@ -38,7 +38,7 @@
                 <input type="checkbox" class="form-check-input" id="rememberMe">
                 <label class="form-check-label" for="rememberMe">Lembre-me</label>
             </div>
-            <button type="submit" class="btn btn-verde w-100">Login</button>
+            <button type="button" class="btn btn-verde w-100" onclick="login()">Login</button>
         </form>
 
         <hr>

@@ -38,3 +38,38 @@ function setActiveButton(activeSection) {
     }
 }
 
+// Função para exibir informações do usuário logado
+function carregarInformacoesUsuario() {
+    const userInfo = document.querySelector('.user-info');
+    const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado'));
+
+    if (usuarioLogado) {
+        const userInitials = usuarioLogado.nome.split(' ')
+            .map(name => name.substring(0, 2))  // Pega as duas primeiras letras de cada parte
+            .join('');  // Junta as iniciais
+        const userName = usuarioLogado.nome;
+
+        userInfo.innerHTML = `
+            <div class="user-avatar">
+                <span class="user-initials">${userInitials}</span>
+            </div>
+            <div class="user-details">
+                <p class="user-name"><strong>${userName}</strong></p>
+                <p class="user-role"><strong>${usuarioLogado.perfil}</strong></p>
+            </div>
+        `;
+    } else {
+        // Se o usuário não está logado, redireciona para a página de login
+        window.location.href = 'login.html';
+    }
+}
+
+// Função de logout
+function logout() {
+    localStorage.removeItem('usuarioLogado');
+    window.location.href = 'login.html';
+}
+
+// Carregar as informações do usuário assim que a página for carregada
+window.onload = carregarInformacoesUsuario;
+
