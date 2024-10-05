@@ -34,40 +34,48 @@ function showDashboard() {
 function showLojas() {
     const content = document.getElementById('mainContent');
     content.innerHTML = `
-        <h1>Lista de Lojas</h1>
-        <p>Veja a lista de Lojas cadastradas e suas respectivas situações.</p>
+        <h1 class="text-center">Lista de Lojas</h1>
+        <p class="text-center">Veja a lista de Lojas cadastradas e suas respectivas situações.</p>
 
-        <div class="input-group mb-4">
-            <input type="text" class="form-control" id="lojaSearchInput" placeholder="Procurar por loja">
-            <button class="btn btn-custom" type="button" onclick="buscarLoja()">Buscar</button>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-sm-12 mb-4">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="lojaSearchInput" placeholder="Procurar por loja">
+                        <button class="btn btn-custom" type="button" onclick="buscarLoja()">Buscar</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Loja</th>
-                    <th>Talões</th>
-                    <th>Data do Pedido</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody id="lojaTableBody">
-                <tr>
-                    <td>Loja 1</td>
-                    <td>68</td>
-                    <td>Dez 6, 2023</td>
-                    <td><span class="badge bg-success">Talões Enviados</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-primary">Visualizar</button>
-                        <button class="btn btn-sm btn-outline-secondary">Extrato</button>
-                        <button class="btn btn-sm btn-outline-info">Relatório</button>
-                    </td>
-                </tr>
-                <!-- Adicione mais lojas conforme necessário -->
-            </tbody>
-        </table>
-        
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Loja</th>
+                        <th>Talões</th>
+                        <th>Data</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="lojaTableBody">
+                    <tr>
+                        <td>Loja 1</td>
+                        <td>68</td>
+                        <td>Dez 6, 2023</td>
+                        <td><span class="badge bg-success">Talões Enviados</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary">Visualizar</button>
+                            <button class="btn btn-sm btn-outline-secondary">Extrato</button>
+                            <button class="btn btn-sm btn-outline-info">Relatório</button>
+                        </td>
+                    </tr>
+                    <!-- Adicione mais lojas conforme necessário -->
+                </tbody>
+            </table>
+        </div>
+
         <div class="text-center mb-4">
             <button class="btn btn-custom" type="button" onclick="cadastrarLoja()">Cadastrar Nova Loja</button>
         </div>
@@ -96,45 +104,53 @@ function cadastrarLoja() {
     window.location.href = "cadastrar_loja.html";
 }
 
-
 function showUsuarios() {
     const content = document.getElementById('mainContent');
     content.innerHTML = `
-        <h1>Lista de Usuários</h1>
-<p>Veja a lista de usuários cadastrados e suas respectivas situações.</p>
-<div class="input-group mb-4">
-    <input type="text" class="form-control" id="userSearchInput" placeholder="Procurar por usuário">
-    <button class="btn btn-custom" type="button" onclick="buscarUsuario()">Buscar</button>
-</div>
+        <h1 class="text-center">Lista de Usuários</h1>
+        <p class="text-center">Veja a lista de usuários cadastrados e suas respectivas situações.</p>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Nome</th>
-            <th>Função</th>
-            <th>Data de Cadastro</th>
-            <th>E-mail</th>
-            <th>Ações</th>
-        </tr>
-    </thead>
-    <tbody id="userTableBody">
-        <tr>
-            <td>Usuário 1</td>
-            <td>Logista</td>
-            <td>Feb 21, 2024</td>
-            <td>usuario1@verdecard.com.br</td>
-            <td>
-                <i class="fas fa-edit" style="cursor: pointer; margin-right: 10px;" onclick="editarUsuario('Usuário 1')"></i>
-                <i class="fas fa-trash" style="cursor: pointer;" onclick="excluirUsuario('Usuário 1')"></i>
-            </td>
-        </tr>
-        <!-- Adicione mais usuários conforme necessário -->
-    </tbody>
-</table>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-sm-12 mb-4">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="userSearchInput" placeholder="Procurar por usuário">
+                        <button class="btn btn-custom" type="button" onclick="buscarUsuario()">Buscar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<div class="text-center mb-4">
-    <button class="btn btn-custom" type="button" onclick="cadastrarUsuario()">Cadastrar Novo Usuário</button>
-</div>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Função</th>
+                        <th>Data</th>
+                        <th>E-mail</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="userTableBody">
+                    <tr>
+                        <td>Usuário 1</td>
+                        <td>Logista</td>
+                        <td>Feb 21, 2024</td>
+                        <td>usuario1@verdecard.com.br</td>
+                        <td>
+                            <i class="fas fa-edit" style="cursor: pointer; margin-right: 10px;" onclick="editarUsuario('Usuário 1')"></i>
+                            <i class="fas fa-trash" style="cursor: pointer;" onclick="excluirUsuario('Usuário 1')"></i>
+                        </td>
+                    </tr>
+                    <!-- Adicione mais usuários conforme necessário -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-center mb-4">
+            <button class="btn btn-custom" type="button" onclick="cadastrarUsuario()">Cadastrar Novo Usuário</button>
+        </div>
     `;
 
     setActiveButton('Usuários');

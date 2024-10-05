@@ -92,6 +92,10 @@ header::after {
     color: #269447;
 }
 
+.table-responsive {
+    overflow-x: auto;
+}
+
 /* Content */
 .content {
     padding: 2rem;
@@ -129,6 +133,12 @@ header::after {
 @media (max-width: 768px) {
     .sidebar {
         transform: translateX(-100%);
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        width: 250px;
+        height: 100%;
     }
     .sidebar.active {
         transform: translateX(0);
