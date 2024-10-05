@@ -48,5 +48,23 @@ export class Usuario {
       Usuario.usuarios = Usuario.usuarios.filter(user => user.id !== id);
       Usuario.salvarNoLocalStorage();
     }
+
+    // Função para solicitar talões
+    solicitarTalao(quantidade) {
+      console.log(`${this.nome} solicitou ${quantidade} talões para a loja ${this.loja || 'todas as lojas'}.`);
+    }
+
+    // Função para verificar o estoque
+    verificarEstoque(quantidadeAtual) {
+      console.log(`Estoque atual de talões na loja ${this.loja || 'todas as lojas'}: ${quantidadeAtual}`);
+    }
+
+    // Função para confirmar o recebimento de talões
+    receberTalao(quantidade) {
+      console.log(`${this.nome} confirmou o recebimento de ${quantidade} talões na loja ${this.loja || 'todas as lojas'}.`);
+    }
+
   }
+
+  
   
