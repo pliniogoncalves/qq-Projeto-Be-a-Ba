@@ -6,7 +6,6 @@
     <title>Página Inicial - Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
     <link rel="stylesheet" href="../css/main.css">
 </head>
 <body>
@@ -14,11 +13,6 @@
         <span class="hamburger" onclick="toggleSidebar()">&#9776;</span>
         Lojas Quero-Quero
     </header>
-
-    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 content" id="mainContent">
-        <h1 class="h2">Bem-vindo ao Sistema "Oferte e Ganhe"</h1>
-        <p>Escolha uma opção no menu lateral para começar.</p>
-    </main>
 
     <div class="container-fluid">
         <div class="row">
@@ -31,26 +25,25 @@
                         <li class="nav-item">
                             <button class="btn btn-custom w-100 mb-2" onclick="showDashboard()">
                                 <i class="fas fa-chart-line" style="margin-right: 8px;"></i>
-                                    Dashboard
+                                Dashboard
                             </button>
                         </li>
-                    <ul class="nav flex-column">
                         <li class="nav-item">
                             <button class="btn btn-custom w-100 mb-2" onclick="showLojas()">
                                 <i class="fas fa-store" style="margin-right: 8px;"></i>
-                                    Lojas
+                                Lojas
                             </button>
                         </li>
                         <li class="nav-item">
                             <button class="btn btn-custom w-100 mb-2" onclick="showUsuarios()">
                                 <i class="fas fa-users" style="margin-right: 8px;"></i>
-                                    Usuários
+                                Usuários
                             </button>
                         </li>
                         <li class="nav-item">
                             <button class="btn btn-custom w-100 mb-2" onclick="showPerfis()">
                                 <i class="fas fa-user-shield" style="margin-right: 8px;"></i>
-                                    Perfis de Acesso
+                                Perfis de Acesso
                             </button>
                         </li>
                     </ul>
@@ -58,15 +51,15 @@
                 <div class="bottom-links">
                     <button class="btn btn-custom w-100 mb-2" onclick="showAjuda()">
                         <i class="fas fa-question-circle" style="margin-right: 8px;"></i>
-                            Ajuda
+                        Ajuda
                     </button>
                     <button class="btn btn-custom w-100 mb-2" onclick="showConfiguracoes()">
                         <i class="fas fa-cog" style="margin-right: 8px;"></i>
-                            Configurações
+                        Configurações
                     </button>
-                    <button class="btn btn-danger w-100">
+                    <button class="btn btn-danger w-100 mb-2" onclick="logout()">
                         <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i>
-                            Sair
+                        Sair
                     </button>
                 </div>
                 <div class="user-info">
@@ -77,7 +70,12 @@
                         <p class="user-name"><strong>Admin</strong></p>
                     </div>
                 </div>
-            </nav>    
+            </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 content" id="mainContent">
+                <h1 class="h2">Bem-vindo ao Sistema "Oferte e Ganhe"</h1>
+                <p>Escolha uma opção no menu lateral para começar.</p>
+            </main>
         </div>
     </div>
 

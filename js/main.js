@@ -2,10 +2,8 @@ function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
     const mainContent = document.getElementById('mainContent');
     
-    // Alterna a classe 'active' para mostrar/esconder a sidebar
     sidebar.classList.toggle('active');
     
-    // Se a sidebar estiver ativa, o conteúdo será empurrado
     if (sidebar.classList.contains('active')) {
         mainContent.classList.add('active');
     } else {
