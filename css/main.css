@@ -86,7 +86,7 @@ header::after {
     flex-grow: 1;
 }
 
-.user-name, .user-role {
+.user-name, .user-perfil, .user-loja {
     margin: 0;
     font-size: 1rem;
     color: #269447;

@@ -54,8 +54,8 @@ function carregarInformacoesUsuario() {
                 <span class="user-initials">${userInitials}</span>
             </div>
             <div class="user-details">
-                <p class="user-name"><strong>${userName}</strong></p>
-                <p class="user-role"><strong>${usuarioLogado.perfil}</strong></p>
+                <p class="user-perfil"><strong>${usuarioLogado.perfil}</strong></p>
+                <p class="user-name"><strong>${usuarioLogado.loja}</strong></p>
             </div>
         `;
     } else {
