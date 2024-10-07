@@ -1,6 +1,6 @@
-window.showTaloes = function() {
-    const content = document.getElementById('mainContent');
-    content.innerHTML = `
+window.showTaloes = function () {
+  const content = document.getElementById("mainContent");
+  content.innerHTML = `
         <h1 class="text-center">Lista de Taloes</h1>
         <p class="text-center">Veja a lista de Taloes solicitados e suas respectivas situações.</p>
 
@@ -48,28 +48,32 @@ window.showTaloes = function() {
         </div>
     `;
 
-    setActiveButton('talaos');
-}
+  setActiveButton("talaos");
+};
 
- window.buscarTalao = function() {
-    const searchInput = document.getElementById('talaoSearchInput').value.toLowerCase();
-    const tableBody = document.getElementById('talaoTableBody');
-    const rows = tableBody.getElementsByTagName('tr');
+window.buscarTalao = function () {
+  const searchInput = document
+    .getElementById("talaoSearchInput")
+    .value.toLowerCase();
+  const tableBody = document.getElementById("talaoTableBody");
+  const rows = tableBody.getElementsByTagName("tr");
 
-    for (let i = 0; i < rows.length; i++) {
-        const nometalao = rows[i].getElementsByTagName('td')[0].textContent.toLowerCase();
-        
-        if (nometalao.includes(searchInput)) {
-            rows[i].style.display = '';
-        } else {
-            rows[i].style.display = 'none';
-        }
+  for (let i = 0; i < rows.length; i++) {
+    const nometalao = rows[i]
+      .getElementsByTagName("td")[0]
+      .textContent.toLowerCase();
+
+    if (nometalao.includes(searchInput)) {
+      rows[i].style.display = "";
+    } else {
+      rows[i].style.display = "none";
     }
-}
+  }
+};
 
-window.cadastrarTalao = function() {
-    const content = document.getElementById('mainContent');
-    content.innerHTML = `
+window.cadastrarTalao = function () {
+  const content = document.getElementById("mainContent");
+  content.innerHTML = `
         <div class="form-container">
         <h1 class="h4 mb-4">Nova talao</h1>
         <form id="storeForm">
@@ -105,4 +109,4 @@ window.cadastrarTalao = function() {
         </form>
     </div>
     `;
-}
+};
