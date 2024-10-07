@@ -95,58 +95,69 @@ window.cadastrarUsuario = function () {
   const lojas = ["Loja 1", "Loja 2", "Loja 3"];
 
   content.innerHTML = `
-    <div class="form-container">
-      <h1 class="h4 mb-4">Novo Usuário</h1>
-      <form id="userForm">
-        <div class="mb-3">
-          <label for="nome" class="form-label">Nome do Usuário</label>
-          <input type="text" class="form-control" id="nome" placeholder="Digite o nome de usuário">
-        </div>
-        <div class="mb-3">
-          <label for="matricula" class="form-label">Matrícula</label>
-          <input type="number" class="form-control" id="matricula" placeholder="Digite a Matrícula">
-        </div>
-        <div class="mb-3">
-          <label for="email" class="form-label">E-mail</label>
-          <input type="email" class="form-control" id="email" placeholder="Digite o e-mail">
-        </div>
-        <div class="mb-3">
-          <label for="senha" class="form-label">Senha</label>
-          <input type="password" class="form-control" id="senha" placeholder="Digite a senha">
-        </div>
-        <div class="mb-3">
-          <label for="funcao" class="form-label">Função</label>
-          <select id="funcao" class="form-select" onchange="atualizarLoja()">
-            <option value="Estoque">Estoque</option>
-            <option value="Gerente">Gerente</option>
-            <option value="AdminRoot" ${
-              !isAdminRoot ? "disabled" : ""
-            }>Admin Root</option>
-          </select>
-        </div>
-        <div class="mb-3" id="loja-container">
-          <!-- O campo de loja será atualizado pela função 'atualizarLoja' -->
-        </div>
-        <button type="button" class="btn btn-submit" onclick="submitCadastro()">Cadastrar Usuário</button>
-      </form>
-    </div>
-    `;
+      <div class="form-container">
+        <h1 class="h4 mb-4">Novo Usuário</h1>
+        <form id="userForm">
+          <div class="mb-3">
+            <label for="nome" class="form-label">Nome do Usuário</label>
+            <input type="text" class="form-control" id="nome" placeholder="Digite o nome de usuário">
+          </div>
+          <div class="mb-3">
+            <label for="matricula" class="form-label">Matrícula</label>
+            <input type="number" class="form-control" id="matricula" placeholder="Digite a Matrícula">
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">E-mail</label>
+            <input type="email" class="form-control" id="email" placeholder="Digite o e-mail">
+          </div>
+          <div class="mb-3">
+            <label for="senha" class="form-label">Senha</label>
+            <input type="password" class="form-control" id="senha" placeholder="Digite a senha">
+          </div>
+          <div class="mb-3">
+            <label for="funcao" class="form-label">Função</label>
+            <select id="funcao" class="form-select" onchange="atualizarLojaCadastro()">
+              <option value="Estoque">Estoque</option>
+              <option value="Gerente">Gerente</option>
+              ${
+                isAdminRoot
+                  ? `<option value="AdminRoot">Admin Root</option>`
+                  : ""
+              }
+            </select>
+          </div>
+          <div class="mb-3" id="loja-container">
+            <!-- O campo de loja será atualizado pela função 'atualizarLojaCadastro' -->
+          </div>
+          <button type="button" class="btn btn-submit" onclick="submitCadastro()">Cadastrar Usuário</button>
+        </form>
+      </div>
+      `;
 
-  // Inicializar o campo de loja com base no perfil inicial (estoque, gerente, etc.)
-  atualizarLoja();
+  // Inicializar o campo de loja com base no perfil inicial
+  atualizarLojaCadastro();
 };
 
-window.atualizarLoja = function () {
+window.atualizarLojaCadastro = function () {
   const perfilSelecionado = document.getElementById("funcao").value;
   const lojaContainer = document.getElementById("loja-container");
   const lojas = ["Loja 1", "Loja 2", "Loja 3"];
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado")); // Recupera o usuário logado
 
   if (perfilSelecionado === "AdminRoot") {
+    // Se for AdminRoot, exibir "Todas as lojas" e desabilitar a seleção
     lojaContainer.innerHTML = `
         <label for="loja" class="form-label">Loja</label>
         <input type="text" class="form-control" id="loja" value="Todas as lojas" disabled>
-        `;
+      `;
+  } else if (usuarioLogado.perfil === "Gerente") {
+    // Se for Gerente, a loja é fixa na loja do gerente
+    lojaContainer.innerHTML = `
+        <label for="loja" class="form-label">Loja</label>
+        <input type="text" class="form-control" id="loja" value="${usuarioLogado.loja}" disabled>
+      `;
   } else {
+    // Se for Estoque ou Gerente (AdminRoot cadastrando), exibir a lista de lojas
     lojaContainer.innerHTML = `
         <label for="loja" class="form-label">Loja</label>
         <select id="loja" class="form-select">
@@ -154,7 +165,7 @@ window.atualizarLoja = function () {
             .map((loja) => `<option value="${loja}">${loja}</option>`)
             .join("")}
         </select>
-        `;
+      `;
   }
 };
 
@@ -170,11 +181,9 @@ window.submitCadastro = function () {
 
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado")); // Recupera o usuário logado
 
-  // Definir a loja com base no perfil
-  if (perfil === "AdminRoot") {
-    loja = "Todas as lojas"; // AdminRoot deve ser "Todas as lojas"
-  } else if (usuarioLogado.perfil === "Gerente") {
-    loja = usuarioLogado.loja; // Gerente deve cadastrar na sua loja
+  // Gerente só pode cadastrar usuários na sua própria loja
+  if (usuarioLogado.perfil === "Gerente") {
+    loja = usuarioLogado.loja;
   }
 
   // Verificar se todos os campos estão preenchidos
