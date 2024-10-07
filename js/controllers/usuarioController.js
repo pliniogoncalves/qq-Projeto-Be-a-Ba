@@ -216,108 +216,79 @@ window.editarUsuario = function (id) {
   const lojas = ["Loja 1", "Loja 2", "Loja 3"];
 
   content.innerHTML = `
-    <div class="form-container">
-        <h1 class="h4 mb-4">Editar Usuário</h1>
-        <form id="userForm">
-            <div class="mb-3">
-                <label for="nome" class="form-label">Nome do Usuário</label>
-                <input type="text" class="form-control" id="nome" value="${
-                  usuario.nome
-                }">
-            </div>
-            <div class="mb-3">
-                <label for="matricula" class="form-label">Matrícula</label>
-                <input type="text" class="form-control" id="matricula" value="${
-                  usuario.matricula
-                }">
-            </div>
-            <div class="mb-3">
-                <label for="email" class="form-label">E-mail</label>
-                <input type="email" class="form-control" id="email" value="${
-                  usuario.email
-                }">
-            </div>
-            <div class="mb-3">
-                <label for="senha" class="form-label">Senha</label>
-                <input type="password" class="form-control" id="senha" placeholder="Digite a nova senha (opcional)">
-            </div>
-            <div class="mb-3">
-                <label for="funcao" class="form-label">Função</label>
-                <select id="funcao" class="form-select" ${
-                  usuario.perfil === "AdminRoot" ? "disabled" : ""
-                }>
-                    ${
-                      usuario.perfil === "AdminRoot"
-                        ? `
-                    <option value="AdminRoot" selected>Admin Root</option>
-                    `
-                        : `
-                    <option value="Estoque" ${
-                      usuario.perfil === "Estoque" ? "selected" : ""
-                    }>Estoque</option>
-                    <option value="Gerente" ${
-                      usuario.perfil === "Gerente" ? "selected" : ""
-                    }>Gerente</option>
-                    `
-                    }
-                </select>
-            </div>
-            <div class="mb-3" id="loja-container">
-                ${
-                  usuario.perfil === "AdminRoot"
-                    ? `
-                <input type="text" class="form-control" id="loja" value="Todas as lojas" disabled>
-                `
-                    : `
-                <label for="loja" class="form-label">Loja</label>
-                <select id="loja" class="form-select">
-                    ${lojas
-                      .map(
-                        (loja) =>
-                          `<option value="${loja}" ${
-                            usuario.loja === loja ? "selected" : ""
-                          }>${loja}</option>`
-                      )
-                      .join("")}
-                </select>
-                `
-                }
-            </div>
-            <button type="button" class="btn btn-submit" onclick="submitEdicao(${id})">Salvar Alterações</button>
-        </form>
-    </div>
-    `;
-
-  // Inicializar o campo de loja com base no perfil do usuário sendo editado
-  atualizarLojaEdicao(usuario.id);
-};
-
-window.atualizarLojaEdicao = function (id) {
-  const usuario = Usuario.usuarios.find((user) => user.id === id);
-  const perfilSelecionado = document.getElementById("funcao").value;
-  const lojaContainer = document.getElementById("loja-container");
-  const lojas = ["Loja 1", "Loja 2", "Loja 3"];
-
-  if (perfilSelecionado === "AdminRoot") {
-    lojaContainer.innerHTML = `
-        <label for="loja" class="form-label">Loja</label>
-        <input type="text" class="form-control" id="loja" value="Todas as lojas" disabled>
-        `;
-  } else {
-    lojaContainer.innerHTML = `
-        <label for="loja" class="form-label">Loja</label>
-        <select id="loja" class="form-select">
-          ${lojas
-            .map(
-              (loja) =>
-                `<option value="${loja}" ${
-                  usuario.loja === loja ? "selected" : ""
-                }>${loja}</option>`
-            )
-            .join("")}
-        </select>
-        `;
-  }
+      <div class="form-container">
+          <h1 class="h4 mb-4">Editar Usuário</h1>
+          <form id="userForm">
+              <div class="mb-3">
+                  <label for="nome" class="form-label">Nome do Usuário</label>
+                  <input type="text" class="form-control" id="nome" value="${
+                    usuario.nome
+                  }">
+              </div>
+              <div class="mb-3">
+                  <label for="matricula" class="form-label">Matrícula</label>
+                  <input type="text" class="form-control" id="matricula" value="${
+                    usuario.matricula
+                  }">
+              </div>
+              <div class="mb-3">
+                  <label for="email" class="form-label">E-mail</label>
+                  <input type="email" class="form-control" id="email" value="${
+                    usuario.email
+                  }">
+              </div>
+              <div class="mb-3">
+                  <label for="senha" class="form-label">Senha</label>
+                  <input type="password" class="form-control" id="senha" placeholder="Digite a nova senha (opcional)">
+              </div>
+              <div class="mb-3">
+                  <label for="funcao" class="form-label">Função</label>
+                  <select id="funcao" class="form-select" ${
+                    usuario.perfil === "AdminRoot" ? "disabled" : ""
+                  }>
+                      ${
+                        usuario.perfil === "AdminRoot"
+                          ? `<option value="AdminRoot" selected>Admin Root</option>`
+                          : `
+                      <option value="Estoque" ${
+                        usuario.perfil === "Estoque" ? "selected" : ""
+                      }>Estoque</option>
+                      <option value="Gerente" ${
+                        usuario.perfil === "Gerente" ? "selected" : ""
+                      }>Gerente</option>
+                      `
+                      }
+                  </select>
+              </div>
+              <div class="mb-3" id="loja-container">
+                  ${
+                    usuarioLogado.perfil === "Gerente"
+                      ? `
+                  <input type="text" class="form-control" id="loja" value="${usuarioLogado.loja}" disabled>
+                  `
+                      : usuario.perfil === "AdminRoot"
+                      ? `
+                  <input type="text" class="form-control" id="loja" value="Todas as lojas" disabled>
+                  `
+                      : `
+                  <label for="loja" class="form-label">Loja</label>
+                  <select id="loja" class="form-select">
+                      ${lojas
+                        .map(
+                          (loja) =>
+                            `<option value="${loja}" ${
+                              usuario.loja === loja ? "selected" : ""
+                            }>${loja}</option>`
+                        )
+                        .join("")}
+                  </select>
+                  `
+                  }
+              </div>
+              <button type="button" class="btn btn-submit" onclick="submitEdicao(${id})">Salvar Alterações</button>
+          </form>
+      </div>
+      `;
 };
 
 window.submitEdicao = function (id) {
