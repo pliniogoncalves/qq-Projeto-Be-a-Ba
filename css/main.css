@@ -113,6 +113,19 @@ header::after {
   transition: margin-left 0.3s ease;
 }
 
+.input-icon {
+  position: absolute; /* Posiciona o ícone de forma absoluta */
+  left: 20px; /* Ajuste a posição horizontal */
+  top: 50%; /* Centraliza verticalmente */
+  transform: translateY(-50%); /* Ajusta a posição vertical */
+  pointer-events: none; /* Permite que o clique passe pelo ícone */
+  color: #999; /* Cor do ícone (opcional) */
+}
+
+.form-control {
+  padding-left: 40px; /* Ajuste o padding para deslocar o texto do placeholder */
+}
+
 /* Custom Button */
 .btn-custom {
   background-color: #269447;

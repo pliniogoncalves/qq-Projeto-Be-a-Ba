@@ -1,14 +1,17 @@
 window.showTaloes = function () {
   const content = document.getElementById("mainContent");
   content.innerHTML = `
-        <h1 class="text-center">Lista de Taloes</h1>
-        <p class="text-center">Veja a lista de Taloes solicitados e suas respectivas situações.</p>
+        <h1 class="text-center">Lista de Talões</h1>
+        <p class="text-center">Veja a lista de Talões solicitados e suas respectivas situações.</p>
 
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-8 col-sm-12 mb-4">
                     <div class="input-group">
-                        <input type="text" class="form-control" id="talaoSearchInput" placeholder="Procurar por talao">
+                        <input type="text" class="form-control" id="talaoSearchInput" placeholder="Procurar por talão">
+                        <div class="input-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
                         <button class="btn btn-custom" type="button" onclick="buscarTalao()">Buscar</button>
                     </div>
                 </div>
@@ -19,11 +22,12 @@ window.showTaloes = function () {
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>talao</th>
+                        <th>talão</th>
                         <th>Talões</th>
                         <th>Data</th>
                         <th>Status</th>
-                        <th>Ações</th>
+                        <th>Extrato</th>
+                        <th>Relatório</th>
                     </tr>
                 </thead>
                 <tbody id="talaoTableBody">
@@ -33,8 +37,10 @@ window.showTaloes = function () {
                         <td>Dez 6, 2023</td>
                         <td><span class="badge bg-success">Talões Enviados</span></td>
                         <td>
-                            <button class="btn btn-sm btn-outline-primary">Visualizar</button>
                             <button class="btn btn-sm btn-outline-secondary">Extrato</button>
+                            
+                        </td>
+                        <td>
                             <button class="btn btn-sm btn-outline-info">Relatório</button>
                         </td>
                     </tr>
@@ -44,7 +50,7 @@ window.showTaloes = function () {
         </div>
 
         <div class="text-center mb-4">
-            <button class="btn btn-custom" type="button" onclick="cadastrarTalao()">Cadastrar Nova talao</button>
+            <button class="btn btn-custom" type="button" onclick="cadastrarTalao()">Solicitar Talão</button>
         </div>
     `;
 

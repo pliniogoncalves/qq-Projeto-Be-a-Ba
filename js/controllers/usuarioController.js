@@ -45,6 +45,9 @@ window.showUsuarios = function () {
               <div class="col-md-8 col-sm-12 mb-4">
                   <div class="input-group">
                       <input type="text" class="form-control" id="userSearchInput" placeholder="Procurar por usuário">
+                      <div class="input-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
                       <button class="btn btn-custom" type="button" onclick="buscarUsuario()">Buscar</button>
                   </div>
               </div>
