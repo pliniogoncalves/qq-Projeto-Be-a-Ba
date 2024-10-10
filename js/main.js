@@ -81,3 +81,18 @@ function logout() {
 
 // Carregar as informações do usuário assim que a página for carregada
 window.onload = carregarInformacoesUsuario;
+
+// Função para formatar data e hora
+function formatarDataHora(dataString) {
+  const data = new Date(dataString);
+  const dia = String(data.getDate()).padStart(2, "0");
+  const mes = String(data.getMonth() + 1).padStart(2, "0"); // Os meses começam do zero
+  const ano = data.getFullYear();
+  const horas = String(data.getHours()).padStart(2, "0");
+  const minutos = String(data.getMinutes()).padStart(2, "0");
+
+  const dataFormatada = `${dia}/${mes}/${ano}`;
+  const horaFormatada = `${horas}:${minutos}`;
+
+  return [dataFormatada, horaFormatada]; // Retorna um array com data e hora separadas
+}
