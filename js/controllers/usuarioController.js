@@ -12,7 +12,7 @@ window.showUsuarios = function () {
     if (usuarioLogado.perfil === "AdminRoot") {
       return true; // AdminRoot vê todos os usuários
     } else {
-      return user.loja === usuarioLogado.loja; // Gerente e Estoque veem apenas os usuários da sua loja
+      return user.loja === usuarioLogado.loja; // Gerente e Caixa veem apenas os usuários da sua loja
     }
   });
 
@@ -23,7 +23,7 @@ window.showUsuarios = function () {
           <tr>
               <td>${user.nome}</td>
               <td>${user.perfil}</td>
-              <td>${user.matricula}</td>
+              <td>${user.loja}</td>
               <td>${user.email}</td>
               <td>
                   <i class="fas fa-edit" style="cursor: pointer; margin-right: 10px;" onclick="editarUsuario(${user.id})"></i>
@@ -57,7 +57,7 @@ window.showUsuarios = function () {
               <tr>
                   <th>Nome</th>
                   <th>Função</th>
-                  <th>Matrícula</th>
+                  <th>Loja</th>
                   <th>E-mail</th>
                   <th>Ações</th>
               </tr>
@@ -79,10 +79,7 @@ window.cadastrarUsuario = function () {
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
 
   // Controle de Acesso
-  if (
-    !usuarioLogado ||
-    (usuarioLogado.perfil !== "AdminRoot" && usuarioLogado.perfil !== "Gerente")
-  ) {
+  if (!usuarioLogado || usuarioLogado.perfil !== "AdminRoot") {
     alert("Você não tem permissão para cadastrar novos usuários.");
     return;
   }
@@ -117,7 +114,7 @@ window.cadastrarUsuario = function () {
           <div class="mb-3">
             <label for="funcao" class="form-label">Função</label>
             <select id="funcao" class="form-select" onchange="atualizarLojaCadastro()">
-              <option value="Estoque">Estoque</option>
+              <option value="Caixa">Caixa</option>
               <option value="Gerente">Gerente</option>
               ${
                 isAdminRoot
@@ -145,19 +142,13 @@ window.atualizarLojaCadastro = function () {
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado")); // Recupera o usuário logado
 
   if (perfilSelecionado === "AdminRoot") {
-    // Se for AdminRoot, exibir "Todas as lojas" e desabilitar a seleção
+    // Se for AdminRoot, exibir "Matriz" e desabilitar a seleção
     lojaContainer.innerHTML = `
         <label for="loja" class="form-label">Loja</label>
-        <input type="text" class="form-control" id="loja" value="Todas as lojas" disabled>
-      `;
-  } else if (usuarioLogado.perfil === "Gerente") {
-    // Se for Gerente, a loja é fixa na loja do gerente
-    lojaContainer.innerHTML = `
-        <label for="loja" class="form-label">Loja</label>
-        <input type="text" class="form-control" id="loja" value="${usuarioLogado.loja}" disabled>
+        <input type="text" class="form-control" id="loja" value="Matriz" disabled>
       `;
   } else {
-    // Se for Estoque ou Gerente (AdminRoot cadastrando), exibir a lista de lojas
+    // Se for Caixa ou Gerente (AdminRoot cadastrando), exibir a lista de lojas
     lojaContainer.innerHTML = `
         <label for="loja" class="form-label">Loja</label>
         <select id="loja" class="form-select">
@@ -177,14 +168,9 @@ window.submitCadastro = function () {
   const perfil = document.getElementById("funcao").value;
   let loja = document.getElementById("loja")
     ? document.getElementById("loja").value
-    : "Todas as lojas";
+    : "Matriz";
 
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado")); // Recupera o usuário logado
-
-  // Gerente só pode cadastrar usuários na sua própria loja
-  if (usuarioLogado.perfil === "Gerente") {
-    loja = usuarioLogado.loja;
-  }
 
   // Verificar se todos os campos estão preenchidos
   if (!nome || !matricula || !email || !senha || !perfil || !loja) {
@@ -202,10 +188,7 @@ window.editarUsuario = function (id) {
   const usuario = Usuario.usuarios.find((user) => user.id === id);
 
   // Controle de Acesso
-  if (
-    !usuarioLogado ||
-    (usuarioLogado.perfil !== "AdminRoot" && usuarioLogado.perfil !== "Gerente")
-  ) {
+  if (!usuarioLogado || usuarioLogado.perfil !== "AdminRoot") {
     alert("Você não tem permissão para editar este usuário.");
     return;
   }
@@ -250,9 +233,9 @@ window.editarUsuario = function (id) {
                         usuario.perfil === "AdminRoot"
                           ? `<option value="AdminRoot" selected>Admin Root</option>`
                           : `
-                      <option value="Estoque" ${
-                        usuario.perfil === "Estoque" ? "selected" : ""
-                      }>Estoque</option>
+                      <option value="Caixa" ${
+                        usuario.perfil === "Caixa" ? "selected" : ""
+                      }>Caixa</option>
                       <option value="Gerente" ${
                         usuario.perfil === "Gerente" ? "selected" : ""
                       }>Gerente</option>
@@ -268,7 +251,7 @@ window.editarUsuario = function (id) {
                   `
                       : usuario.perfil === "AdminRoot"
                       ? `
-                  <input type="text" class="form-control" id="loja" value="Todas as lojas" disabled>
+                  <input type="text" class="form-control" id="loja" value="Matriz" disabled>
                   `
                       : `
                   <label for="loja" class="form-label">Loja</label>
@@ -299,7 +282,7 @@ window.submitEdicao = function (id) {
   const perfil = document.getElementById("funcao").value;
   let loja = document.getElementById("loja")
     ? document.getElementById("loja").value
-    : "Todas as lojas";
+    : "Matriz";
 
   // Verificar se todos os campos estão preenchidos
   if (!nome || !matricula || !email || !perfil || !loja) {
@@ -317,10 +300,7 @@ window.excluirUsuario = function (id) {
   const usuario = Usuario.usuarios.find((user) => user.id === id);
 
   // Controle de Acesso
-  if (
-    !usuarioLogado ||
-    (usuarioLogado.perfil !== "AdminRoot" && usuarioLogado.perfil !== "Gerente")
-  ) {
+  if (!usuarioLogado || usuarioLogado.perfil !== "AdminRoot") {
     alert("Você não tem permissão para excluir este usuário.");
     return;
   }

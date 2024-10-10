@@ -108,8 +108,8 @@ header::after {
 
 /* Content */
 .content {
-  padding: 2rem;
-  margin-left: 20vw; /* Espaçamento dinâmico */
+  padding: 1rem;
+  margin-left: 27.5vh; /* Espaçamento dinâmico */
   transition: margin-left 0.3s ease;
 }
 
@@ -132,7 +132,8 @@ header::after {
 .btn-submit {
   background-color: #269447;
   color: white;
-  width: 100%;
+  margin-left: 60vh;
+  width: 30%;
 }
 
 /* Hamburger Menu */
@@ -167,5 +168,10 @@ header::after {
   }
   .content.active {
     margin-left: 60vw;
+  }
+
+  .btn-submit {
+    margin-left: 25vh;
+    width: 20%;
   }
 }
