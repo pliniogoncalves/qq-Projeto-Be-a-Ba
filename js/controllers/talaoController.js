@@ -18,24 +18,33 @@ window.showTaloes = function () {
 
   taloesFiltrados.forEach((talao) => {
     if (talao) {
-      const [data, hora] = formatarDataHora(talao.data); // Separar a data da hora
+      const [data, hora] = formatarDataHora(talao.data);
       tableRows += `
             <tr>
                 <td>${talao.id}</td>
                 <td>${talao.loja}</td>
-                <td>${data}</td>  <!-- Exibe apenas a data -->
-                <td>${hora}</td>  <!-- Exibe apenas a hora -->
+                <td>${data}</td>
+                <td>${hora}</td>
                 <td>${talao.quantidade}</td>
                 <td><span class="badge ${
                   talao.status === "Enviado" ? "bg-success" : "bg-warning"
                 }">${talao.status}</span></td>
                 <td>
-                    <i class="fas fa-edit" style="cursor: pointer; margin-right: 10px;" onclick="editarTalao(${
-                      talao.id
-                    })"></i>
-                    <i class="fas fa-trash" style="cursor: pointer;" onclick="excluirTalao(${
-                      talao.id
-                    })"></i> <!-- Ícone de exclusão -->
+                    <i class="fas fa-edit" 
+                       style="cursor: pointer; margin-right: 10px;" 
+                       onclick="editarTalao(${talao.id})" 
+                       data-bs-toggle="tooltip" 
+                       title="Editar"></i>
+                    <i class="fas fa-trash" 
+                       style="cursor: pointer; margin-right: 10px;" 
+                       onclick="excluirTalao(${talao.id})" 
+                       data-bs-toggle="tooltip" 
+                       title="Excluir"></i>
+                    <i class="fas fa-file-export" 
+                       style="cursor: pointer;" 
+                       onclick="exportarTalao(${talao.id})" 
+                       data-bs-toggle="tooltip" 
+                       title="Exportar"></i>
                 </td>
             </tr>
         `;
@@ -271,4 +280,34 @@ window.excluirTalao = function (id) {
   } else {
     alert("Talão não encontrado.");
   }
+};
+
+window.exportarTalao = function (id) {
+  const taloes = JSON.parse(localStorage.getItem("taloes")) || [];
+  const talao = taloes.find((t) => t.id === id);
+
+  if (!talao) {
+    alert("Talão não encontrado.");
+    return;
+  }
+
+  // Criar o conteúdo CSV
+  const csvContent =
+    `data:text/csv;charset=utf-8,` +
+    "ID,Loja,Data,Hora,Quantidade,Status\n" + // Cabeçalho
+    `${talao.id},${talao.loja},${talao.data},${new Date(
+      talao.data
+    ).toLocaleTimeString("pt-BR")},${talao.quantidade},${talao.status}\n`;
+
+  // Codifica o conteúdo CSV
+  const encodedUri = encodeURI(csvContent);
+
+  // Cria um link e simula o download
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", `talao_${talao.id}.csv`);
+  document.body.appendChild(link); // Necessário para o Firefox
+
+  link.click(); // Simula o clique para download
+  document.body.removeChild(link); // Remove o link do DOM
 };
