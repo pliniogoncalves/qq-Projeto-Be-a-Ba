@@ -57,11 +57,11 @@ header::after {
 }
 
 .menu {
-  padding-top: 12vh; /* Espaçamento relativo à altura da tela */
+  padding-top: 10vh; /* Espaçamento relativo à altura da tela */
 }
 
 .bottom-links {
-  padding-top: 25vh;
+  padding-top: 20vh;
 }
 
 .bottom-links button {

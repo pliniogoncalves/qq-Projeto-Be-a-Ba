@@ -40,6 +40,15 @@
               <li class="nav-item">
                 <button
                   class="btn btn-custom w-100 mb-2"
+                  onclick="showEstoque()"
+                >
+                  <i class="fas fa-box" style="margin-right: 8px"></i>
+                  Estoque
+                </button>
+              </li>
+              <li class="nav-item">
+                <button
+                  class="btn btn-custom w-100 mb-2"
                   onclick="showUsuarios()"
                 >
                   <i class="fas fa-users" style="margin-right: 8px"></i>
@@ -93,10 +102,7 @@
     </div>
 
     <script src="../js/main.js"></script>
-    <script
-      type="module"
-      src="../js/controllers/dashboardController.js"
-    ></script>
+    <script type="module" src="../js/controllers/estoqueController.js"></script>
     <script type="module" src="../js/controllers/talaoController.js"></script>
     <script type="module" src="../js/controllers/usuarioController.js"></script>
     <script type="module" src="../js/controllers/perfilController.js"></script>
