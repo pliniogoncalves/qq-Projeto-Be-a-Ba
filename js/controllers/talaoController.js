@@ -27,9 +27,13 @@ window.showTaloes = function () {
                 <td>${hora}</td>
                 <td>${talao.quantidade}</td>
                 <td><span class="badge ${
-                  talao.status === "Enviado" ? "bg-success" : "bg-warning"
+                  talao.status === "Solicitado"
+                    ? "bg-warning"
+                    : talao.status === "Recebido"
+                    ? "bg-success"
+                    : "bg-secondary"
                 }">${talao.status}</span></td>
-                <td>
+                 <td>
                     <i class="fas fa-edit" 
                        style="cursor: pointer; margin-right: 10px;" 
                        onclick="editarTalao(${talao.id})" 
@@ -90,28 +94,33 @@ window.showTaloes = function () {
             </table>
         </div>
         <div class="text-center mb-4">
-            <button class="btn btn-custom" type="button" onclick="cadastrarTalao()">Registrar Novo Talão</button>
+            <button class="btn btn-custom" type="button" onclick="solicitarTalao()">Solicitar Talão</button>
+            <button class="btn btn-success" type="button" onclick="registrarRecebimento()">Registrar Recebimento</button>
         </div>
     `;
+
+  // Inicializa os tooltips
+  const tooltipTriggerList = [].slice.call(
+    document.querySelectorAll('[data-bs-toggle="tooltip"]')
+  );
+  const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+  });
 
   setActiveButton("Talões");
 };
 
-window.cadastrarTalao = function () {
+window.solicitarTalao = function () {
   const content = document.getElementById("mainContent");
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+
   content.innerHTML = `
           <div class="form-container">
-          <h1 class="h4 mb-4">Novo Talão</h1>
-          <form id="talaoForm" onsubmit="salvarTalao(event)">
+          <h1 class="h4 mb-4">Solicitar Talão</h1>
+          <form id="talaoForm" onsubmit="salvarSolicitacaoTalao(event)">
               <div class="mb-3">
                   <label for="lojaTalao" class="form-label">Loja</label>
-                  <select class="form-select" id="lojaTalao" required>
-                      ${lojas
-                        .map(
-                          (loja) => `<option value="${loja}">${loja}</option>`
-                        )
-                        .join("")}
-                  </select>
+                  <input type="text" class="form-control" id="lojaTalao" value="${usuarioLogado.loja}" readonly required>
               </div>
               <div class="mb-3">
                   <label for="dataTalao" class="form-label">Data</label>
@@ -125,13 +134,13 @@ window.cadastrarTalao = function () {
                   <label for="quantidadeTalao" class="form-label">Quantidade de Talões</label>
                   <input type="number" class="form-control" id="quantidadeTalao" placeholder="Digite a quantidade" min="1" required>
               </div>
-              <button type="submit" class="btn btn-submit">Registrar Talão</button>
+              <button type="submit" class="btn btn-submit">Solicitar Talão</button>
           </form>
       </div>
       `;
 };
 
-window.salvarTalao = function (event) {
+window.salvarSolicitacaoTalao = function (event) {
   event.preventDefault();
   const loja = document.getElementById("lojaTalao").value;
   const data = document.getElementById("dataTalao").value; // Obtém a data
@@ -147,19 +156,103 @@ window.salvarTalao = function (event) {
     loja,
     data: dataHora, // Armazena a data e hora combinadas
     quantidade, // Armazena a quantidade de talões
-    status: "Enviado", // Define o status padrão como "Enviado"
+    status: "Solicitado", // Define o status como "Solicitado"
+    timestamp: {
+      // Armazena os timestamps para cada status
+      solicitado: dataHora,
+      enviado: null,
+      recebido: null,
+    },
   };
 
   taloes.push(novoTalao);
   localStorage.setItem("taloes", JSON.stringify(taloes));
 
   alert(
-    `Talão registrado para ${loja} na data ${data} às ${hora} com quantidade ${quantidade}`
+    `Talão solicitado para ${loja} na data ${data} às ${hora} com quantidade ${quantidade}`
   );
 
   // Voltar para a lista de talões
   showTaloes();
 };
+
+window.registrarRecebimento = function () {
+  const content = document.getElementById("mainContent");
+  const taloes = JSON.parse(localStorage.getItem("taloes")) || [];
+  const loja = JSON.parse(localStorage.getItem("usuarioLogado")).loja; // Obtém a loja do usuário logado
+
+  const taloesSolicitados = taloes.filter(
+    (talao) => talao.loja === loja && talao.status === "Solicitado"
+  );
+
+  if (taloesSolicitados.length === 0) {
+    alert("Não há talões solicitados para esta loja.");
+    return;
+  }
+
+  let tableRows = "";
+  taloesSolicitados.forEach((talao) => {
+    const [data, hora] = formatarDataHora(talao.data);
+    tableRows += `
+        <tr>
+            <td>${talao.id}</td>
+            <td>${talao.loja}</td>
+            <td>${data}</td>
+            <td>${hora}</td>
+            <td>${talao.quantidade}</td>
+            <td>
+                <button class="btn btn-success" onclick="confirmarRecebimento(${talao.id})">Confirmar Recebimento</button>
+            </td>
+        </tr>
+      `;
+  });
+
+  content.innerHTML = `
+        <h1 class="h4 mb-4">Registrar Recebimento de Talões</h1>
+        <div class="table-responsive">
+            <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Loja</th>
+                    <th>Data</th>
+                    <th>Hora</th>
+                    <th>Quantidade</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${tableRows}
+            </tbody>
+            </table>
+        </div>
+    `;
+};
+
+window.confirmarRecebimento = function (id) {
+    const taloes = JSON.parse(localStorage.getItem("taloes")) || [];
+    const talao = taloes.find(t => t.id === id);
+  
+    if (!talao) {
+      alert("Talão não encontrado.");
+      return;
+    }
+  
+    // Certifique-se de que a propriedade timestamp foi inicializada
+    if (!talao.timestamp) {
+      talao.timestamp = {}; // Inicializa a propriedade timestamp se não existir
+    }
+  
+    // Atualiza o status e o timestamp de recebido
+    talao.status = "Recebido"; // Atualiza o status para "Recebido"
+    talao.timestamp.recebido = new Date().toISOString(); // Atualiza o timestamp de recebido
+  
+    localStorage.setItem("taloes", JSON.stringify(taloes)); // Salva as alterações no localStorage
+    alert(`Talão ${talao.id} recebido com sucesso!`);
+    
+    showTaloes(); // Atualiza a lista de talões
+  };
+  
 
 window.editarTalao = function (id) {
   const taloes = JSON.parse(localStorage.getItem("taloes")) || [];
@@ -171,7 +264,7 @@ window.editarTalao = function (id) {
   }
 
   const content = document.getElementById("mainContent");
-  const [data, hora] = talao.data.split("T"); // Garante que estamos lidando com a data corretamente
+  const [data, hora] = talao.data.split("T"); // Separar a data da hora
   const horaFormatada = hora.substring(0, 5); // Obtém apenas a parte da hora
 
   content.innerHTML = `
@@ -180,7 +273,7 @@ window.editarTalao = function (id) {
             <form id="talaoForm" onsubmit="salvarEdicaoTalao(event, ${id})">
                 <div class="mb-3">
                     <label for="lojaTalao" class="form-label">Loja</label>
-                    <input type="text" class="form-control" id="lojaTalao" value="${talao.loja}" required>
+                    <input type="text" class="form-control" id="lojaTalao" value="${talao.loja}" readonly required>
                 </div>
                 <div class="mb-3">
                     <label for="dataTalao" class="form-label">Data</label>
@@ -197,7 +290,7 @@ window.editarTalao = function (id) {
                 <button type="submit" class="btn btn-submit">Salvar Alterações</button>
             </form>
         </div>
-    `;
+        `;
 };
 
 window.salvarEdicaoTalao = function (event, id) {
