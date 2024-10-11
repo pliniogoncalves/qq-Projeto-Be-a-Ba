@@ -16,89 +16,83 @@
   </head>
   <body>
     <header>
-      <span class="hamburger" onclick="toggleSidebar()">&#9776;</span>
-      Lojas Quero-Quero
+      <h1>lojas quero-quero</h1>
     </header>
-
-    <div class="container-fluid">
-      <div class="row">
-        <nav class="sidebar col-md-2 col-lg-2" id="sidebar">
-          <a class="navbar-brand" href="#">
-            <img src="../logo.png" alt="Logo Quero-Quero" class="img-fluid" />
-          </a>
-          <div class="menu">
-            <ul class="nav flex-column">
-              <li class="nav-item">
-                <button
-                  class="btn btn-custom w-100 mb-2"
-                  onclick="showTaloes()"
-                >
-                  <i class="fas fa-file-invoice" style="margin-right: 8px"></i>
-                  Talões
-                </button>
-              </li>
-              <li class="nav-item">
-                <button
-                  class="btn btn-custom w-100 mb-2"
-                  onclick="showEstoque()"
-                >
-                  <i class="fas fa-box" style="margin-right: 8px"></i>
-                  Estoque
-                </button>
-              </li>
-              <li class="nav-item">
-                <button
-                  class="btn btn-custom w-100 mb-2"
-                  onclick="showUsuarios()"
-                >
-                  <i class="fas fa-users" style="margin-right: 8px"></i>
-                  Usuários
-                </button>
-              </li>
-              <li class="nav-item">
-                <button
-                  class="btn btn-custom w-100 mb-2"
-                  onclick="showPerfis()"
-                >
-                  <i class="fas fa-user-shield" style="margin-right: 8px"></i>
-                  Perfis de Acesso
-                </button>
-              </li>
-            </ul>
+    <div class="wrapper">
+      <aside id="sidebar">
+        <div class="d-flex">
+          <button id="toggle-btn" type="button">
+            <i class="fas fa-th-large" style="margin-right: 8px"></i>
+          </button>
+          <div class="sidebar-logo">
+            <a href="#"> </a>
           </div>
-          <div class="bottom-links">
-            <button class="btn btn-custom w-100 mb-2" onclick="showAjuda()">
-              <i class="fas fa-question-circle" style="margin-right: 8px"></i>
-              Ajuda
+        </div>
+        <ul class="sidebar-nav">
+          <li class="sidebar-item">
+            <button class="sidebar-link" onclick="showTaloes()">
+              <i class="fas fa-file-invoice" style="margin-right: 8px"></i>
+              <span>Talões</span>
             </button>
-            <button
-              class="btn btn-custom w-100 mb-2"
-              onclick="showConfiguracoes()"
-            >
-              <i class="fas fa-cog" style="margin-right: 8px"></i>
-              Configurações
+          </li>
+          <li class="sidebar-item">
+            <button class="sidebar-link" onclick="showEstoque()">
+              <i class="fas fa-box" style="margin-right: 8px"></i>
+              <span>Estoque</span>
             </button>
-            <button class="btn btn-danger w-100 mb-2" onclick="logout()">
-              <i class="fas fa-sign-out-alt" style="margin-right: 8px"></i>
-              Sair
+          </li>
+          <li class="sidebar-item">
+            <button class="sidebar-link" onclick="showUsuarios()">
+              <i class="fas fa-users" style="margin-right: 8px"></i>
+              <span>Usuários</span>
             </button>
-            <div class="user-info">
-              <div class="user-avatar">
-                <span class="user-initials"></span>
-              </div>
-              <div class="user-details">
-                <p class="user-perfil"><strong></strong></p>
-                <p class="user-loja"><strong></strong></p>
-              </div>
+          </li>
+          <li class="sidebar-item">
+            <button class="sidebar-link" onclick="showPerfis()">
+              <i class="fas fa-user-shield" style="margin-right: 8px"></i>
+              <span>Perfis de Acesso</span>
+            </button>
+          </li>
+        </ul>
+
+        <div class="sidebar-footer">
+          <ul class="sidebar-nav">
+            <li class="sidebar-item">
+              <button class="sidebar-link" onclick="showAjuda()">
+                <i class="fas fa-question-circle" style="margin-right: 8px"></i>
+                <span>Ajuda</span>
+              </button>
+            </li>
+            <li class="sidebar-item">
+              <button class="sidebar-link" onclick="showConfiguracoes()">
+                <i class="fas fa-cog" style="margin-right: 8px"></i>
+                <span>Configurações</span>
+              </button>
+            </li>
+            <li class="sidebar-item">
+              <button class="sidebar-link" onclick="logout()">
+                <i class="fas fa-sign-out-alt" style="margin-right: 8px"></i>
+                <span>Sair</span>
+              </button>
+            </li>
+          </ul>
+          <div class="user-info">
+            <div class="user-avatar">
+              <span class="user-initials"></span>
+            </div>
+            <div class="user-details">
+              <p class="user-perfil"><strong></strong></p>
+              <p class="user-loja"><strong></strong></p>
             </div>
           </div>
-        </nav>
-
-        <main class="col-md-10 col-lg-10 px-md-4 content" id="mainContent">
-          <h1 class="h2">Bem-vindo ao Sistema "Oferte e Ganhe"</h1>
+        </div>
+      </aside>
+      <main id="mainContent" class="main-p3">
+        <div class="text-center">
+          <h1>Bem-vindo ao Sistema "Oferte e Ganhe"</h1>
           <p>Escolha uma opção no menu lateral para começar.</p>
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
 
     <script src="../js/main.js"></script>
@@ -109,7 +103,7 @@
     <script type="module" src="../js/controllers/ajudaController.js"></script>
     <script
       type="module"
-      src="../js/controllers/configuraoController.js"
+      src="../js/controllers/configuracaoController.js"
     ></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
   </body>

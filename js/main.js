@@ -1,28 +1,7 @@
-function toggleSidebar() {
-  const sidebar = document.getElementById("sidebar");
-  const mainContent = document.getElementById("mainContent");
+const hamburger = document.querySelector("#toggle-btn");
 
-  sidebar.classList.toggle("active");
-
-  if (sidebar.classList.contains("active")) {
-    mainContent.classList.add("active");
-  } else {
-    mainContent.classList.remove("active");
-  }
-}
-
-document.addEventListener("click", function (event) {
-  const sidebar = document.getElementById("sidebar");
-  const hamburger = document.querySelector(".hamburger");
-
-  if (
-    sidebar.classList.contains("active") &&
-    !sidebar.contains(event.target) &&
-    !hamburger.contains(event.target)
-  ) {
-    sidebar.classList.remove("active");
-    document.getElementById("mainContent").classList.remove("active");
-  }
+hamburger.addEventListener("click", function(){
+  document.querySelector("#sidebar").classList.toggle("expand");
 });
 
 function setActiveButton(activeSection) {

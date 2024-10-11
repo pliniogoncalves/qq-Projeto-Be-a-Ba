@@ -5,21 +5,40 @@
 }
 
 body {
-  background-color: #f8f9fa;
-  font-size: 100%; /* Define o tamanho base da fonte */
+  font-family: Arial, Helvetica, sans-serif;
+  overflow: hidden;
 }
 
-/* Header */
+a {
+  text-decoration: none;
+}
+
+li {
+  list-style: none;
+}
+
+h1 {
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+.wrapper {
+  display: flex;
+  height: calc(100vh - 80px); /* Ajusta a altura para o espaço sem o header */
+}
+
 header {
   background-color: #269447;
   color: white;
   text-align: center;
-  padding: 2rem; /* Use rem para espaçamento baseado no tamanho da fonte */
+  height: 80px;
   font-size: 1.5rem;
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
+  top: 0;
+  z-index: 999;
 }
 
 header::after {
@@ -32,53 +51,149 @@ header::after {
   bottom: 0;
 }
 
-/* Sidebar */
-.sidebar {
-  height: 100vh;
-  padding: 2rem 1rem;
-  background-color: #f5d307;
-  box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.1);
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 12vw; /* Largura relativa à viewport */
-  transform: translateX(0);
-  transition: transform 0.3s ease;
+.main {
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  transition: all 0.35s ease-in-out;
+  background-color: #f8f9fa;
+}
+
+#sidebar {
+  width: 70px;
+  min-width: 70px;
   z-index: 1000;
+  transition: all 0.25s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5d307;
+  justify-content: space-between; /* Para espaçar uniformemente os itens no sidebar */
 }
 
-.sidebar button {
-  font-size: 1rem;
-  padding: 0.6rem 1rem;
+#sidebar.expand {
+  width: 260px;
+  min-width: 260px;
 }
 
-.nav-item {
-  margin: 1rem 0;
+#toggle-btn {
+  background-color: transparent;
+  cursor: pointer;
+  border: 0 none;
+  padding: 1rem 1.5rem;
 }
 
-.menu {
-  padding-top: 10vh; /* Espaçamento relativo à altura da tela */
+#toggle-btn i {
+  font-size: 1.5rem;
+  color: #269447;
 }
 
-.bottom-links {
-  padding-top: 20vh;
+.sidebar-logo {
+  margin: auto 0;
 }
 
-.bottom-links button {
+#sidebar:not(.expand) .sidebar-logo,
+#sidebar:not(.expand) .sidebar-link span {
+  display: none;
+}
+
+.sidebar-nav {
+  padding: 2rem 0;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centraliza os botões horizontalmente */
+  justify-content: center; /* Centraliza os botões verticalmente */
+  gap: 2rem; /* Espaço entre os botões */
+}
+
+/* Ajuste para os botões */
+.sidebar-link {
+  padding: 0.625rem 1.625rem;
+  color: #269447;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  border-left: 3px solid transparent;
+  background-color: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sidebar-link i {
+  font-size: 1.1rem;
+  margin-right: 0.75rem;
+}
+
+.sidebar-link:hover {
+  background-color: rgba(255, 255, 255, 0.75);
+  border-left: 3px solid #269447;
+}
+
+.sidebar-item {
+  position: relative;
+}
+
+button.sidebar-link {
+  background: none;
+  border: none;
+  padding: 0;
+  width: 100%;
+  text-align: left;
+}
+
+button.sidebar-link:hover {
+  background-color: rgba(255, 255, 255, 0.75);
+}
+
+button.sidebar-link i {
+  margin-right: 0.75rem;
+}
+
+/* Footer e links no rodapé */
+.sidebar-footer {
+  padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem; /* Espaço entre os botões no rodapé */
+}
+
+.sidebar-footer button.sidebar-link {
   margin-bottom: 1rem;
+  border-left: none;
 }
 
 /* User Info */
+#sidebar:not(.expand) .user-info .user-details {
+  display: none;
+}
+
+#sidebar.expand .user-info .user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+#sidebar:not(.expand) .user-info {
+  justify-content: center;
+}
+
+#sidebar:not(.expand) .user-avatar {
+  margin-right: 0;
+}
+
 .user-info {
   display: flex;
   align-items: center;
   padding: 1rem;
   border-top: 0.1rem solid #269447;
-  margin-top: 1rem;
 }
 
 .user-avatar {
-  width: 2.5rem; /* Tamanho relativo ao corpo do texto */
+  width: 2.5rem;
   height: 2.5rem;
   border-radius: 50%;
   background-color: #269447;
@@ -91,42 +206,37 @@ header::after {
 }
 
 .user-details {
-  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .user-name,
 .user-perfil,
 .user-loja {
-  margin: 0;
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: #269447;
-}
-
-.table-responsive {
-  overflow-x: auto;
 }
 
 /* Content */
 .content {
   padding: 1rem;
-  margin-left: 27.5vh; /* Espaçamento dinâmico */
+  margin-left: 27.5vh;
   transition: margin-left 0.3s ease;
 }
 
 .input-icon {
-  position: absolute; /* Posiciona o ícone de forma absoluta */
-  left: 20px; /* Ajuste a posição horizontal */
-  top: 50%; /* Centraliza verticalmente */
-  transform: translateY(-50%); /* Ajusta a posição vertical */
-  pointer-events: none; /* Permite que o clique passe pelo ícone */
-  color: #999; /* Cor do ícone (opcional) */
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #999;
 }
 
 .form-control {
-  padding-left: 40px; /* Ajuste o padding para deslocar o texto do placeholder */
+  padding-left: 40px;
 }
 
-/* Custom Button */
 .btn-custom {
   background-color: #269447;
   color: white;
@@ -147,44 +257,4 @@ header::after {
   color: white;
   margin-left: 60vh;
   width: 30%;
-}
-
-/* Hamburger Menu */
-.hamburger {
-  font-size: 2rem;
-  cursor: pointer;
-  position: absolute;
-  left: 1.5rem;
-  top: 1.5rem;
-  color: white;
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-  .sidebar {
-    transform: translateX(-100%);
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-    width: 25vw; /* Ajuste da largura para telas menores */
-    height: 100%;
-  }
-  .sidebar.active {
-    transform: translateX(0);
-  }
-  .content {
-    margin-left: 0;
-  }
-  .hamburger {
-    display: block;
-  }
-  .content.active {
-    margin-left: 60vw;
-  }
-
-  .btn-submit {
-    margin-left: 25vh;
-    width: 20%;
-  }
 }
