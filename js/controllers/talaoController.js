@@ -58,6 +58,7 @@ window.showTaloes = function () {
   });
 
   content.innerHTML = `
+        <div class="overlay" id="overlay"></div>
         <h1 class="text-center">Lista de Talões</h1>
         <p class="text-center">Veja a lista de talões e suas respectivas situações.</p>
   

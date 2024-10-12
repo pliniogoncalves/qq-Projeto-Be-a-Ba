@@ -1,6 +1,7 @@
 window.showEstoque = function () {
   const content = document.getElementById("mainContent");
   content.innerHTML = `
+    <div class="overlay" id="overlay"></div>
     <h1 class="text-center">Gestão de Estoque</h1>
     <div class="table-responsive">
       <table class="table table-striped">

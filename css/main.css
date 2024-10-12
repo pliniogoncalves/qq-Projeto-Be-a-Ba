@@ -42,9 +42,13 @@ header::after {
   top: 0;
   left: 0;
   width: 12vw; /* Largura relativa à viewport */
-  transform: translateX(0);
+  transform: translateX(-100%); /* Inicialmente escondido */
   transition: transform 0.3s ease;
   z-index: 1000;
+}
+
+.sidebar.active {
+  transform: translateX(0); /* Mostra o sidebar quando ativo */
 }
 
 .sidebar button {
@@ -109,8 +113,12 @@ header::after {
 /* Content */
 .content {
   padding: 1rem;
-  margin-left: 27.5vh; /* Espaçamento dinâmico */
+  margin-left: 0; /* Inicialmente sem margem, pois o sidebar está recolhido */
   transition: margin-left 0.3s ease;
+}
+
+.content.active {
+  margin-left: 12vw; /* Espaçamento ajustado quando o sidebar está ativo */
 }
 
 .input-icon {
@@ -157,12 +165,25 @@ header::after {
   left: 1.5rem;
   top: 1.5rem;
   color: white;
+  display: block;
 }
 
-/* Responsividade */
+/* Overlay */
+.overlay {
+  position: fixed; /* Fixa na tela */
+  top: 0;
+  left: 0;
+  width: 100vw; /* Largura total da tela */
+  height: 100vh; /* Altura total da tela */
+  background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro com transparência */
+  z-index: 999; /* Deve estar acima do conteúdo principal, mas abaixo do sidebar */
+  display: none; /* Escondido por padrão */
+}
+
+/* Responsividade para telas menores */
 @media (max-width: 768px) {
   .sidebar {
-    transform: translateX(-100%);
+    transform: translateX(-100%); /* Sidebar recolhido por padrão */
     position: fixed;
     top: 0;
     left: 0;
@@ -170,17 +191,17 @@ header::after {
     width: 25vw; /* Ajuste da largura para telas menores */
     height: 100%;
   }
+  
   .sidebar.active {
-    transform: translateX(0);
+    transform: translateX(0); /* Mostra o sidebar quando ativo */
   }
+
   .content {
     margin-left: 0;
   }
-  .hamburger {
-    display: block;
-  }
+  
   .content.active {
-    margin-left: 60vw;
+    margin-left: 25vw; /* Ajusta o conteúdo quando o sidebar está ativo */
   }
 
   .btn-submit {
