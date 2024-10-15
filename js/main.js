@@ -117,3 +117,7 @@ function formatarDataHora(dataString) {
 
   return [dataFormatada, horaFormatada]; // Retorna um array com data e hora separadas
 }
+
+function mostrarAlerta() {
+  alert('Você clicou no botão de alerta!');
+}
