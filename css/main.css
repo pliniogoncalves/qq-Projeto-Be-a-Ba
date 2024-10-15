@@ -6,7 +6,7 @@
 
 body {
   background-color: #f8f9fa;
-  font-size: 100%; /* Define o tamanho base da fonte */
+  font-size: 100%;
 }
 
 /* Header */
@@ -14,7 +14,7 @@ header {
   background-color: #269447;
   color: white;
   text-align: center;
-  padding: 2rem; /* Use rem para espaçamento baseado no tamanho da fonte */
+  padding: 2rem;
   font-size: 1.5rem;
   position: relative;
   display: flex;
@@ -26,7 +26,7 @@ header::after {
   content: "";
   display: block;
   width: 100%;
-  height: 0.5rem; /* Altura relativa para linhas decorativas */
+  height: 0.5rem;
   background-color: #f7e800;
   position: absolute;
   bottom: 0;
@@ -41,14 +41,13 @@ header::after {
   position: fixed;
   top: 0;
   left: 0;
-  width: 12vw; /* Largura relativa à viewport */
-  transform: translateX(-100%); /* Inicialmente escondido */
-  transition: transform 0.3s ease;
+  width: 12vw;
+  overflow: hidden;
   z-index: 1000;
 }
 
 .sidebar.active {
-  transform: translateX(0); /* Mostra o sidebar quando ativo */
+  transform: translateX(0);
 }
 
 .sidebar button {
@@ -61,7 +60,7 @@ header::after {
 }
 
 .menu {
-  padding-top: 10vh; /* Espaçamento relativo à altura da tela */
+  padding-top: 10vh;
 }
 
 .bottom-links {
@@ -82,7 +81,7 @@ header::after {
 }
 
 .user-avatar {
-  width: 2.5rem; /* Tamanho relativo ao corpo do texto */
+  width: 2.5rem;
   height: 2.5rem;
   border-radius: 50%;
   background-color: #269447;
@@ -113,13 +112,11 @@ header::after {
 /* Content */
 .content {
   padding: 1rem;
-  margin-left: 0; /* Inicialmente sem margem, pois o sidebar está recolhido */
+  margin-left: 12vw;
   transition: margin-left 0.3s ease;
 }
 
-.content.active {
-  margin-left: 12vw; /* Espaçamento ajustado quando o sidebar está ativo */
-}
+
 
 .input-icon {
   position: absolute; /* Posiciona o ícone de forma absoluta */
