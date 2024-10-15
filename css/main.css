@@ -6,7 +6,6 @@
 
 body {
   background-color: #f8f9fa;
-  font-size: 100%;
 }
 
 /* Header */
@@ -77,6 +76,23 @@ header::after {
   margin-bottom: 1rem;
 }
 
+.close-btn {
+  display: none; /* Escondido por padrão */
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: none;
+  border: none;
+  color: #269447;
+  cursor: pointer;
+  z-index: 1001; /* Acima do sidebar */
+}
+
+.close-btn i {
+  font-size: 1.5rem; /* Ajuste o tamanho do ícone */
+  color: #269447;
+}
+
 /* User Info */
 .user-info {
   display: flex;
@@ -120,8 +136,6 @@ header::after {
   padding: 1rem;
   margin-left: 12vw;
 }
-
-
 
 .input-icon {
   position: absolute; /* Posiciona o ícone de forma absoluta */
@@ -194,7 +208,7 @@ header::after {
     height: 100%;
     padding: 1.5rem 1rem;
   }
-  
+
   .sidebar.active {
     transform: translateX(0); /* Mostra o sidebar quando ativo */
   }
@@ -202,6 +216,10 @@ header::after {
   .sidebar button {
     font-size: 0.9rem; /* Ajuste do tamanho do botão */
     padding: 0.5rem 0.8rem;
+  }
+
+  .close-btn {
+    display: block;
   }
 
   header .img-fluid {
@@ -212,7 +230,7 @@ header::after {
   .content {
     margin-left: 0;
   }
-  
+
   .btn-submit {
     margin-left: 15vh;
     width: 30%;
@@ -227,5 +245,4 @@ header::after {
   .user-loja {
     font-size: 0.8rem; /* Ajuste das fontes para telas menores */
   }
-
 }

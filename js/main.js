@@ -35,6 +35,16 @@ document.addEventListener("click", function (event) {
   }
 });
 
+// Função para fechar o sidebar ao clicar no botão "X"
+function closeSidebar() {
+  const sidebar = document.getElementById("sidebar");
+  const mainContent = document.getElementById("mainContent");
+  const overlay = document.getElementById("overlay");
+
+  sidebar.classList.remove("active");
+  mainContent.classList.remove("active");
+  overlay.style.display = "none"; // Esconde o overlay
+}
 
 function setActiveButton(activeSection) {
   const buttons = document.querySelectorAll(".nav-item .btn-custom");
