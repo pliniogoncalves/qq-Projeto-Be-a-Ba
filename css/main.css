@@ -22,6 +22,11 @@ header {
   align-items: center;
 }
 
+header .img-fluid {
+  height: 5rem; /* Tamanho padrão para a logo */
+  margin-left: 15rem; /* Espaço entre a logo e o texto */
+}
+
 header::after {
   content: "";
   display: block;
@@ -159,8 +164,8 @@ header::after {
   font-size: 2rem;
   cursor: pointer;
   position: absolute;
-  left: 1.5rem;
-  top: 1.5rem;
+  left: 2rem;
+  top: 2rem;
   color: white;
   display: block;
 }
@@ -199,6 +204,10 @@ header::after {
     padding: 0.5rem 0.8rem;
   }
 
+  header .img-fluid {
+    height: 3.5rem; /* Logo menor para telas pequenas */
+    margin-left: 2rem;
+  }
 
   .content {
     margin-left: 0;
