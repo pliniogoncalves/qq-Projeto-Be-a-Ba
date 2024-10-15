@@ -44,6 +44,7 @@ header::after {
   width: 12vw;
   overflow: hidden;
   z-index: 1000;
+  transition: transform 0.3s ease, width 0.3s ease;
 }
 
 .sidebar.active {
@@ -113,7 +114,6 @@ header::after {
 .content {
   padding: 1rem;
   margin-left: 12vw;
-  transition: margin-left 0.3s ease;
 }
 
 
@@ -185,24 +185,38 @@ header::after {
     top: 0;
     left: 0;
     z-index: 1000;
-    width: 25vw; /* Ajuste da largura para telas menores */
+    width: 60vw; /* Ajuste da largura para telas menores */
     height: 100%;
+    padding: 1.5rem 1rem;
   }
   
   .sidebar.active {
     transform: translateX(0); /* Mostra o sidebar quando ativo */
   }
 
+  .sidebar button {
+    font-size: 0.9rem; /* Ajuste do tamanho do botão */
+    padding: 0.5rem 0.8rem;
+  }
+
+
   .content {
     margin-left: 0;
   }
   
-  .content.active {
-    margin-left: 25vw; /* Ajusta o conteúdo quando o sidebar está ativo */
+  .btn-submit {
+    margin-left: 15vh;
+    width: 30%;
   }
 
-  .btn-submit {
-    margin-left: 25vh;
-    width: 20%;
+  .user-avatar {
+    width: 2.5rem; /* Ajuste do avatar para telas menores */
+    height: 2.5rem;
   }
+
+  .user-name,
+  .user-loja {
+    font-size: 0.8rem; /* Ajuste das fontes para telas menores */
+  }
+
 }
