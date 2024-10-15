@@ -65,7 +65,7 @@ header::after {
 }
 
 .btn-alert-circle {
-  background-color: #dc3545; /* Cor vermelha para alerta */
+  background-color: #b30d14; /* Cor vermelha para alerta */
   color: white;
   border: none;
   width: 3.5rem;
@@ -86,11 +86,11 @@ header::after {
 }
 
 .btn-alert-circle:hover {
-  background-color: #c82333; /* Cor ao passar o mouse */
+  background-color: #851306; /* Cor ao passar o mouse */
 }
 
 .menu {
-  padding-top: 10vh;
+  padding-top: 15vh;
 }
 
 .bottom-links {
@@ -116,6 +116,16 @@ header::after {
 .close-btn i {
   font-size: 1.5rem; /* Ajuste o tamanho do ícone */
   color: #269447;
+}
+
+.btn-danger {
+  background-color: #b30d14; /* Cor de fundo nova */
+  border-color: #b30d14; /* Cor da borda */
+}
+
+.btn-danger:hover {
+  background-color: #851306; /* Cor ao passar o mouse */
+  border-color: #851306; /* Cor da borda ao passar o mouse */
 }
 
 /* User Info */
