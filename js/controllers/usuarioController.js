@@ -205,81 +205,65 @@ window.editarUsuario = function (id) {
   // Armazenar a lista de lojas
   const lojas = ["Loja 1", "Loja 2", "Loja 3"];
 
+  // Obter a lista de perfis de acesso do LocalStorage
+  const perfis = JSON.parse(localStorage.getItem("perfis")) || [];
+
+  // Filtrar para exibir "AdminRoot" apenas se o usuário sendo editado for AdminRoot
+  const perfisFiltrados = usuario.perfil === "AdminRoot"
+    ? perfis // Se for AdminRoot, exibe todos os perfis
+    : perfis.filter(perfil => perfil.nome !== "AdminRoot"); // Caso contrário, exclui "AdminRoot"
+
+  // Gerar opções de perfil a partir da lista de perfis filtrados
+  const opcoesPerfis = perfisFiltrados.map((perfil) => `
+    <option value="${perfil.nome}" ${usuario.perfil === perfil.nome ? 'selected' : ''}>${perfil.nome}</option>
+  `).join("");
+
   content.innerHTML = `
-      <div class="form-container">
-          <h1 class="h4 mb-4">Editar Usuário</h1>
-          <form id="userForm">
-              <div class="mb-3">
-                  <label for="nome" class="form-label">Nome do Usuário</label>
-                  <input type="text" class="form-control" id="nome" value="${
-                    usuario.nome
-                  }">
-              </div>
-              <div class="mb-3">
-                  <label for="matricula" class="form-label">Matrícula</label>
-                  <input type="text" class="form-control" id="matricula" value="${
-                    usuario.matricula
-                  }">
-              </div>
-              <div class="mb-3">
-                  <label for="email" class="form-label">E-mail</label>
-                  <input type="email" class="form-control" id="email" value="${
-                    usuario.email
-                  }">
-              </div>
-              <div class="mb-3">
-                  <label for="senha" class="form-label">Senha</label>
-                  <input type="password" class="form-control" id="senha" placeholder="Digite a nova senha (opcional)">
-              </div>
-              <div class="mb-3">
-                  <label for="funcao" class="form-label">Função</label>
-                  <select id="funcao" class="form-select" ${
-                    usuario.perfil === "AdminRoot" ? "disabled" : ""
-                  }>
-                      ${
-                        usuario.perfil === "AdminRoot"
-                          ? `<option value="AdminRoot" selected>Admin Root</option>`
-                          : `
-                      <option value="Caixa" ${
-                        usuario.perfil === "Caixa" ? "selected" : ""
-                      }>Caixa</option>
-                      <option value="Gerente" ${
-                        usuario.perfil === "Gerente" ? "selected" : ""
-                      }>Gerente</option>
-                      `
-                      }
-                  </select>
-              </div>
-              <div class="mb-3" id="loja-container">
-                  ${
-                    usuarioLogado.perfil === "Gerente"
-                      ? `
-                  <input type="text" class="form-control" id="loja" value="${usuarioLogado.loja}" disabled>
-                  `
-                      : usuario.perfil === "AdminRoot"
-                      ? `
-                  <input type="text" class="form-control" id="loja" value="Matriz" disabled>
-                  `
-                      : `
+    <div class="form-container">
+        <h1 class="h4 mb-4">Editar Usuário</h1>
+        <form id="userForm">
+            <div class="mb-3">
+                <label for="nome" class="form-label">Nome do Usuário</label>
+                <input type="text" class="form-control" id="nome" value="${usuario.nome}">
+            </div>
+            <div class="mb-3">
+                <label for="matricula" class="form-label">Matrícula</label>
+                <input type="text" class="form-control" id="matricula" value="${usuario.matricula}">
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">E-mail</label>
+                <input type="email" class="form-control" id="email" value="${usuario.email}">
+            </div>
+            <div class="mb-3">
+                <label for="senha" class="form-label">Senha</label>
+                <input type="password" class="form-control" id="senha" placeholder="Digite a nova senha (opcional)">
+            </div>
+            <div class="mb-3">
+                <label for="funcao" class="form-label">Função</label>
+                <select id="funcao" class="form-select" ${usuario.perfil === "AdminRoot" ? "disabled" : ""}>
+                    ${opcoesPerfis}
+                </select>
+            </div>
+            <div class="mb-3" id="loja-container">
+                ${
+                  usuarioLogado.perfil === "Gerente" 
+                  ? `<input type="text" class="form-control" id="loja" value="${usuarioLogado.loja}" disabled>` 
+                  : usuario.perfil === "AdminRoot"
+                  ? `<input type="text" class="form-control" id="loja" value="Matriz" disabled>`
+                  : `
                   <label for="loja" class="form-label">Loja</label>
                   <select id="loja" class="form-select">
-                      ${lojas
-                        .map(
-                          (loja) =>
-                            `<option value="${loja}" ${
-                              usuario.loja === loja ? "selected" : ""
-                            }>${loja}</option>`
-                        )
-                        .join("")}
+                      ${lojas.map(loja => `<option value="${loja}" ${usuario.loja === loja ? "selected" : ""}>${loja}</option>`).join("")}
                   </select>
                   `
-                  }
-              </div>
-              <button type="button" class="btn btn-submit" onclick="submitEdicao(${id})">Salvar Alterações</button>
-          </form>
-      </div>
-      `;
+                }
+            </div>
+            <button type="button" class="btn btn-submit" onclick="submitEdicao(${id})">Salvar Alterações</button>
+        </form>
+    </div>
+  `;
 };
+
 
 window.submitEdicao = function (id) {
   const nome = document.getElementById("nome").value;
