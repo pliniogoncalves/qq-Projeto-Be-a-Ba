@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
+
 * {
   margin: 0;
   padding: 0;
@@ -6,6 +9,10 @@
 
 body {
   background-color: #f8f9fa;
+  font-family: "DM Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: weight;
+  font-style: normal;
 }
 
 /* Header */
@@ -31,9 +38,35 @@ header::after {
   display: block;
   width: 100%;
   height: 0.5rem;
-  background-color: #f7e800;
+  background-color: #f5d307;
   position: absolute;
   bottom: 0;
+}
+
+/* Botão de alerta */
+.btn-alert-circle {
+  background-color: #1f5d3d; /* Cor vermelha para alerta */
+  color: white;
+  border: none;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%; /* Torna o botão circular */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  position: absolute; /* Para posicionamento mais fácil */
+  right: 5rem; /* Ajusta mais para a esquerda em telas grandes */
+  top: 2.5rem; /* Alinha no topo */
+  z-index: 1001;
+}
+
+.btn-alert-circle i {
+  font-size: 1.5rem; /* Tamanho do ícone */
+}
+
+.btn-alert-circle:hover {
+  background-color: #851306; /* Cor ao passar o mouse */
 }
 
 /* Sidebar */
@@ -62,31 +95,6 @@ header::after {
 
 .nav-item {
   margin: 1rem 0;
-}
-
-.btn-alert-circle {
-  background-color: #b30d14; /* Cor vermelha para alerta */
-  color: white;
-  border: none;
-  width: 3.5rem;
-  height: 3.5rem;
-  border-radius: 50%; /* Torna o botão circular */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  position: absolute; /* Para posicionamento mais fácil */
-  left: 5.5rem; /* Ajusta mais para a esquerda em telas grandes */
-  top: 2.5rem; /* Alinha no topo */
-  z-index: 1001;
-}
-
-.btn-alert-circle i {
-  font-size: 1.5rem; /* Tamanho do ícone */
-}
-
-.btn-alert-circle:hover {
-  background-color: #851306; /* Cor ao passar o mouse */
 }
 
 .menu {
@@ -192,7 +200,7 @@ header::after {
 }
 
 .btn-custom:hover {
-  background-color: #20512e;
+  background-color: #1f5d3d;
   color: white;
 }
 
@@ -262,16 +270,15 @@ header::after {
     width: 3rem; /* Tamanho ajustado para telas pequenas */
     height: 3rem;
     position: absolute;
-    top: 5rem; /* Abaixo do botão de fechar "X" */
-    left: 50%;
+    top: 2rem; /* Abaixo do botão de fechar "X" */
+    right: 2%;
     transform: translateX(-50%); /* Centraliza o botão horizontalmente */
     z-index: 1001;
   }
 
-
   header .img-fluid {
     height: 3.5rem; /* Logo menor para telas pequenas */
-    margin-left: 2rem;
+    margin-right: 15.5rem;
   }
 
   .content {
