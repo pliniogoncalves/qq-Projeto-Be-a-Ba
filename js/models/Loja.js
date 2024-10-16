@@ -16,7 +16,7 @@ export class Loja {
 
     // CREATE: Adicionar um novo Loja
     static criarLoja(nome, endereco) {
-        const novoLoja = new Loja(nome, permissoes);
+        const novoLoja = new Loja(nome, endereco);
         Loja.lojas.push(novoLoja);
         Loja.salvarNoLocalStorage();
         alert(`Loja ${nome} criado com sucesso!`);
@@ -29,11 +29,11 @@ export class Loja {
     }
 
     // UPDATE: Atualizar um Loja existente
-    static atualizarLoja(id, novoNome, novasPermissoes) {
-        const Loja = Loja.lojas.find((p) => p.id === id);
+    static atualizarLoja(id, novoNome, novoEndereco) {
+        const Loja = Loja.lojas.find((l) => l.id === id);
         if (Loja) {
             Loja.nome = novoNome || Loja.nome;
-            Loja.permissoes = novasPermissoes || Loja.permissoes;
+            Loja.endereco = novoEndereco || Loja.endereco;
             Loja.salvarNoLocalStorage();
             alert(`Loja ${Loja.nome} atualizado com sucesso!`);
         } else {
@@ -43,7 +43,7 @@ export class Loja {
 
     // DELETE: Remover um Loja
     static excluirLoja(id) {
-        Loja.lojas = Loja.lojas.filter((p) => p.id !== id);
+        Loja.lojas = Loja.lojas.filter((l) => l.id !== id);
         Loja.salvarNoLocalStorage();
         alert(`Loja removido com sucesso!`);
     }
