@@ -33,6 +33,24 @@
               <li class="nav-item">
                 <button
                   class="btn btn-custom w-100 mb-2"
+                  onclick="showUsuarios()"
+                >
+                  <i class="fas fa-file-invoice" style="margin-right: 8px"></i>
+                  Usuários
+                </button>
+              </li>
+              <li class="nav-item">
+                <button
+                  class="btn btn-custom w-100 mb-2"
+                  onclick="showPerfis()"
+                >
+                  <i class="fas fa-user-shield" style="margin-right: 8px"></i>
+                  Perfis de Acesso
+                </button>
+              </li>
+              <li class="nav-item">
+                <button
+                  class="btn btn-custom w-100 mb-2"
                   onclick="showTaloes()"
                 >
                   <i class="fas fa-file-invoice" style="margin-right: 8px"></i>
@@ -51,19 +69,19 @@
               <li class="nav-item">
                 <button
                   class="btn btn-custom w-100 mb-2"
-                  onclick="showUsuarios()"
+                  onclick="showModulos()"
                 >
-                  <i class="fas fa-users" style="margin-right: 8px"></i>
-                  Usuários
+                  <i class="fas fa-box" style="margin-right: 8px"></i>
+                  Módulos
                 </button>
               </li>
               <li class="nav-item">
                 <button
                   class="btn btn-custom w-100 mb-2"
-                  onclick="showPerfis()"
+                  onclick="showLoja()"
                 >
-                  <i class="fas fa-user-shield" style="margin-right: 8px"></i>
-                  Perfis de Acesso
+                  <i class="fas fa-box" style="margin-right: 8px"></i>
+                  Loja
                 </button>
               </li>
             </ul>
@@ -109,6 +127,8 @@
     <script type="module" src="../js/controllers/talaoController.js"></script>
     <script type="module" src="../js/controllers/usuarioController.js"></script>
     <script type="module" src="../js/controllers/perfilController.js"></script>
+    <script type="module" src="../js/controllers/moduloController.js"></script>
+    <script type="module" src="../js/controllers/lojaController.js"></script>
     <script type="module" src="../js/controllers/ajudaController.js"></script>
     <script
       type="module"
