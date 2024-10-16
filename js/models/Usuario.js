@@ -67,6 +67,32 @@ export class Usuario {
     alert(`Usuário removido com sucesso!`);
   }
 
+  //Função para removerperfil do usuario
+  static removerPerfil(id) {
+    const usuario = Usuario.usuarios.find((user) => user.id === id);
+    if (usuario) {
+      usuario.perfil = null; // Ou atribuir um valor padrão
+      Usuario.salvarNoLocalStorage();
+      alert(`Perfil removido do usuário ${usuario.nome} com sucesso!`);
+    } else {
+      alert(`Usuário com ID ${id} não encontrado.`);
+    }
+  }
+
+  //Função para vincular perfil ao usuário
+  static vincularPerfil(usuarioId, perfilId) {
+    const usuario = Usuario.usuarios.find((u) => u.id === usuarioId);
+    if (usuario) {
+      usuario.perfil = perfilId; // Atualiza o perfil do usuário
+      Usuario.salvarNoLocalStorage(); // Salva as alterações
+      alert(
+        `Perfil com ID ${perfilId} vinculado ao usuário ${usuario.nome} com sucesso!`
+      );
+    } else {
+      alert(`Usuário com ID ${usuarioId} não encontrado.`);
+    }
+  }
+
   // Função para solicitar talões
   solicitarTalao(quantidade) {
     console.log(

@@ -5,7 +5,7 @@ export class Perfil {
     constructor(nome, permissoes) {
         this.id = Perfil.nextId; // Atribuir ID único
         this.nome = nome;
-        this.permissoes = permissoes; // Array de permissões, exemplo: ['gerenciar_usuarios', 'ver_relatorios']
+        this.permissoes = permissoes; // Array de permissões
         Perfil.nextId++; // Incrementa o próximo ID para o próximo perfil
     }
 
@@ -26,6 +26,15 @@ export class Perfil {
     // READ: Listar todos os perfis
     static listarPerfis() {
         return Perfil.perfis;
+    }
+
+    // READ: Obter um perfil por ID
+    static obterPerfilPorId(id) {
+        const perfil = Perfil.perfis.find(p => p.id === id);
+        if (!perfil) {
+            throw new Error('Perfil não encontrado');
+        }
+        return perfil;
     }
 
     // UPDATE: Atualizar um perfil existente
