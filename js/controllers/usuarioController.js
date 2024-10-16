@@ -1,4 +1,5 @@
 import { Usuario } from "../models/Usuario.js";
+import { Perfil } from "../models/Perfil.js";
 
 window.showUsuarios = function () {
   const content = document.getElementById("mainContent");
@@ -95,6 +96,14 @@ window.cadastrarUsuario = function () {
   // Obter a lista de lojas (ou definir um array de lojas)
   const lojas = ["Loja 1", "Loja 2", "Loja 3"];
 
+  // Obter os perfis de acesso do LocalStorage
+  const perfis = JSON.parse(localStorage.getItem("perfis")) || [];
+
+  // Criar opções de função a partir dos perfis de acesso
+  const opcoesFuncoes = perfis
+    .map((perfil) => `<option value="${perfil.nome}">${perfil.nome}</option>`)
+    .join("");
+
   content.innerHTML = `
       <div class="form-container">
         <h1 class="h4 mb-4">Novo Usuário</h1>
@@ -118,13 +127,7 @@ window.cadastrarUsuario = function () {
           <div class="mb-3">
             <label for="funcao" class="form-label">Função</label>
             <select id="funcao" class="form-select" onchange="atualizarLojaCadastro()">
-              <option value="Caixa">Caixa</option>
-              <option value="Gerente">Gerente</option>
-              ${
-                isAdminRoot
-                  ? `<option value="AdminRoot">Admin Root</option>`
-                  : ""
-              }
+              ${opcoesFuncoes}
             </select>
           </div>
           <div class="mb-3" id="loja-container">
