@@ -11,7 +11,7 @@ body {
   background-color: #f8f9fa;
   font-family: "DM Sans", sans-serif;
   font-optical-sizing: auto;
-  font-weight: weight;
+  font-weight: 400;
   font-style: normal;
 }
 
@@ -45,7 +45,7 @@ header::after {
 
 /* Botão de alerta */
 .btn-alert-circle {
-  background-color: #1f5d3d; /* Cor vermelha para alerta */
+  background-color: #1f5d3d; /* Cor verde para alerta */
   color: white;
   border: none;
   width: 3.5rem;
