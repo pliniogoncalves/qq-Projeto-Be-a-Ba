@@ -46,11 +46,10 @@ window.showUsuarios = function () {
           <div class="row justify-content-center">
               <div class="col-md-8 col-sm-12 mb-4">
                   <div class="input-group">
-                      <input type="text" class="form-control" id="userSearchInput" placeholder="Procurar por usuário">
+                      <input type="text" class="form-control" id="userSearchInput" placeholder="Procurar por usuário" oninput="buscarUsuario()">
                       <div class="input-icon">
                             <i class="fas fa-search"></i>
                         </div>
-                      <button class="btn btn-custom" type="button" onclick="buscarUsuario()">Buscar</button>
                   </div>
               </div>
           </div>
@@ -209,14 +208,21 @@ window.editarUsuario = function (id) {
   const perfis = JSON.parse(localStorage.getItem("perfis")) || [];
 
   // Filtrar para exibir "AdminRoot" apenas se o usuário sendo editado for AdminRoot
-  const perfisFiltrados = usuario.perfil === "AdminRoot"
-    ? perfis // Se for AdminRoot, exibe todos os perfis
-    : perfis.filter(perfil => perfil.nome !== "AdminRoot"); // Caso contrário, exclui "AdminRoot"
+  const perfisFiltrados =
+    usuario.perfil === "AdminRoot"
+      ? perfis // Se for AdminRoot, exibe todos os perfis
+      : perfis.filter((perfil) => perfil.nome !== "AdminRoot"); // Caso contrário, exclui "AdminRoot"
 
   // Gerar opções de perfil a partir da lista de perfis filtrados
-  const opcoesPerfis = perfisFiltrados.map((perfil) => `
-    <option value="${perfil.nome}" ${usuario.perfil === perfil.nome ? 'selected' : ''}>${perfil.nome}</option>
-  `).join("");
+  const opcoesPerfis = perfisFiltrados
+    .map(
+      (perfil) => `
+    <option value="${perfil.nome}" ${
+        usuario.perfil === perfil.nome ? "selected" : ""
+      }>${perfil.nome}</option>
+  `
+    )
+    .join("");
 
   content.innerHTML = `
     <div class="form-container">
@@ -224,15 +230,21 @@ window.editarUsuario = function (id) {
         <form id="userForm">
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome do Usuário</label>
-                <input type="text" class="form-control" id="nome" value="${usuario.nome}">
+                <input type="text" class="form-control" id="nome" value="${
+                  usuario.nome
+                }">
             </div>
             <div class="mb-3">
                 <label for="matricula" class="form-label">Matrícula</label>
-                <input type="text" class="form-control" id="matricula" value="${usuario.matricula}">
+                <input type="text" class="form-control" id="matricula" value="${
+                  usuario.matricula
+                }">
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">E-mail</label>
-                <input type="email" class="form-control" id="email" value="${usuario.email}">
+                <input type="email" class="form-control" id="email" value="${
+                  usuario.email
+                }">
             </div>
             <div class="mb-3">
                 <label for="senha" class="form-label">Senha</label>
@@ -240,20 +252,29 @@ window.editarUsuario = function (id) {
             </div>
             <div class="mb-3">
                 <label for="funcao" class="form-label">Função</label>
-                <select id="funcao" class="form-select" ${usuario.perfil === "AdminRoot" ? "disabled" : ""}>
+                <select id="funcao" class="form-select" ${
+                  usuario.perfil === "AdminRoot" ? "disabled" : ""
+                }>
                     ${opcoesPerfis}
                 </select>
             </div>
             <div class="mb-3" id="loja-container">
                 ${
-                  usuarioLogado.perfil === "Gerente" 
-                  ? `<input type="text" class="form-control" id="loja" value="${usuarioLogado.loja}" disabled>` 
-                  : usuario.perfil === "AdminRoot"
-                  ? `<input type="text" class="form-control" id="loja" value="Matriz" disabled>`
-                  : `
+                  usuarioLogado.perfil === "Gerente"
+                    ? `<input type="text" class="form-control" id="loja" value="${usuarioLogado.loja}" disabled>`
+                    : usuario.perfil === "AdminRoot"
+                    ? `<input type="text" class="form-control" id="loja" value="Matriz" disabled>`
+                    : `
                   <label for="loja" class="form-label">Loja</label>
                   <select id="loja" class="form-select">
-                      ${lojas.map(loja => `<option value="${loja}" ${usuario.loja === loja ? "selected" : ""}>${loja}</option>`).join("")}
+                      ${lojas
+                        .map(
+                          (loja) =>
+                            `<option value="${loja}" ${
+                              usuario.loja === loja ? "selected" : ""
+                            }>${loja}</option>`
+                        )
+                        .join("")}
                   </select>
                   `
                 }
@@ -263,7 +284,6 @@ window.editarUsuario = function (id) {
     </div>
   `;
 };
-
 
 window.submitEdicao = function (id) {
   const nome = document.getElementById("nome").value;

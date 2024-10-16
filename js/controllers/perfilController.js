@@ -79,7 +79,7 @@ window.showPerfis = async function () {
       <div class="row justify-content-center">
         <div class="col-md-8 col-sm-12 mb-4">
           <div class="input-group">
-            <input type="text" class="form-control" id="searchInput" placeholder="Procurar por perfil" oninput="filtrarPerfis()">
+            <input type="text" class="form-control" id="searchInput" placeholder="Procurar por perfil" oninput="buscarPerfis()">
             <div class="input-icon">
               <i class="fas fa-search"></i>
             </div>
@@ -111,7 +111,7 @@ window.showPerfis = async function () {
 };
 
 // Função para filtrar os perfis com base na entrada do usuário
-window.filtrarPerfis = async function () {
+window.buscarPerfis = async function () {
   const searchInput = document
     .getElementById("searchInput")
     .value.toLowerCase();
@@ -293,7 +293,6 @@ window.editarPerfil = async function (id) {
     </div>
   `;
 };
-
 
 window.submitEdicaoPerfil = function (id) {
   const nome = document.getElementById("nomePerfil").value;
