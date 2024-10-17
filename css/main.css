@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
 
-
 * {
   margin: 0;
   padding: 0;
@@ -45,28 +44,28 @@ header::after {
 
 /* Botão de alerta */
 .btn-alert-circle {
-  background-color: #1f5d3d; /* Cor verde para alerta */
+  background-color: #1f5d3d;
   color: white;
   border: none;
   width: 3.5rem;
   height: 3.5rem;
-  border-radius: 50%; /* Torna o botão circular */
+  border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  position: absolute; /* Para posicionamento mais fácil */
-  right: 5rem; /* Ajusta mais para a esquerda em telas grandes */
-  top: 2.5rem; /* Alinha no topo */
+  position: absolute;
+  right: 5rem;
+  top: 2.5rem;
   z-index: 1001;
 }
 
 .btn-alert-circle i {
-  font-size: 1.5rem; /* Tamanho do ícone */
+  font-size: 1.5rem;
 }
 
 .btn-alert-circle:hover {
-  background-color: #851306; /* Cor ao passar o mouse */
+  background-color: #851306;
 }
 
 /* Sidebar */
@@ -110,7 +109,7 @@ header::after {
 }
 
 .close-btn {
-  display: none; /* Escondido por padrão */
+  display: none;
   position: absolute;
   top: 1rem;
   left: 1rem;
@@ -118,22 +117,22 @@ header::after {
   border: none;
   color: #269447;
   cursor: pointer;
-  z-index: 1001; /* Acima do sidebar */
+  z-index: 1001;
 }
 
 .close-btn i {
-  font-size: 1.5rem; /* Ajuste o tamanho do ícone */
+  font-size: 1.5rem;
   color: #269447;
 }
 
 .btn-danger {
-  background-color: #b30d14; /* Cor de fundo nova */
-  border-color: #b30d14; /* Cor da borda */
+  background-color: #b30d14;
+  border-color: #b30d14;
 }
 
 .btn-danger:hover {
-  background-color: #851306; /* Cor ao passar o mouse */
-  border-color: #851306; /* Cor da borda ao passar o mouse */
+  background-color: #851306;
+  border-color: #851306;
 }
 
 /* User Info */
@@ -181,16 +180,16 @@ header::after {
 }
 
 .input-icon {
-  position: absolute; /* Posiciona o ícone de forma absoluta */
-  left: 20px; /* Ajuste a posição horizontal */
-  top: 50%; /* Centraliza verticalmente */
-  transform: translateY(-50%); /* Ajusta a posição vertical */
-  pointer-events: none; /* Permite que o clique passe pelo ícone */
-  color: #999; /* Cor do ícone (opcional) */
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #999;
 }
 
 .form-control {
-  padding-left: 40px; /* Ajuste o padding para deslocar o texto do placeholder */
+  padding-left: 40px;
 }
 
 /* Custom Button */
@@ -229,60 +228,35 @@ header::after {
 
 /* Overlay */
 .overlay {
-  position: fixed; /* Fixa na tela */
+  position: fixed;
   top: 0;
   left: 0;
-  width: 100vw; /* Largura total da tela */
-  height: 100vh; /* Altura total da tela */
-  background-color: rgba(0, 0, 0, 0.5); /* Fundo escuro com transparência */
-  z-index: 999; /* Deve estar acima do conteúdo principal, mas abaixo do sidebar */
-  display: none; /* Escondido por padrão */
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  display: none;
 }
 
 /* Responsividade para telas menores */
-@media (max-width: 768px) {
-  .sidebar {
-    transform: translateX(-100%); /* Sidebar recolhido por padrão */
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-    width: 60vw; /* Ajuste da largura para telas menores */
-    height: 100%;
-    padding: 1.5rem 1rem;
-  }
-
-  .sidebar.active {
-    transform: translateX(0); /* Mostra o sidebar quando ativo */
-  }
-
-  .sidebar button {
-    font-size: 0.9rem; /* Ajuste do tamanho do botão */
-    padding: 0.5rem 0.8rem;
-  }
-
-  .close-btn {
-    display: block;
+@media (max-width: 1366px) {
+  header .img-fluid {
+    height: 3.5rem;
+    margin-left: 10rem;
   }
 
   .btn-alert-circle {
-    display: block !important; /* Mostra o botão em telas pequenas */
-    width: 3rem; /* Tamanho ajustado para telas pequenas */
+    width: 3rem;
     height: 3rem;
-    position: absolute;
-    top: 2rem; /* Abaixo do botão de fechar "X" */
-    right: 2%;
-    transform: translateX(-50%); /* Centraliza o botão horizontalmente */
-    z-index: 1001;
+    right: 2rem;
   }
 
-  header .img-fluid {
-    height: 3.5rem; /* Logo menor para telas pequenas */
-    margin-right: 15.5rem;
+  .sidebar {
+    width: 15vw;
   }
 
   .content {
-    margin-left: 0;
+    margin-left: 16vw;
   }
 
   .btn-submit {
@@ -291,12 +265,68 @@ header::after {
   }
 
   .user-avatar {
-    width: 2.5rem; /* Ajuste do avatar para telas menores */
+    width: 2.5rem;
     height: 2.5rem;
   }
 
   .user-name,
   .user-loja {
-    font-size: 0.8rem; /* Ajuste das fontes para telas menores */
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 60vw;
+    height: 100%;
+    padding: 1.5rem 1rem;
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  .sidebar button {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.8rem;
+  }
+
+  .close-btn {
+    display: block;
+  }
+
+  .btn-alert-circle {
+    display: block !important;
+    width: 3rem;
+    height: 3rem;
+    right: 2%;
+  }
+
+  header .img-fluid {
+    height: 3rem;
+    margin-right: 15.5rem;
+  }
+
+  .content {
+    margin-left: 0;
+  }
+
+  .btn-submit {
+    margin-left: 10vh;
+    width: 50%;
+  }
+
+  .user-avatar {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .user-name,
+  .user-loja {
+    font-size: 0.7rem;
   }
 }
