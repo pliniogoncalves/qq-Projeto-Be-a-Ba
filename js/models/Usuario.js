@@ -2,14 +2,14 @@ export class Usuario {
   static usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
   static nextId = Usuario.usuarios.length > 0 ? Math.max(...Usuario.usuarios.map(u => u.id)) + 1 : 1;
 
-  constructor(nome, matricula, email, senha, perfil, loja = null) {
+  constructor(nome, matricula, email, senha, perfil = null, loja = null) {
     this.id = Usuario.nextId;
     this.nome = nome;
     this.matricula = matricula;
     this.email = email;
     this.senha = senha;
-    this.perfil = perfil; // 'Gerente', 'Estoque', 'AdminRoot'
-    this.loja = loja; // Loja específica (apenas para Gerentes e Estoque)
+    this.perfil = perfil; 
+    this.loja = loja; 
     Usuario.nextId++;
   }
 
@@ -24,7 +24,7 @@ export class Usuario {
   }
 
   // CREATE: Adicionar um novo usuário com validação
-  static criarUsuario(nome, matricula, email, senha, perfil, loja = null) {
+  static criarUsuario(nome, matricula, email, senha, perfil = null, loja = null) {
     if (Usuario.validarDuplicidade(matricula, email)) {
       alert("Matrícula ou email já cadastrados.");
       return null;
@@ -43,7 +43,7 @@ export class Usuario {
   }
 
   // UPDATE: Atualizar informações de um usuário existente
-  static atualizarUsuario(id, novoNome, novaMatricula, novoEmail, novaSenha, novoPerfil, novaLoja = null, senhaAtual) {
+  static atualizarUsuario(id, novoNome, novaMatricula, novoEmail, novaSenha, novoPerfil = null, novaLoja = null, senhaAtual) {
     const usuario = Usuario.usuarios.find(user => user.id === id);
     if (!usuario) {
       alert("Usuário não encontrado.");

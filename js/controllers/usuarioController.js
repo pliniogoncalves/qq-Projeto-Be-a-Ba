@@ -19,7 +19,7 @@ window.showUsuarios = function () {
   });
 
   usuariosFiltrados.forEach((user) => {
-    if (user && user.perfil) {
+    if (user) {
       // Verifica se 'user' existe e se 'perfil' está definido
       let lojaNome = user.loja ? user.loja.nome : "Nenhuma loja"; // Acessando a propriedade correta
 
@@ -28,10 +28,13 @@ window.showUsuarios = function () {
         lojaNome = "Matriz"; // Ou qualquer valor padrão que você deseje
       }
 
+      // Verifica se o perfil do usuário é "Nenhuma" ou está vazio
+      const perfilDisplay = !user.perfil || user.perfil === "Nenhuma" ? "" : user.perfil;
+
       tableRows += `
           <tr>
               <td>${user.nome}</td>
-              <td>${user.perfil}</td>
+              <td>${perfilDisplay}</td>
               <td>${lojaNome}</td> <!-- Exibindo o nome da loja -->
               <td>
                   <i class="fas fa-edit" style="cursor: pointer; margin-right: 10px;" onclick="editarUsuario(${user.id})"></i>
@@ -107,7 +110,7 @@ window.cadastrarUsuario = function () {
   // Criar opções de função a partir dos perfis de acesso
   const opcoesFuncoes = perfis
     .map((perfil) => `<option value="${perfil.nome}">${perfil.nome}</option>`)
-    .join("");
+    .join("")+ `<option value="Nenhum">Nenhum</option>`;
 
   content.innerHTML = `
       <div class="form-container">
@@ -178,7 +181,7 @@ window.submitCadastro = function () {
   const matricula = document.getElementById("matricula").value;
   const email = document.getElementById("email").value;
   const senha = document.getElementById("senha").value;
-  const perfil = document.getElementById("funcao").value;
+  const perfil = document.getElementById("funcao").value !== "Nenhum" ? document.getElementById("funcao").value : null;
 
   // Carregar as lojas do LocalStorage
   const lojas = JSON.parse(localStorage.getItem("lojas")) || [];
@@ -191,7 +194,7 @@ window.submitCadastro = function () {
   // Encontrar o objeto da loja com base no nome
   const loja = lojas.find((l) => l.nome === lojaNome) || { nome: "Matriz" }; // Se não encontrar, assume "Matriz"
 
-  if (!nome || !matricula || !email || !senha || !perfil || !loja) {
+  if (!nome || !matricula || !email || !senha || !loja) {
     alert("Preencha todos os campos.");
     return;
   }
@@ -234,7 +237,7 @@ window.editarUsuario = function (id) {
       }>${perfil.nome}</option>
   `
     )
-    .join("");
+    .join("")+ `<option value="Nenhuma" ${usuario.perfil === "Nenhum" ? "selected" : ""}>Nenhum</option>`;
 
   // Gerar opções de lojas
   const lojaOptions = lojas
@@ -306,7 +309,7 @@ window.submitEdicao = function (id) {
   const matricula = document.getElementById("matricula").value;
   const email = document.getElementById("email").value;
   const senha = document.getElementById("senha").value || null; // Permite senha vazia
-  const perfil = document.getElementById("funcao").value;
+  const perfil = document.getElementById("funcao").value !== "Nenhum" ? document.getElementById("funcao").value : null;
   const lojaId = document.getElementById("loja")
     ? document.getElementById("loja").value
     : null;
@@ -316,7 +319,6 @@ window.submitEdicao = function (id) {
     !nome ||
     !matricula ||
     !email ||
-    !perfil ||
     (perfil !== "AdminRoot" && !lojaId)
   ) {
     alert("Preencha todos os campos obrigatórios.");
