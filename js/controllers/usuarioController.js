@@ -85,7 +85,6 @@ window.showUsuarios = function () {
   setActiveButton("Usuários");
 };
 
-
 window.cadastrarUsuario = function () {
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
 
@@ -159,7 +158,7 @@ window.atualizarLojaCadastro = function () {
       <label for="loja" class="form-label">Loja</label>
       <input type="text" class="form-control" id="loja" value="Matriz" disabled>
     `;
-  } else if (perfilSelecionado === "Gerente" || perfilSelecionado === "Caixa") {
+  } else {
     // Se for Caixa ou Gerente, exibir a lista de lojas excluindo a "Matriz"
     const lojasSemMatriz = lojas.filter((loja) => loja.nome !== "Matriz");
 
@@ -171,12 +170,6 @@ window.atualizarLojaCadastro = function () {
           .join("")}
       </select>
     `;
-  } else {
-    // Para outros perfis, pode exibir a loja associada ao usuário logado
-    lojaContainer.innerHTML = `
-      <label for="loja" class="form-label">Loja</label>
-      <input type="text" class="form-control" id="loja" value="${usuarioLogado.loja}" disabled>
-    `;
   }
 };
 
@@ -186,13 +179,18 @@ window.submitCadastro = function () {
   const email = document.getElementById("email").value;
   const senha = document.getElementById("senha").value;
   const perfil = document.getElementById("funcao").value;
-  let loja = document.getElementById("loja")
+
+  // Carregar as lojas do LocalStorage
+  const lojas = JSON.parse(localStorage.getItem("lojas")) || [];
+
+  // Obter o nome da loja selecionada
+  let lojaNome = document.getElementById("loja")
     ? document.getElementById("loja").value
     : "Matriz";
 
-  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado")); // Recupera o usuário logado
+  // Encontrar o objeto da loja com base no nome
+  const loja = lojas.find((l) => l.nome === lojaNome) || { nome: "Matriz" }; // Se não encontrar, assume "Matriz"
 
-  // Verificar se todos os campos estão preenchidos
   if (!nome || !matricula || !email || !senha || !perfil || !loja) {
     alert("Preencha todos os campos.");
     return;
@@ -255,15 +253,21 @@ window.editarUsuario = function (id) {
         <form id="userForm">
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome do Usuário</label>
-                <input type="text" class="form-control" id="nome" value="${usuario.nome}">
+                <input type="text" class="form-control" id="nome" value="${
+                  usuario.nome
+                }">
             </div>
             <div class="mb-3">
                 <label for="matricula" class="form-label">Matrícula</label>
-                <input type="text" class="form-control" id="matricula" value="${usuario.matricula}">
+                <input type="text" class="form-control" id="matricula" value="${
+                  usuario.matricula
+                }">
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">E-mail</label>
-                <input type="email" class="form-control" id="email" value="${usuario.email}">
+                <input type="email" class="form-control" id="email" value="${
+                  usuario.email
+                }">
             </div>
             <div class="mb-3">
                 <label for="senha" class="form-label">Senha</label>
@@ -303,10 +307,18 @@ window.submitEdicao = function (id) {
   const email = document.getElementById("email").value;
   const senha = document.getElementById("senha").value || null; // Permite senha vazia
   const perfil = document.getElementById("funcao").value;
-  const lojaId = document.getElementById("loja") ? document.getElementById("loja").value : null;
+  const lojaId = document.getElementById("loja")
+    ? document.getElementById("loja").value
+    : null;
 
   // Verificar se todos os campos obrigatórios estão preenchidos
-  if (!nome || !matricula || !email || !perfil || (perfil !== "AdminRoot" && !lojaId)) {
+  if (
+    !nome ||
+    !matricula ||
+    !email ||
+    !perfil ||
+    (perfil !== "AdminRoot" && !lojaId)
+  ) {
     alert("Preencha todos os campos obrigatórios.");
     return;
   }
@@ -319,7 +331,6 @@ window.submitEdicao = function (id) {
   Usuario.atualizarUsuario(id, nome, matricula, email, senha, perfil, loja);
   showUsuarios(); // Exibir a lista de usuários após a edição
 };
-
 
 window.excluirUsuario = function (id) {
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
