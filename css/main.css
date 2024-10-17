@@ -240,7 +240,7 @@ header::after {
 
 /* Responsividade para telas menores */
 /* Ajustes para tela 1366x768 */
-@media only screen and (min-width: 1280px) and (max-width: 1440px) and (min-height: 720px) and (max-height: 800px) {
+@media only screen and (min-width: 1280px) and (max-width: 1400px) {
   /* Ajustes no header */
   header {
     padding: 1.5rem;
