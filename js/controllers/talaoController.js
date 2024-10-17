@@ -1,10 +1,24 @@
+// controllers/TalaoController.js
+
 import { Talao } from "../models/Talao.js";
 
 const lojas = ["Loja 1", "Loja 2", "Loja 3"]; // Lista de lojas
 
+// Função para formatar data e hora
+function formatarDataHora(dataHoraISO) {
+  const data = new Date(dataHoraISO);
+  const dataFormatada = data.toLocaleDateString("pt-BR");
+  const horaFormatada = data.toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  return [dataFormatada, horaFormatada];
+}
+
+// Exibir talões na tela
 window.showTaloes = function () {
   const content = document.getElementById("mainContent");
-  const taloes = JSON.parse(localStorage.getItem("taloes")) || [];
+  const taloes = Talao.listarTaloes();
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
 
   let tableRows = "";
@@ -18,7 +32,7 @@ window.showTaloes = function () {
 
   taloesFiltrados.forEach((talao) => {
     if (talao) {
-      const [data, hora] = formatarDataHora(talao.data);
+      const [data, hora] = formatarDataHora(talao.dataHora);
       tableRows += `
             <tr>
                 <td>${talao.id}</td>
@@ -34,6 +48,11 @@ window.showTaloes = function () {
                     : "bg-secondary"
                 }">${talao.status}</span></td>
                  <td>
+                    <i class="fas fa-eye" 
+                       style="cursor: pointer; margin-right: 10px;" 
+                       onclick="visualizarDetalhes(${talao.id})" 
+                       data-bs-toggle="tooltip" 
+                       title="Detalhes"></i>
                     <i class="fas fa-edit" 
                        style="cursor: pointer; margin-right: 10px;" 
                        onclick="editarTalao(${talao.id})" 
@@ -52,8 +71,6 @@ window.showTaloes = function () {
                 </td>
             </tr>
         `;
-    } else {
-      console.error("Talão inválido encontrado: ", talao);
     }
   });
 
@@ -71,6 +88,7 @@ window.showTaloes = function () {
                             <i class="fas fa-search"></i>
                         </div>
                         <button class="btn btn-custom" type="button" onclick="buscarTalao()">Buscar</button>
+                        <button class="btn btn-secondary" type="button" onclick="exportarTodosTaloes()">Exportar Todos</button>
                     </div>
                 </div>
             </div>
@@ -83,7 +101,7 @@ window.showTaloes = function () {
                     <th>ID</th>
                     <th>Loja</th>
                     <th>Data</th>
-                    <th>Hora</th> <!-- Nova coluna para Hora -->
+                    <th>Hora</th>
                     <th>Quantidade</th>
                     <th>Status</th>
                     <th>Ações</th>
@@ -100,7 +118,6 @@ window.showTaloes = function () {
         </div>
     `;
 
-  // Inicializa os tooltips
   const tooltipTriggerList = [].slice.call(
     document.querySelectorAll('[data-bs-toggle="tooltip"]')
   );
@@ -111,6 +128,7 @@ window.showTaloes = function () {
   setActiveButton("Talões");
 };
 
+// Solicitar talão
 window.solicitarTalao = function () {
   const content = document.getElementById("mainContent");
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
@@ -141,46 +159,34 @@ window.solicitarTalao = function () {
       `;
 };
 
+// Salvar solicitação de talão
 window.salvarSolicitacaoTalao = function (event) {
   event.preventDefault();
   const loja = document.getElementById("lojaTalao").value;
   const data = document.getElementById("dataTalao").value; // Obtém a data
   const hora = document.getElementById("horaTalao").value; // Obtém a hora
-  const quantidade = document.getElementById("quantidadeTalao").value;
-
-  // Combina a data e a hora em um único string no formato ISO
-  const dataHora = new Date(`${data}T${hora}`).toISOString();
-
-  const taloes = JSON.parse(localStorage.getItem("taloes")) || [];
-  const novoTalao = {
-    id: taloes.length + 1, // Gera um ID sequencial simples
-    loja,
-    data: dataHora, // Armazena a data e hora combinadas
-    quantidade, // Armazena a quantidade de talões
-    status: "Solicitado", // Define o status como "Solicitado"
-    timestamp: {
-      // Armazena os timestamps para cada status
-      solicitado: dataHora,
-      enviado: null,
-      recebido: null,
-    },
-  };
-
-  taloes.push(novoTalao);
-  localStorage.setItem("taloes", JSON.stringify(taloes));
-
-  alert(
-    `Talão solicitado para ${loja} na data ${data} às ${hora} com quantidade ${quantidade}`
+  const quantidade = parseInt(
+    document.getElementById("quantidadeTalao").value,
+    10
   );
 
-  // Voltar para a lista de talões
+  // Validação adicional
+  if (!loja || !data || !hora || isNaN(quantidade) || quantidade < 1) {
+    alert("Por favor, preencha todos os campos corretamente.");
+    return;
+  }
+
+  const dataHora = new Date(`${data}T${hora}`).toISOString();
+  Talao.criarTalao(loja, dataHora, quantidade, "Solicitado");
   showTaloes();
 };
 
+// Registrar recebimento
 window.registrarRecebimento = function () {
   const content = document.getElementById("mainContent");
-  const taloes = JSON.parse(localStorage.getItem("taloes")) || [];
-  const loja = JSON.parse(localStorage.getItem("usuarioLogado")).loja; // Obtém a loja do usuário logado
+  const taloes = Talao.listarTaloes();
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+  const loja = usuarioLogado.loja;
 
   const taloesSolicitados = taloes.filter(
     (talao) => talao.loja === loja && talao.status === "Solicitado"
@@ -193,7 +199,7 @@ window.registrarRecebimento = function () {
 
   let tableRows = "";
   taloesSolicitados.forEach((talao) => {
-    const [data, hora] = formatarDataHora(talao.data);
+    const [data, hora] = formatarDataHora(talao.dataHora);
     tableRows += `
         <tr>
             <td>${talao.id}</td>
@@ -209,9 +215,9 @@ window.registrarRecebimento = function () {
   });
 
   content.innerHTML = `
-        <h1 class="h4 mb-4">Registrar Recebimento de Talões</h1>
-        <div class="table-responsive">
-            <table class="table table-striped">
+        <h1 class="h4 mb-4">Registrar Recebimento</h1>
+        <p>Confirme o recebimento dos talões solicitados.</p>
+        <table class="table table-striped">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -225,183 +231,188 @@ window.registrarRecebimento = function () {
             <tbody>
                 ${tableRows}
             </tbody>
-            </table>
-        </div>
+        </table>
     `;
 };
 
+// Confirmar recebimento
 window.confirmarRecebimento = function (id) {
-    const taloes = JSON.parse(localStorage.getItem("taloes")) || [];
-    const talao = taloes.find(t => t.id === id);
-  
-    if (!talao) {
-      alert("Talão não encontrado.");
-      return;
-    }
-  
-    // Certifique-se de que a propriedade timestamp foi inicializada
-    if (!talao.timestamp) {
-      talao.timestamp = {}; // Inicializa a propriedade timestamp se não existir
-    }
-  
-    // Atualiza o status e o timestamp de recebido
-    talao.status = "Recebido"; // Atualiza o status para "Recebido"
-    talao.timestamp.recebido = new Date().toISOString(); // Atualiza o timestamp de recebido
-  
-    localStorage.setItem("taloes", JSON.stringify(taloes)); // Salva as alterações no localStorage
-    alert(`Talão ${talao.id} recebido com sucesso!`);
-    
-    showTaloes(); // Atualiza a lista de talões
-  };
-  
-
-window.editarTalao = function (id) {
-  const taloes = JSON.parse(localStorage.getItem("taloes")) || [];
-  const talao = taloes.find((t) => t.id === id);
-
-  if (!talao) {
-    alert("Talão não encontrado.");
-    return;
-  }
-
-  const content = document.getElementById("mainContent");
-  const [data, hora] = talao.data.split("T"); // Separar a data da hora
-  const horaFormatada = hora.substring(0, 5); // Obtém apenas a parte da hora
-
-  content.innerHTML = `
-        <div class="form-container">
-            <h1 class="h4 mb-4">Editar Talão</h1>
-            <form id="talaoForm" onsubmit="salvarEdicaoTalao(event, ${id})">
-                <div class="mb-3">
-                    <label for="lojaTalao" class="form-label">Loja</label>
-                    <input type="text" class="form-control" id="lojaTalao" value="${talao.loja}" readonly required>
-                </div>
-                <div class="mb-3">
-                    <label for="dataTalao" class="form-label">Data</label>
-                    <input type="date" class="form-control" id="dataTalao" value="${data}" required>
-                </div>
-                <div class="mb-3">
-                    <label for="horaTalao" class="form-label">Hora</label>
-                    <input type="time" class="form-control" id="horaTalao" value="${horaFormatada}" required>
-                </div>
-                <div class="mb-3">
-                    <label for="quantidadeTalao" class="form-label">Quantidade de Talões</label>
-                    <input type="number" class="form-control" id="quantidadeTalao" value="${talao.quantidade}" min="1" required>
-                </div>
-                <button type="submit" class="btn btn-submit">Salvar Alterações</button>
-            </form>
-        </div>
-        `;
-};
-
-window.salvarEdicaoTalao = function (event, id) {
-  event.preventDefault();
-  const loja = document.getElementById("lojaTalao").value;
-  const data = document.getElementById("dataTalao").value; // Obtém a data
-  const hora = document.getElementById("horaTalao").value; // Obtém a hora
-  const quantidade = document.getElementById("quantidadeTalao").value;
-
-  // Combina a data e a hora em um único string no formato ISO
-  const dataHora = new Date(`${data}T${hora}`).toISOString();
-
-  const taloes = JSON.parse(localStorage.getItem("taloes")) || [];
-  const talaoIndex = taloes.findIndex((t) => t.id === id);
-
-  if (talaoIndex !== -1) {
-    taloes[talaoIndex].loja = loja;
-    taloes[talaoIndex].data = dataHora; // Atualiza a data e hora
-    taloes[talaoIndex].quantidade = quantidade; // Atualiza a quantidade de talões
-    taloes[talaoIndex].status = taloes[talaoIndex].status; // Mantém o status atual
-    localStorage.setItem("taloes", JSON.stringify(taloes));
-
-    alert(
-      `Talão atualizado para ${loja} na data ${data} às ${hora} com quantidade ${quantidade}`
-    );
-
-    // Voltar para a lista de talões
+  const talao = Talao.buscarTalao(id);
+  if (talao) {
+    talao.status = "Recebido";
+    Talao.atualizarTalao(talao);
     showTaloes();
   } else {
     alert("Talão não encontrado.");
   }
 };
 
-// Buscar talão
-window.buscarTalao = function () {
-  const searchInput = document
-    .getElementById("talaoSearchInput")
-    .value.toLowerCase();
-  const tableBody = document.getElementById("talaoTableBody");
-  const rows = tableBody.getElementsByTagName("tr");
-
-  for (let i = 0; i < rows.length; i++) {
-    const idTalao = rows[i]
-      .getElementsByTagName("td")[0]
-      .textContent.toLowerCase(); // Coluna ID
-    const lojaTalao = rows[i]
-      .getElementsByTagName("td")[1]
-      .textContent.toLowerCase(); // Coluna Loja
-
-    // Verifica se o input é um número (ID)
-    if (searchInput && !isNaN(searchInput)) {
-      // Se for um número, procura apenas pelo ID
-      if (idTalao.includes(searchInput)) {
-        rows[i].style.display = "";
-      } else {
-        rows[i].style.display = "none";
-      }
-    } else {
-      // Se não for um número, procura pelo nome da loja
-      if (lojaTalao.includes(searchInput)) {
-        rows[i].style.display = "";
-      } else {
-        rows[i].style.display = "none";
-      }
-    }
-  }
-};
-
-window.excluirTalao = function (id) {
-  const taloes = JSON.parse(localStorage.getItem("taloes")) || [];
-  const talaoIndex = taloes.findIndex((t) => t.id === id);
-
-  if (talaoIndex !== -1) {
-    if (confirm("Você tem certeza que deseja excluir este talão?")) {
-      taloes.splice(talaoIndex, 1); // Remove o talão do array
-      localStorage.setItem("taloes", JSON.stringify(taloes)); // Atualiza o localStorage
-      alert("Talão excluído com sucesso.");
-      showTaloes(); // Atualiza a lista de talões
-    }
-  } else {
-    alert("Talão não encontrado.");
-  }
-};
-
-window.exportarTalao = function (id) {
-  const taloes = JSON.parse(localStorage.getItem("taloes")) || [];
-  const talao = taloes.find((t) => t.id === id);
-
+// Função para editar talão
+window.editarTalao = function (id) {
+  const talao = Talao.buscarTalao(id);
   if (!talao) {
     alert("Talão não encontrado.");
     return;
   }
 
-  // Criar o conteúdo CSV
-  const csvContent =
-    `data:text/csv;charset=utf-8,` +
-    "ID,Loja,Data,Hora,Quantidade,Status\n" + // Cabeçalho
-    `${talao.id},${talao.loja},${talao.data},${new Date(
-      talao.data
-    ).toLocaleTimeString("pt-BR")},${talao.quantidade},${talao.status}\n`;
+  const content = document.getElementById("mainContent");
+  const [data, hora] = formatarDataHora(talao.dataHora);
 
-  // Codifica o conteúdo CSV
-  const encodedUri = encodeURI(csvContent);
-
-  // Cria um link e simula o download
-  const link = document.createElement("a");
-  link.setAttribute("href", encodedUri);
-  link.setAttribute("download", `talao_${talao.id}.csv`);
-  document.body.appendChild(link); // Necessário para o Firefox
-
-  link.click(); // Simula o clique para download
-  document.body.removeChild(link); // Remove o link do DOM
+  content.innerHTML = `
+          <div class="form-container">
+          <h1 class="h4 mb-4">Editar Talão</h1>
+          <form id="talaoEditForm" onsubmit="salvarEdicaoTalao(event, ${id})">
+              <div class="mb-3">
+                  <label for="lojaTalaoEdit" class="form-label">Loja</label>
+                  <input type="text" class="form-control" id="lojaTalaoEdit" value="${talao.loja}" readonly required>
+              </div>
+              <div class="mb-3">
+                  <label for="dataTalaoEdit" class="form-label">Data</label>
+                  <input type="date" class="form-control" id="dataTalaoEdit" value="${data}" required>
+              </div>
+              <div class="mb-3">
+                  <label for="horaTalaoEdit" class="form-label">Hora</label>
+                  <input type="time" class="form-control" id="horaTalaoEdit" value="${hora}" required>
+              </div>
+              <div class="mb-3">
+                  <label for="quantidadeTalaoEdit" class="form-label">Quantidade de Talões</label>
+                  <input type="number" class="form-control" id="quantidadeTalaoEdit" value="${talao.quantidade}" min="1" required>
+              </div>
+              <button type="submit" class="btn btn-submit">Salvar Edição</button>
+          </form>
+      </div>
+      `;
 };
+
+// Salvar edição de talão
+window.salvarEdicaoTalao = function (event, id) {
+  event.preventDefault();
+  const loja = document.getElementById("lojaTalaoEdit").value;
+  const data = document.getElementById("dataTalaoEdit").value; // Obtém a data
+  const hora = document.getElementById("horaTalaoEdit").value; // Obtém a hora
+  const quantidade = parseInt(
+    document.getElementById("quantidadeTalaoEdit").value,
+    10
+  );
+
+  if (!loja || !data || !hora || isNaN(quantidade) || quantidade < 1) {
+    alert("Por favor, preencha todos os campos corretamente.");
+    return;
+  }
+
+  const dataHora = new Date(`${data}T${hora}`).toISOString();
+  const talao = Talao.buscarTalao(id);
+
+  if (talao) {
+    talao.dataHora = dataHora;
+    talao.quantidade = quantidade;
+    Talao.atualizarTalao(talao);
+    showTaloes();
+  } else {
+    alert("Erro ao atualizar o talão.");
+  }
+};
+
+// Excluir talão
+window.excluirTalao = function (id) {
+  const confirmacao = confirm("Tem certeza que deseja excluir este talão?");
+  if (confirmacao) {
+    Talao.removerTalao(id);
+    showTaloes();
+  }
+};
+
+// Função para exportar talões para CSV
+window.exportarTalao = function (id) {
+  const talao = Talao.buscarTalao(id);
+  if (!talao) {
+    alert("Talão não encontrado.");
+    return;
+  }
+
+  const csvContent = `ID,Loja,Data,Hora,Quantidade,Status\n${talao.id},${
+    talao.loja
+  },${formatarDataHora(talao.dataHora).join(",")},${talao.quantidade},${
+    talao.status
+  }`;
+  downloadCSV(csvContent, `talao_${talao.id}.csv`);
+};
+
+// Função para exportar todos os talões para CSV
+window.exportarTodosTaloes = function () {
+  const taloes = Talao.listarTaloes();
+  if (taloes.length === 0) {
+    alert("Nenhum talão disponível para exportação.");
+    return;
+  }
+
+  let csvContent = "ID,Loja,Data,Hora,Quantidade,Status\n";
+  taloes.forEach((talao) => {
+    csvContent += `${talao.id},${talao.loja},${formatarDataHora(
+      talao.dataHora
+    ).join(",")},${talao.quantidade},${talao.status}\n`;
+  });
+  downloadCSV(csvContent, "taloes.csv");
+};
+
+// Função para buscar talões
+window.buscarTalao = function () {
+  const searchInput = document
+    .getElementById("talaoSearchInput")
+    .value.toLowerCase();
+  const tableRows = document.querySelectorAll("#talaoTableBody tr");
+
+  tableRows.forEach((row) => {
+    const lojaCell = row.cells[1].textContent.toLowerCase();
+    const idCell = row.cells[0].textContent.toLowerCase();
+    if (lojaCell.includes(searchInput) || idCell.includes(searchInput)) {
+      row.style.display = "";
+    } else {
+      row.style.display = "none";
+    }
+  });
+};
+
+// Função auxiliar para download de CSV
+function downloadCSV(csvContent, fileName) {
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", fileName);
+  link.style.visibility = "hidden";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+// Função para visualizar detalhes do talão
+window.visualizarDetalhes = function (id) {
+  const talao = Talao.buscarTalao(id);
+  if (!talao) {
+    alert("Talão não encontrado.");
+    return;
+  }
+
+  const [data, hora] = formatarDataHora(talao.dataHora);
+
+  // Prepara o conteúdo do modal
+  const modalBody = document.getElementById("modalBody");
+  modalBody.innerHTML = `
+    <h1 class="h4 mb-4">Detalhes do Talão</h1>
+    <p><strong>ID:</strong> ${talao.id}</p>
+    <p><strong>Loja:</strong> ${talao.loja}</p>
+    <p><strong>Data:</strong> ${data}</p>
+    <p><strong>Hora:</strong> ${hora}</p>
+    <p><strong>Quantidade:</strong> ${talao.quantidade}</p>
+    <p><strong>Status:</strong> ${talao.status}</p>
+    <button class="btn btn-primary" onclick="fecharModal()">Fechar</button>
+  `;
+
+  // Exibe o modal
+  const modal = document.getElementById("detalhesModal");
+  modal.style.display = "block";
+};
+
+
+

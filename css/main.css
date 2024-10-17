@@ -238,6 +238,42 @@ header::after {
   display: none;
 }
 
+/* Estilos do Modal */
+.modal {
+  display: none; /* Escondido por padrão */
+  position: fixed; /* Fixo na tela */
+  z-index: 1000; /* Fica acima de outros elementos */
+  left: 0;
+  top: 0;
+  width: 100%; /* Largura total */
+  height: 100%; /* Altura total */
+  overflow: auto; /* Permitir rolagem se necessário */
+  background-color: rgb(0,0,0); /* Fundo preto */
+  background-color: rgba(0,0,0,0.4); /* Fundo preto com opacidade */
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% da parte superior e centralizado */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Largura do modal */
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
 /* Responsividade para telas menores */
 /* Ajustes para tela 1366x768 */
 @media only screen and (min-width: 1280px) and (max-width: 1400px) {

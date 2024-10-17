@@ -76,10 +76,7 @@
                 </button>
               </li>
               <li class="nav-item">
-                <button
-                  class="btn btn-custom w-100 mb-2"
-                  onclick="showLojas()"
-                >
+                <button class="btn btn-custom w-100 mb-2" onclick="showLojas()">
                   <i class="fas fa-store" style="margin-right: 8px"></i>
                   Lojas
                 </button>
@@ -119,6 +116,16 @@
           <h1 class="h2">Bem-vindo ao Sistema "Oferte e Ganhe"</h1>
           <p>Escolha uma opção no menu lateral para começar.</p>
         </main>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="detalhesModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="fecharModal()">&times;</span>
+        <div id="modalBody">
+          <!-- Os detalhes do talão serão inseridos aqui -->
+        </div>
       </div>
     </div>
 

@@ -126,3 +126,17 @@ function formatarDataHora(dataString) {
 function mostrarAlerta() {
   alert('Você clicou no botão de alerta!');
 }
+
+// Fechar o modal ao clicar fora do conteúdo
+window.onclick = function(event) {
+  const modal = document.getElementById("detalhesModal");
+  if (event.target === modal) {
+    modal.style.display = "none";
+  }
+};
+
+// Função para fechar o modal
+function fecharModal() {
+  const modal = document.getElementById("detalhesModal");
+  modal.style.display = "none";
+}
