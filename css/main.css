@@ -239,42 +239,55 @@ header::after {
 }
 
 /* Responsividade para telas menores */
-@media (max-width: 1366px) {
+/* Ajustes para tela 1366x768 */
+@media only screen and (min-width: 1366px) and (max-width: 1366px) and (min-height: 768px) and (max-height: 768px) {
+  /* Ajustes no header */
   header .img-fluid {
-    height: 3.5rem;
-    margin-left: 10rem;
+    height: 4rem; /* Tamanho da logo reduzido para caber melhor */
+    margin-left: 5rem; /* Ajuste de margem */
   }
 
   .btn-alert-circle {
-    width: 3rem;
+    width: 3rem; /* Ajuste do tamanho do botão */
     height: 3rem;
-    right: 2rem;
+    right: 2rem; /* Aproximar da lateral */
+    top: 2rem; /* Reduzir espaço superior */
   }
 
+  /* Sidebar ajustes */
   .sidebar {
-    width: 15vw;
+    width: 15vw; /* Aumenta a largura da sidebar para 15vw */
+    padding: 1.5rem 1rem; /* Reduz espaçamento interno */
+  }
+
+  .sidebar button {
+    font-size: 0.9rem; /* Reduz o tamanho da fonte dos botões */
+    padding: 0.5rem 0.8rem; /* Reduz o espaçamento interno dos botões */
   }
 
   .content {
-    margin-left: 16vw;
+    margin-left: 16vw; /* Ajuste de margem para o conteúdo acompanhar a sidebar maior */
   }
 
+  /* Botão de submissão ajustado */
   .btn-submit {
-    margin-left: 15vh;
-    width: 30%;
+    margin-left: 20vh; /* Ajuste da margem para o botão ficar mais centralizado */
+    width: 40%; /* Alargar o botão */
   }
 
+  /* Ajustes no avatar do usuário */
   .user-avatar {
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 2rem; /* Reduz tamanho do avatar */
+    height: 2rem;
   }
 
   .user-name,
   .user-loja {
-    font-size: 0.8rem;
+    font-size: 0.9rem; /* Ajuste do tamanho da fonte */
   }
 }
 
+/*responsividade para mobile */
 @media (max-width: 768px) {
   .sidebar {
     transform: translateX(-100%);
@@ -327,6 +340,6 @@ header::after {
 
   .user-name,
   .user-loja {
-    font-size: 0.6rem;
+    font-size: 0.7rem;
   }
 }

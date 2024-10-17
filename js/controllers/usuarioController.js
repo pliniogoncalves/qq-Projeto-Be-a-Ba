@@ -33,7 +33,6 @@ window.showUsuarios = function () {
               <td>${user.nome}</td>
               <td>${user.perfil}</td>
               <td>${lojaNome}</td> <!-- Exibindo o nome da loja -->
-              <td>${user.email}</td>
               <td>
                   <i class="fas fa-edit" style="cursor: pointer; margin-right: 10px;" onclick="editarUsuario(${user.id})"></i>
                   <i class="fas fa-trash" style="cursor: pointer;" onclick="excluirUsuario(${user.id})"></i>
@@ -70,7 +69,6 @@ window.showUsuarios = function () {
                   <th>Nome</th>
                   <th>Função</th>
                   <th>Loja</th>
-                  <th>E-mail</th>
                   <th>Ações</th>
               </tr>
           </thead>
