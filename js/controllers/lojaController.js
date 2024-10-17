@@ -12,7 +12,7 @@ window.showLojas = function () {
       tableRows += `
         <tr>
           <td>${loja.nome}</td>
-          <td>${loja.endereco}</td>
+          <td>${loja.numero}</td>
           <td>
             <i class="fas fa-edit" style="cursor: pointer; margin-right: 10px;" onclick="editarLoja(${loja.id})"></i>
             <i class="fas fa-trash" style="cursor: pointer;" onclick="excluirLoja(${loja.id})"></i>
@@ -45,7 +45,7 @@ window.showLojas = function () {
         <thead>
           <tr>
             <th>Nome</th>
-            <th>Endereço</th>
+            <th>Número</th>
             <th>Ações</th>
           </tr>
         </thead>
@@ -73,7 +73,7 @@ window.buscarLoja = function () {
     .map(loja => `
       <tr>
         <td>${loja.nome}</td>
-        <td>${loja.endereco}</td>
+        <td>${loja.numero}</td>
         <td>
           <i class="fas fa-edit" style="cursor: pointer; margin-right: 10px;" onclick="editarLoja(${loja.id})"></i>
           <i class="fas fa-trash" style="cursor: pointer;" onclick="excluirLoja(${loja.id})"></i>
@@ -98,8 +98,8 @@ window.cadastrarLoja = function () {
           <input type="text" class="form-control" id="nome" placeholder="Digite o nome da loja">
         </div>
         <div class="mb-3">
-          <label for="endereco" class="form-label">Endereço</label>
-          <input type="text" class="form-control" id="endereco" placeholder="Digite o endereço da loja">
+          <label for="numero" class="form-label">Número</label>
+          <input type="text" class="form-control" id="numero" placeholder="Digite o número da loja">
         </div>
         <button type="button" class="btn btn-submit" onclick="submitLojaCadastro()">Cadastrar Loja</button>
       </form>
@@ -110,14 +110,14 @@ window.cadastrarLoja = function () {
 // Submissão do cadastro de loja
 window.submitLojaCadastro = function () {
   const nome = document.getElementById("nome").value;
-  const endereco = document.getElementById("endereco").value;
+  const numero = document.getElementById("numero").value;
 
-  if (!nome || !endereco) {
+  if (!nome || !numero) {
     alert("Preencha todos os campos.");
     return;
   }
 
-  Loja.criarLoja(nome, endereco);
+  Loja.criarLoja(nome, numero);
   showLojas();
 };
 
@@ -142,8 +142,8 @@ window.editarLoja = function (id) {
           <input type="text" class="form-control" id="nome" value="${loja.nome}">
         </div>
         <div class="mb-3">
-          <label for="endereco" class="form-label">Endereço</label>
-          <input type="text" class="form-control" id="endereco" value="${loja.endereco}">
+          <label for="numero" class="form-label">Número</label>
+          <input type="text" class="form-control" id="numero" value="${loja.numero}">
         </div>
         <button type="button" class="btn btn-submit" onclick="submitEdicaoLoja(${id})">Salvar Alterações</button>
       </form>
@@ -154,15 +154,15 @@ window.editarLoja = function (id) {
 // Submissão da edição da loja
 window.submitEdicaoLoja = function (id) {
   const nome = document.getElementById("nome").value;
-  const endereco = document.getElementById("endereco").value;
+  const numero = document.getElementById("numero").value;
 
-  if (!nome || !endereco) {
+  if (!nome || !numero) {
     alert("Preencha todos os campos.");
     return;
   }
 
   // Atualiza a loja usando o método da classe Loja
-  Loja.atualizarLoja(id, nome, endereco);
+  Loja.atualizarLoja(id, nome, numero);
 
   // Exibe uma mensagem de sucesso
   alert(`Loja ${nome} atualizada com sucesso!`);

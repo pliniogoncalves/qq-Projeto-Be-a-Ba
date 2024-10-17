@@ -2,10 +2,10 @@ export class Loja {
     static lojas = JSON.parse(localStorage.getItem("lojas")) || [];
     static nextId = Loja.lojas.length > 0 ? Math.max(...Loja.lojas.map((l) => l.id)) + 1 : 1;
   
-    constructor(nome, endereco) {
+    constructor(nome, numero) {
       this.id = Loja.nextId;
       this.nome = nome;
-      this.endereco = endereco; // Supondo que um endereço é uma string
+      this.numero = numero; // supondo que o número é uma string
       Loja.nextId++;
     }
   
@@ -15,8 +15,8 @@ export class Loja {
     }
   
     // CREATE: Adicionar um novo Loja
-    static criarLoja(nome, endereco) {
-      const novaLoja = new Loja(nome, endereco);
+    static criarLoja(nome, numero) {
+      const novaLoja = new Loja(nome, numero);
       Loja.lojas.push(novaLoja);
       Loja.salvarNoLocalStorage();
       alert(`Loja ${nome} criada com sucesso!`);
@@ -29,7 +29,7 @@ export class Loja {
     }
   
     // UPDATE: Atualizar uma Loja existente
-    static atualizarLoja(id, novoNome, novoEndereco) {
+    static atualizarLoja(id, novoNome, novonumero) {
       const loja = Loja.lojas.find((l) => l.id === id);
       if (!loja) {
         alert("Loja não encontrada.");
@@ -37,7 +37,7 @@ export class Loja {
       }
   
       loja.nome = novoNome || loja.nome;
-      loja.endereco = novoEndereco || loja.endereco; // Atualiza apenas se novoEndereco for fornecido
+      loja.numero = novonumero || loja.numero; // Atualiza apenas se novonumero for fornecido
       Loja.salvarNoLocalStorage();
       alert(`Loja ${loja.nome} atualizada com sucesso!`);
     }

@@ -152,30 +152,31 @@ window.atualizarLojaCadastro = function () {
   const perfilSelecionado = document.getElementById("funcao").value;
   const lojaContainer = document.getElementById("loja-container");
   const lojas = JSON.parse(localStorage.getItem("lojas")) || []; // Carregar lojas do localStorage
-  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado")); // Recupera o usuário logado
 
   if (perfilSelecionado === "AdminRoot") {
     // Se for AdminRoot, exibir "Matriz" e desabilitar a seleção
     lojaContainer.innerHTML = `
-        <label for="loja" class="form-label">Loja</label>
-        <input type="text" class="form-control" id="loja" value="Matriz" disabled>
-      `;
+      <label for="loja" class="form-label">Loja</label>
+      <input type="text" class="form-control" id="loja" value="Matriz" disabled>
+    `;
   } else if (perfilSelecionado === "Gerente" || perfilSelecionado === "Caixa") {
-    // Se for Caixa ou Gerente, exibir a lista de lojas disponíveis
+    // Se for Caixa ou Gerente, exibir a lista de lojas excluindo a "Matriz"
+    const lojasSemMatriz = lojas.filter((loja) => loja.nome !== "Matriz");
+
     lojaContainer.innerHTML = `
-        <label for="loja" class="form-label">Loja</label>
-        <select id="loja" class="form-select">
-          ${lojas
-            .map((loja) => `<option value="${loja.nome}">${loja.nome}</option>`)
-            .join("")}
-        </select>
-      `;
+      <label for="loja" class="form-label">Loja</label>
+      <select id="loja" class="form-select">
+        ${lojasSemMatriz
+          .map((loja) => `<option value="${loja.nome}">${loja.nome}</option>`)
+          .join("")}
+      </select>
+    `;
   } else {
-    // Caso não seja nem AdminRoot, nem Gerente ou Caixa, exibir um campo de loja desativado
+    // Para outros perfis, pode exibir a loja associada ao usuário logado
     lojaContainer.innerHTML = `
-        <label for="loja" class="form-label">Loja</label>
-        <input type="text" class="form-control" id="loja" value="${usuarioLogado.loja}" disabled>
-      `;
+      <label for="loja" class="form-label">Loja</label>
+      <input type="text" class="form-control" id="loja" value="${usuarioLogado.loja}" disabled>
+    `;
   }
 };
 
