@@ -164,9 +164,6 @@ window.submitEdicaoLoja = function (id) {
   // Atualiza a loja usando o método da classe Loja
   Loja.atualizarLoja(id, nome, numero);
 
-  // Exibe uma mensagem de sucesso
-  alert(`Loja ${nome} atualizada com sucesso!`);
-
   showLojas(); // Atualiza a lista de lojas após a edição
 };
 
