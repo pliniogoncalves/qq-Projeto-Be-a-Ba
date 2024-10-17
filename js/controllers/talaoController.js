@@ -14,7 +14,6 @@ function formatarDataHora(dataHoraISO) {
   return [dataFormatada, horaFormatada];
 }
 
-
 // Exibir talões na tela
 window.showTaloes = function () {
   const content = document.getElementById("mainContent");
@@ -106,7 +105,7 @@ window.showTaloes = function () {
         <div class="table-responsive">
             <table class="table table-striped">
             <thead>
-                <tr class="table-success"> <!-- Tabela com cor verde -->
+                <tr>
                     <th>ID</th>
                     <th>Loja</th>
                     <th>Data</th>
@@ -139,8 +138,6 @@ window.showTaloes = function () {
 
   setActiveButton("Talões");
 };
-
-
 
 // Função para editar talão
 window.editarTalao = function (id) {
@@ -212,12 +209,15 @@ window.editarTalao = function (id) {
 // Salvar edição de talão
 window.salvarEdicaoTalao = function (event, id) {
   event.preventDefault();
-  
+
   // Obtém os valores do formulário
   const loja = document.getElementById("lojaTalaoEdit").value;
   const data = document.getElementById("dataTalaoEdit").value; // Obtém a data
   const hora = document.getElementById("horaTalaoEdit").value; // Obtém a hora
-  const quantidade = parseInt(document.getElementById("quantidadeTalaoEdit").value, 10);
+  const quantidade = parseInt(
+    document.getElementById("quantidadeTalaoEdit").value,
+    10
+  );
 
   if (!loja || !data || !hora || isNaN(quantidade) || quantidade < 1) {
     alert("Por favor, preencha todos os campos corretamente.");
@@ -334,7 +334,9 @@ window.salvarSolicitacaoTalao = function (event) {
 window.registrarEnvio = function () {
   const content = document.getElementById("mainContent");
   const taloes = Talao.listarTaloes();
-  const taloesSolicitados = taloes.filter(talao => talao.status === "Solicitado");
+  const taloesSolicitados = taloes.filter(
+    (talao) => talao.status === "Solicitado"
+  );
 
   if (taloesSolicitados.length === 0) {
     alert("Não há talões solicitados para registrar envio.");
@@ -384,7 +386,13 @@ window.confirmarEnvio = function (id) {
   const talao = Talao.buscarTalao(id);
   if (talao) {
     talao.status = "Enviado";
-    Talao.atualizarTalao(id, talao.loja, talao.dataHora, talao.quantidade, "Enviado");
+    Talao.atualizarTalao(
+      id,
+      talao.loja,
+      talao.dataHora,
+      talao.quantidade,
+      "Enviado"
+    );
     alert("Talão registrado como enviado.");
     showTaloes(); // Atualiza a lista de talões
   }
@@ -398,9 +406,11 @@ window.registrarRecebimento = function () {
   const loja = usuarioLogado.loja;
   const isAdmin = usuarioLogado.perfil === "AdminRoot"; // Verifica se o usuário é o AdminRoot
 
-  const taloesEnviados = taloes.filter(talao =>
-    isAdmin || talao.loja === loja // Admin pode ver todos, outros apenas sua loja
-  ).filter(talao => talao.status === "Enviado");
+  const taloesEnviados = taloes
+    .filter(
+      (talao) => isAdmin || talao.loja === loja // Admin pode ver todos, outros apenas sua loja
+    )
+    .filter((talao) => talao.status === "Enviado");
 
   if (taloesEnviados.length === 0) {
     alert("Não há talões enviados para registrar recebimento.");
@@ -450,12 +460,17 @@ window.confirmarRecebimento = function (id) {
   const talao = Talao.buscarTalao(id);
   if (talao) {
     talao.status = "Recebido";
-    Talao.atualizarTalao(id, talao.loja, talao.dataHora, talao.quantidade, "Recebido");
+    Talao.atualizarTalao(
+      id,
+      talao.loja,
+      talao.dataHora,
+      talao.quantidade,
+      "Recebido"
+    );
     alert("Recebimento confirmado.");
     showTaloes(); // Atualiza a lista de talões
   }
 };
-
 
 // Função para exportar talões para CSV
 window.exportarTalao = function (id) {

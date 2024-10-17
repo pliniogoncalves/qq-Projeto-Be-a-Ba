@@ -42,6 +42,14 @@ header::after {
   bottom: 0;
 }
 
+/* Estilizando o cabeçalho de todas as tabelas */
+table thead {
+  background-color: #269447; /* Cor de fundo verde */
+  color: white; /* Cor do texto do cabeçalho */
+  border-bottom: 2px solid #ccc; /* Borda inferior */
+  text-align: left; /* Alinhamento do texto */
+}
+
 /* Botão de alerta */
 .btn-alert-circle {
   background-color: #1f5d3d;
