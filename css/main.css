@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap");
 
 * {
   margin: 0;
@@ -145,8 +145,8 @@ header::after {
 }
 
 .user-avatar {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 3rem;
+  height: 3rem;
   border-radius: 50%;
   background-color: #269447;
   display: flex;
@@ -240,16 +240,20 @@ header::after {
 
 /* Responsividade para telas menores */
 /* Ajustes para tela 1366x768 */
-@media only screen and (min-width: 1366px) and (max-width: 1366px) and (min-height: 768px) and (max-height: 768px) {
+@media only screen and (min-width: 1280px) {
   /* Ajustes no header */
+  header {
+    padding: 1.5rem;
+  }
+
   header .img-fluid {
     height: 4rem; /* Tamanho da logo reduzido para caber melhor */
-    margin-left: 5rem; /* Ajuste de margem */
+    margin-left: 12rem; /* Ajuste de margem */
   }
 
   .btn-alert-circle {
-    width: 3rem; /* Ajuste do tamanho do botão */
-    height: 3rem;
+    width: 2.5rem; /* Ajuste do tamanho do botão */
+    height: 2.5rem;
     right: 2rem; /* Aproximar da lateral */
     top: 2rem; /* Reduzir espaço superior */
   }
@@ -261,8 +265,25 @@ header::after {
   }
 
   .sidebar button {
-    font-size: 0.9rem; /* Reduz o tamanho da fonte dos botões */
-    padding: 0.5rem 0.8rem; /* Reduz o espaçamento interno dos botões */
+    font-size: 0.8rem; /* Reduz o tamanho da fonte dos botões */
+    padding: 0.2rem; /* Reduz o espaçamento interno dos botões */
+  }
+
+  .menu {
+    padding-top: 12vh;
+  }
+
+  .bottom-links {
+    padding-top: 6.5vh;
+  }
+
+  .sidebar .nav-item:nth-child(1),
+  .sidebar .nav-item:nth-child(2),
+  .sidebar .nav-item:nth-child(3),
+  .sidebar .nav-item:nth-child(4),
+  .sidebar .nav-item:nth-child(5),
+  .sidebar .nav-item:nth-child(6) {
+    margin-bottom: 0rem;
   }
 
   .content {
@@ -276,8 +297,8 @@ header::after {
   }
 
   /* Ajustes no avatar do usuário */
-  .user-avatar {
-    width: 2rem; /* Reduz tamanho do avatar */
+  .user-avatar{
+    width: 2rem;
     height: 2rem;
   }
 
