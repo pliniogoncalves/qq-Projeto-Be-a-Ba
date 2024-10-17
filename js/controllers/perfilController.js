@@ -9,45 +9,34 @@ function formatarPermissao(permissao) {
 
 // Função para gerar linhas da tabela
 function gerarLinhas(perfis) {
-  let tableRows = "";
-
-  perfis.forEach((perfil) => {
-    const permissoesAdministrativas = perfil.permissoes
-      .filter(
-        (perm) =>
-          perm === "cadastrar_usuario" ||
-          perm === "excluir_usuario" ||
-          perm === "manutencao_perfis" ||
-          perm === "configurar_permissoes"
-      )
-      .map(formatarPermissao);
-
-    const permissoesOperacionais = perfil.permissoes
-      .filter(
-        (perm) =>
-          perm !== "cadastrar_usuario" &&
-          perm !== "excluir_usuario" &&
-          perm !== "manutencao_perfis" &&
-          perm !== "configurar_permissoes"
-      )
-      .map(formatarPermissao);
-
-    tableRows += `
+  return perfis
+    .map(
+      (perfil) => `
       <tr>
         <td>${perfil.nome}</td>
         <td>
           <strong>Administrativas:</strong><br>
-          ${
-            permissoesAdministrativas.length
-              ? permissoesAdministrativas.join(", ")
-              : "Nenhuma"
-          }<br>
+          ${perfil.permissoes
+            .filter(
+              (perm) =>
+                perm === "cadastrar_usuario" ||
+                perm === "excluir_usuario" ||
+                perm === "manutencao_perfis" ||
+                perm === "configurar_permissoes"
+            )
+            .map(formatarPermissao)
+            .join(", ") || "Nenhuma"}<br>
           <strong>Operacionais:</strong><br>
-          ${
-            permissoesOperacionais.length
-              ? permissoesOperacionais.join(", ")
-              : "Nenhuma"
-          }
+          ${perfil.permissoes
+            .filter(
+              (perm) =>
+                perm !== "cadastrar_usuario" &&
+                perm !== "excluir_usuario" &&
+                perm !== "manutencao_perfis" &&
+                perm !== "configurar_permissoes"
+            )
+            .map(formatarPermissao)
+            .join(", ") || "Nenhuma"}
         </td>
         <td>
           <i class="fas fa-edit" style="cursor: pointer; margin-right: 10px;" onclick="editarPerfil(${
@@ -57,12 +46,11 @@ function gerarLinhas(perfis) {
             perfil.id
           })"></i>
         </td>
-      </tr>
-    `;
-  });
-
-  return tableRows;
+      </tr>`
+    )
+    .join("");
 }
+
 
 window.showPerfis = async function () {
   const content = document.getElementById("mainContent");
@@ -294,7 +282,7 @@ window.editarPerfil = async function (id) {
   `;
 };
 
-window.submitEdicaoPerfil = function (id) {
+window.submitEdicaoPerfil = async function (id) {
   const nome = document.getElementById("nomePerfil").value;
   const permissoes = [];
 
@@ -332,9 +320,11 @@ window.submitEdicaoPerfil = function (id) {
     return;
   }
 
-  Perfil.atualizarPerfil(id, nome, permissoes);
-  showPerfis();
+  // Atualização do perfil deve ser assíncrona
+  await Perfil.atualizarPerfil(id, nome, permissoes);
+  await showPerfis(); // Aguarda o recarregamento da lista de perfis
 };
+
 
 window.excluirPerfil = function (id) {
   const confirmacao = confirm("Tem certeza que deseja excluir este perfil?");

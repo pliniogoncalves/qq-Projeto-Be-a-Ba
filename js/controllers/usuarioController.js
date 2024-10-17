@@ -1,5 +1,6 @@
 import { Usuario } from "../models/Usuario.js";
 import { Perfil } from "../models/Perfil.js";
+import { Loja } from "../models/Loja.js";
 
 window.showUsuarios = function () {
   const content = document.getElementById("mainContent");
@@ -20,11 +21,18 @@ window.showUsuarios = function () {
   usuariosFiltrados.forEach((user) => {
     if (user && user.perfil) {
       // Verifica se 'user' existe e se 'perfil' está definido
+      let lojaNome = user.loja ? user.loja.nome : "Nenhuma loja"; // Acessando a propriedade correta
+
+      // Se o usuário for AdminRoot, atribui um valor padrão para loja
+      if (user.perfil === "AdminRoot") {
+        lojaNome = "Matriz"; // Ou qualquer valor padrão que você deseje
+      }
+
       tableRows += `
           <tr>
               <td>${user.nome}</td>
               <td>${user.perfil}</td>
-              <td>${user.loja}</td>
+              <td>${lojaNome}</td> <!-- Exibindo o nome da loja -->
               <td>${user.email}</td>
               <td>
                   <i class="fas fa-edit" style="cursor: pointer; margin-right: 10px;" onclick="editarUsuario(${user.id})"></i>
@@ -79,6 +87,7 @@ window.showUsuarios = function () {
   setActiveButton("Usuários");
 };
 
+
 window.cadastrarUsuario = function () {
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
 
@@ -92,8 +101,8 @@ window.cadastrarUsuario = function () {
 
   const content = document.getElementById("mainContent");
 
-  // Obter a lista de lojas (ou definir um array de lojas)
-  const lojas = ["Loja 1", "Loja 2", "Loja 3"];
+  // Recupera as lojas do LocalStorage
+  const lojas = JSON.parse(localStorage.getItem("lojas")) || [];
 
   // Obter os perfis de acesso do LocalStorage
   const perfis = JSON.parse(localStorage.getItem("perfis")) || [];
@@ -144,7 +153,7 @@ window.cadastrarUsuario = function () {
 window.atualizarLojaCadastro = function () {
   const perfilSelecionado = document.getElementById("funcao").value;
   const lojaContainer = document.getElementById("loja-container");
-  const lojas = ["Loja 1", "Loja 2", "Loja 3"];
+  const lojas = JSON.parse(localStorage.getItem("lojas")) || []; // Carregar lojas do localStorage
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado")); // Recupera o usuário logado
 
   if (perfilSelecionado === "AdminRoot") {
@@ -153,15 +162,21 @@ window.atualizarLojaCadastro = function () {
         <label for="loja" class="form-label">Loja</label>
         <input type="text" class="form-control" id="loja" value="Matriz" disabled>
       `;
-  } else {
-    // Se for Caixa ou Gerente (AdminRoot cadastrando), exibir a lista de lojas
+  } else if (perfilSelecionado === "Gerente" || perfilSelecionado === "Caixa") {
+    // Se for Caixa ou Gerente, exibir a lista de lojas disponíveis
     lojaContainer.innerHTML = `
         <label for="loja" class="form-label">Loja</label>
         <select id="loja" class="form-select">
           ${lojas
-            .map((loja) => `<option value="${loja}">${loja}</option>`)
+            .map((loja) => `<option value="${loja.nome}">${loja.nome}</option>`)
             .join("")}
         </select>
+      `;
+  } else {
+    // Caso não seja nem AdminRoot, nem Gerente ou Caixa, exibir um campo de loja desativado
+    lojaContainer.innerHTML = `
+        <label for="loja" class="form-label">Loja</label>
+        <input type="text" class="form-control" id="loja" value="${usuarioLogado.loja}" disabled>
       `;
   }
 };
@@ -201,8 +216,8 @@ window.editarUsuario = function (id) {
 
   const content = document.getElementById("mainContent");
 
-  // Armazenar a lista de lojas
-  const lojas = ["Loja 1", "Loja 2", "Loja 3"];
+  // Recupera as lojas do LocalStorage
+  const lojas = JSON.parse(localStorage.getItem("lojas")) || [];
 
   // Obter a lista de perfis de acesso do LocalStorage
   const perfis = JSON.parse(localStorage.getItem("perfis")) || [];
@@ -224,27 +239,32 @@ window.editarUsuario = function (id) {
     )
     .join("");
 
+  // Gerar opções de lojas
+  const lojaOptions = lojas
+    .map(
+      (loja) => `
+    <option value="${loja.id}" ${
+        usuario.loja && usuario.loja.id === loja.id ? "selected" : ""
+      }>${loja.nome}</option>
+  `
+    )
+    .join("");
+
   content.innerHTML = `
     <div class="form-container">
         <h1 class="h4 mb-4">Editar Usuário</h1>
         <form id="userForm">
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome do Usuário</label>
-                <input type="text" class="form-control" id="nome" value="${
-                  usuario.nome
-                }">
+                <input type="text" class="form-control" id="nome" value="${usuario.nome}">
             </div>
             <div class="mb-3">
                 <label for="matricula" class="form-label">Matrícula</label>
-                <input type="text" class="form-control" id="matricula" value="${
-                  usuario.matricula
-                }">
+                <input type="text" class="form-control" id="matricula" value="${usuario.matricula}">
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">E-mail</label>
-                <input type="email" class="form-control" id="email" value="${
-                  usuario.email
-                }">
+                <input type="email" class="form-control" id="email" value="${usuario.email}">
             </div>
             <div class="mb-3">
                 <label for="senha" class="form-label">Senha</label>
@@ -267,14 +287,7 @@ window.editarUsuario = function (id) {
                     : `
                   <label for="loja" class="form-label">Loja</label>
                   <select id="loja" class="form-select">
-                      ${lojas
-                        .map(
-                          (loja) =>
-                            `<option value="${loja}" ${
-                              usuario.loja === loja ? "selected" : ""
-                            }>${loja}</option>`
-                        )
-                        .join("")}
+                      ${lojaOptions}
                   </select>
                   `
                 }
@@ -291,20 +304,23 @@ window.submitEdicao = function (id) {
   const email = document.getElementById("email").value;
   const senha = document.getElementById("senha").value || null; // Permite senha vazia
   const perfil = document.getElementById("funcao").value;
-  let loja = document.getElementById("loja")
-    ? document.getElementById("loja").value
-    : "Matriz";
+  const lojaId = document.getElementById("loja") ? document.getElementById("loja").value : null;
 
-  // Verificar se todos os campos estão preenchidos
-  if (!nome || !matricula || !email || !perfil || !loja) {
-    alert("Preencha todos os campos.");
+  // Verificar se todos os campos obrigatórios estão preenchidos
+  if (!nome || !matricula || !email || !perfil || (perfil !== "AdminRoot" && !lojaId)) {
+    alert("Preencha todos os campos obrigatórios.");
     return;
   }
+
+  // Encontrar a loja correspondente ao ID
+  const lojas = JSON.parse(localStorage.getItem("lojas")) || [];
+  const loja = lojas.find((l) => l.id === parseInt(lojaId, 10));
 
   // Atualizar o usuário
   Usuario.atualizarUsuario(id, nome, matricula, email, senha, perfil, loja);
   showUsuarios(); // Exibir a lista de usuários após a edição
 };
+
 
 window.excluirUsuario = function (id) {
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
