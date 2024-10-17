@@ -46,7 +46,8 @@ export class Talao {
 
   // Método para buscar um talão pelo ID
   static buscarTalao(id) {
-    return Talao.taloes.find((talao) => talao.id === id);
+    // Certificar-se de que o id está no mesmo tipo (inteiro)
+    return Talao.taloes.find((talao) => talao.id === Number(id));
   }
 
   // UPDATE: Atualizar informações de um talão existente
@@ -57,7 +58,7 @@ export class Talao {
     novaQuantidade,
     novoStatus
   ) {
-    const talao = Talao.taloes.find((t) => t.id === id);
+    const talao = Talao.taloes.find((t) => t.id === Number(id)); // Certificar-se de comparar o ID como número
     if (talao) {
       talao.loja = novaLoja || talao.loja;
       talao.dataHora = novaDataHora || talao.dataHora;
@@ -77,7 +78,7 @@ export class Talao {
 
   // DELETE: Remover um talão
   static excluirTalao(id) {
-    const talaoIndex = Talao.taloes.findIndex((t) => t.id === id);
+    const talaoIndex = Talao.taloes.findIndex((t) => t.id === Number(id)); // Certificar-se de comparar o ID como número
     if (talaoIndex !== -1) {
       Talao.taloes.splice(talaoIndex, 1); // Remove o talão do array
       Talao.salvarNoLocalStorage();

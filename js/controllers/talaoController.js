@@ -1,17 +1,16 @@
-// controllers/TalaoController.js
-
 import { Talao } from "../models/Talao.js";
+import { Loja } from "../models/Loja.js"; // Presumindo que há um model de Loja
 
-const lojas = ["Loja 1", "Loja 2", "Loja 3"]; // Lista de lojas
-
-// Função para formatar data e hora
+// Função para formatar data e hora para os campos de input
 function formatarDataHora(dataHoraISO) {
   const data = new Date(dataHoraISO);
-  const dataFormatada = data.toLocaleDateString("pt-BR");
-  const horaFormatada = data.toLocaleTimeString("pt-BR", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+
+  // Formatar data para yyyy-MM-dd, compatível com o input de data
+  const dataFormatada = data.toISOString().split("T")[0];
+
+  // Formatar hora para HH:mm, compatível com o input de hora
+  const horaFormatada = data.toTimeString().split(":").slice(0, 2).join(":");
+
   return [dataFormatada, horaFormatada];
 }
 
@@ -30,49 +29,57 @@ window.showTaloes = function () {
     return isAdminRootMatriz || talao.loja === usuarioLogado.loja;
   });
 
-  taloesFiltrados.forEach((talao) => {
-    if (talao) {
-      const [data, hora] = formatarDataHora(talao.dataHora);
-      tableRows += `
-            <tr>
-                <td>${talao.id}</td>
-                <td>${talao.loja}</td>
-                <td>${data}</td>
-                <td>${hora}</td>
-                <td>${talao.quantidade}</td>
-                <td><span class="badge ${
-                  talao.status === "Solicitado"
-                    ? "bg-warning"
-                    : talao.status === "Recebido"
-                    ? "bg-success"
-                    : "bg-secondary"
-                }">${talao.status}</span></td>
-                 <td>
-                    <i class="fas fa-eye" 
-                       style="cursor: pointer; margin-right: 10px;" 
-                       onclick="visualizarDetalhes(${talao.id})" 
-                       data-bs-toggle="tooltip" 
-                       title="Detalhes"></i>
-                    <i class="fas fa-edit" 
-                       style="cursor: pointer; margin-right: 10px;" 
-                       onclick="editarTalao(${talao.id})" 
-                       data-bs-toggle="tooltip" 
-                       title="Editar"></i>
-                    <i class="fas fa-trash" 
-                       style="cursor: pointer; margin-right: 10px;" 
-                       onclick="excluirTalao(${talao.id})" 
-                       data-bs-toggle="tooltip" 
-                       title="Excluir"></i>
-                    <i class="fas fa-file-export" 
-                       style="cursor: pointer;" 
-                       onclick="exportarTalao(${talao.id})" 
-                       data-bs-toggle="tooltip" 
-                       title="Exportar"></i>
-                </td>
-            </tr>
-        `;
-    }
-  });
+  // Verificar se há talões para exibir
+  if (taloesFiltrados.length === 0) {
+    tableRows = `
+      <tr>
+        <td colspan="7" class="text-center">Nenhum talão encontrado.</td>
+      </tr>`;
+  } else {
+    taloesFiltrados.forEach((talao) => {
+      if (talao) {
+        const [data, hora] = formatarDataHora(talao.dataHora); // Formato brasileiro para data
+        tableRows += `
+              <tr>
+                  <td>${talao.id}</td>
+                  <td>${talao.loja}</td>
+                  <td>${data}</td>
+                  <td>${hora}</td>
+                  <td>${talao.quantidade}</td>
+                  <td><span class="badge ${
+                    talao.status === "Solicitado"
+                      ? "bg-warning"
+                      : talao.status === "Recebido"
+                      ? "bg-success"
+                      : "bg-secondary"
+                  }">${talao.status}</span></td>
+                  <td>
+                      <i class="fas fa-eye" 
+                         style="cursor: pointer; margin-right: 10px;" 
+                         onclick="visualizarDetalhes(${talao.id})" 
+                         data-bs-toggle="tooltip" 
+                         title="Detalhes"></i>
+                      <i class="fas fa-edit" 
+                         style="cursor: pointer; margin-right: 10px;" 
+                         onclick="editarTalao(${talao.id})" 
+                         data-bs-toggle="tooltip" 
+                         title="Editar"></i>
+                      <i class="fas fa-trash" 
+                         style="cursor: pointer; margin-right: 10px;" 
+                         onclick="excluirTalao(${talao.id})" 
+                         data-bs-toggle="tooltip" 
+                         title="Excluir"></i>
+                      <i class="fas fa-file-export" 
+                         style="cursor: pointer;" 
+                         onclick="exportarTalao(${talao.id})" 
+                         data-bs-toggle="tooltip" 
+                         title="Exportar"></i>
+                  </td>
+              </tr>
+          `;
+      }
+    });
+  }
 
   content.innerHTML = `
         <div class="overlay" id="overlay"></div>
@@ -83,11 +90,10 @@ window.showTaloes = function () {
             <div class="row justify-content-center">
                 <div class="col-md-8 col-sm-12 mb-4">
                     <div class="input-group">
-                        <input type="text" class="form-control" id="talaoSearchInput" placeholder="Procurar por talão">
+                        <input type="text" class="form-control" id="talaoSearchInput" placeholder="Procurar por talão" oninput="buscarTalao()">
                         <div class="input-icon">
                             <i class="fas fa-search"></i>
                         </div>
-                        <button class="btn btn-custom" type="button" onclick="buscarTalao()">Buscar</button>
                         <button class="btn btn-secondary" type="button" onclick="exportarTodosTaloes()">Exportar Todos</button>
                     </div>
                 </div>
@@ -115,13 +121,15 @@ window.showTaloes = function () {
         <div class="text-center mb-4">
             <button class="btn btn-custom" type="button" onclick="solicitarTalao()">Solicitar Talão</button>
             <button class="btn btn-success" type="button" onclick="registrarRecebimento()">Registrar Recebimento</button>
+            <button class="btn btn-info" type="button" onclick="registrarEnvio()">Registrar Envio</button>
         </div>
     `;
 
+  // Inicializa tooltips
   const tooltipTriggerList = [].slice.call(
     document.querySelectorAll('[data-bs-toggle="tooltip"]')
   );
-  const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+  tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl);
   });
 
@@ -133,30 +141,64 @@ window.solicitarTalao = function () {
   const content = document.getElementById("mainContent");
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
 
+  // Verificar se há lojas cadastradas
+  const lojasCadastradas = Loja.listarLojas(); // Presumindo que existe uma função para listar lojas
+
+  // Lógica para campo da loja, dependendo do perfil do usuário logado
+  let lojaInput = "";
+  if (usuarioLogado.perfil === "AdminRoot" && usuarioLogado.loja === "Matriz") {
+    if (lojasCadastradas.length > 0) {
+      lojaInput = `
+        <select class="form-select" id="lojaTalao" required>
+          ${lojasCadastradas
+            .map((loja) => `<option value="${loja.nome}">${loja.nome}</option>`)
+            .join("")}
+        </select>`;
+    } else {
+      lojaInput = `
+        <select class="form-select" id="lojaTalao" disabled>
+          <option value="">Nenhuma loja cadastrada</option>
+        </select>`;
+    }
+  } else {
+    lojaInput = `
+      <input type="text" class="form-control" id="lojaTalao" value="${usuarioLogado.loja}" readonly required>`;
+  }
+
+  // Mostrar conteúdo dinâmico do formulário
   content.innerHTML = `
-          <div class="form-container">
-          <h1 class="h4 mb-4">Solicitar Talão</h1>
-          <form id="talaoForm" onsubmit="salvarSolicitacaoTalao(event)">
-              <div class="mb-3">
-                  <label for="lojaTalao" class="form-label">Loja</label>
-                  <input type="text" class="form-control" id="lojaTalao" value="${usuarioLogado.loja}" readonly required>
-              </div>
-              <div class="mb-3">
-                  <label for="dataTalao" class="form-label">Data</label>
-                  <input type="date" class="form-control" id="dataTalao" required>
-              </div>
-              <div class="mb-3">
-                  <label for="horaTalao" class="form-label">Hora</label>
-                  <input type="time" class="form-control" id="horaTalao" required>
-              </div>
-              <div class="mb-3">
-                  <label for="quantidadeTalao" class="form-label">Quantidade de Talões</label>
-                  <input type="number" class="form-control" id="quantidadeTalao" placeholder="Digite a quantidade" min="1" required>
-              </div>
-              <button type="submit" class="btn btn-submit">Solicitar Talão</button>
-          </form>
-      </div>
-      `;
+    <div class="form-container">
+      <h1 class="h4 mb-4">Solicitar Talão</h1>
+      <form id="talaoForm" onsubmit="salvarSolicitacaoTalao(event)">
+        <div class="mb-3">
+          <label for="lojaTalao" class="form-label">Loja</label>
+          ${lojaInput}
+        </div>
+        <div class="mb-3">
+          <label for="dataTalao" class="form-label">Data</label>
+          <input type="date" class="form-control" id="dataTalao" required>
+        </div>
+        <div class="mb-3">
+          <label for="horaTalao" class="form-label">Hora</label>
+          <input type="time" class="form-control" id="horaTalao" required>
+        </div>
+        <div class="mb-3">
+          <label for="quantidadeTalao" class="form-label">Quantidade de Talões</label>
+          <input type="number" class="form-control" id="quantidadeTalao" placeholder="Digite a quantidade" min="1" required>
+        </div>
+        <button type="submit" class="btn btn-submit" ${
+          lojasCadastradas.length === 0 ? "disabled" : ""
+        }>
+          Solicitar Talão
+        </button>
+        ${
+          lojasCadastradas.length === 0
+            ? '<p class="text-danger mt-2">Nenhuma loja cadastrada. Por favor, cadastre uma loja para continuar.</p>'
+            : ""
+        }
+      </form>
+    </div>
+  `;
 };
 
 // Salvar solicitação de talão
@@ -187,10 +229,11 @@ window.registrarRecebimento = function () {
   const taloes = Talao.listarTaloes();
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
   const loja = usuarioLogado.loja;
+  const isAdmin = usuarioLogado.perfil === "AdminRoot"; // Verifica se o usuário é o AdminRoot
 
-  const taloesSolicitados = taloes.filter(
-    (talao) => talao.loja === loja && talao.status === "Solicitado"
-  );
+  const taloesSolicitados = taloes.filter(talao => 
+    isAdmin || talao.loja === loja // Admin pode ver todos, outros apenas sua loja
+  ).filter(talao => talao.status === "Solicitado");
 
   if (taloesSolicitados.length === 0) {
     alert("Não há talões solicitados para esta loja.");
@@ -235,6 +278,7 @@ window.registrarRecebimento = function () {
     `;
 };
 
+
 // Confirmar recebimento
 window.confirmarRecebimento = function (id) {
   const talao = Talao.buscarTalao(id);
@@ -242,21 +286,63 @@ window.confirmarRecebimento = function (id) {
     talao.status = "Recebido";
     Talao.atualizarTalao(talao);
     showTaloes();
-  } else {
-    alert("Talão não encontrado.");
+  }
+};
+
+// Função para registrar o envio
+window.registrarEnvio = function () {
+  const talaoId = prompt("Digite o ID do talão para registrar o envio:");
+  if (talaoId) {
+    const talao = Talao.buscarTalao(parseInt(talaoId, 10));
+    if (talao && talao.status === "Solicitado") {
+      talao.status = "Enviado";
+      Talao.atualizarTalao(talao);
+      alert("Talão registrado como enviado.");
+      showTaloes();
+    }
   }
 };
 
 // Função para editar talão
 window.editarTalao = function (id) {
+  console.log(`Editando talão com ID: ${id}`); // Log para verificar o ID
   const talao = Talao.buscarTalao(id);
-  if (!talao) {
-    alert("Talão não encontrado.");
-    return;
-  }
 
   const content = document.getElementById("mainContent");
+
+  // Certifique-se de que a dataHora do talão está no formato correto
   const [data, hora] = formatarDataHora(talao.dataHora);
+
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+
+  // Verificar se há lojas cadastradas
+  const lojasCadastradas = Loja.listarLojas();
+
+  // Lógica para exibir o campo da loja
+  let lojaInput = "";
+  if (usuarioLogado.perfil === "AdminRoot" && usuarioLogado.loja === "Matriz") {
+    if (lojasCadastradas.length > 0) {
+      lojaInput = `
+        <select class="form-select" id="lojaTalaoEdit" required>
+          ${lojasCadastradas
+            .map(
+              (loja) =>
+                `<option value="${loja.nome}" ${
+                  loja.nome === talao.loja ? "selected" : ""
+                }>${loja.nome}</option>`
+            )
+            .join("")}
+        </select>`;
+    } else {
+      lojaInput = `
+        <select class="form-select" id="lojaTalaoEdit" disabled>
+          <option value="">Nenhuma loja cadastrada</option>
+        </select>`;
+    }
+  } else {
+    lojaInput = `
+      <input type="text" class="form-control" id="lojaTalaoEdit" value="${talao.loja}" readonly required>`;
+  }
 
   content.innerHTML = `
           <div class="form-container">
@@ -264,7 +350,7 @@ window.editarTalao = function (id) {
           <form id="talaoEditForm" onsubmit="salvarEdicaoTalao(event, ${id})">
               <div class="mb-3">
                   <label for="lojaTalaoEdit" class="form-label">Loja</label>
-                  <input type="text" class="form-control" id="lojaTalaoEdit" value="${talao.loja}" readonly required>
+                  ${lojaInput}
               </div>
               <div class="mb-3">
                   <label for="dataTalaoEdit" class="form-label">Data</label>
@@ -304,12 +390,16 @@ window.salvarEdicaoTalao = function (event, id) {
   const talao = Talao.buscarTalao(id);
 
   if (talao) {
+    // Atualiza os campos do talão
     talao.dataHora = dataHora;
     talao.quantidade = quantidade;
+    talao.loja = loja;
+
+    // Salva as atualizações
     Talao.atualizarTalao(talao);
+
+    // Exibe a lista atualizada de talões
     showTaloes();
-  } else {
-    alert("Erro ao atualizar o talão.");
   }
 };
 
@@ -317,7 +407,7 @@ window.salvarEdicaoTalao = function (event, id) {
 window.excluirTalao = function (id) {
   const confirmacao = confirm("Tem certeza que deseja excluir este talão?");
   if (confirmacao) {
-    Talao.removerTalao(id);
+    Talao.excluirTalao(id);
     showTaloes();
   }
 };
@@ -325,10 +415,6 @@ window.excluirTalao = function (id) {
 // Função para exportar talões para CSV
 window.exportarTalao = function (id) {
   const talao = Talao.buscarTalao(id);
-  if (!talao) {
-    alert("Talão não encontrado.");
-    return;
-  }
 
   const csvContent = `ID,Loja,Data,Hora,Quantidade,Status\n${talao.id},${
     talao.loja
@@ -389,10 +475,6 @@ function downloadCSV(csvContent, fileName) {
 // Função para visualizar detalhes do talão
 window.visualizarDetalhes = function (id) {
   const talao = Talao.buscarTalao(id);
-  if (!talao) {
-    alert("Talão não encontrado.");
-    return;
-  }
 
   const [data, hora] = formatarDataHora(talao.dataHora);
 
@@ -413,6 +495,3 @@ window.visualizarDetalhes = function (id) {
   const modal = document.getElementById("detalhesModal");
   modal.style.display = "block";
 };
-
-
-
