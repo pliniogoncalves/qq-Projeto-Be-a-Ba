@@ -78,21 +78,26 @@ function carregarInformacoesUsuario() {
       .map((name) => name.substring(0, 2)) // Pega as duas primeiras letras de cada parte
       .join(""); // Junta as iniciais
     const userName = usuarioLogado.nome;
+    const userLoja = usuarioLogado.loja; // Supondo que 'loja' seja uma string, não um objeto
+
+    // Verifique se 'loja' é um objeto e obtenha a propriedade correta
+    const lojaDisplayName = typeof userLoja === 'object' && userLoja !== null ? userLoja.nome : userLoja;
 
     userInfo.innerHTML = `
-            <div class="user-avatar">
-                <span class="user-initials">${userInitials}</span>
-            </div>
-            <div class="user-details">
-                <p class="user-perfil"><strong>${usuarioLogado.perfil}</strong></p>
-                <p class="user-name"><strong>${usuarioLogado.loja}</strong></p>
-            </div>
-        `;
+      <div class="user-avatar">
+        <span class="user-initials">${userInitials}</span>
+      </div>
+      <div class="user-details">
+        <p class="user-perfil"><strong>${usuarioLogado.perfil}</strong></p>
+        <p class="user-name"><strong>${lojaDisplayName}</strong></p>
+      </div>
+    `;
   } else {
     // Se o usuário não está logado, redireciona para a página de login
     window.location.href = "login.html";
   }
 }
+
 
 // Função de logout
 function logout() {

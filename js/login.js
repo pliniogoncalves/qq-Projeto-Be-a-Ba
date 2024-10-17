@@ -9,16 +9,17 @@ document
     const senha = document.getElementById("senha");
     const eyeIcon = document.getElementById("eyeIcon");
 
-    if (senha.type === "senha") {
+    if (senha.type === "password") {  // Corrigido para 'password'
       senha.type = "text";
       eyeIcon.classList.remove("bi-eye-slash");
       eyeIcon.classList.add("bi-eye");
     } else {
-      senha.type = "senha";
+      senha.type = "password";  // Corrigido para 'password'
       eyeIcon.classList.remove("bi-eye");
       eyeIcon.classList.add("bi-eye-slash");
     }
   });
+
 
 // Função para verificar o login
 window.login = function () {
