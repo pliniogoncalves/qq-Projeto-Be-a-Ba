@@ -5,6 +5,11 @@ import { Loja } from "../models/Loja.js";
 function formatarDataHora(dataHoraISO) {
   const data = new Date(dataHoraISO);
 
+  if (isNaN(data.getTime())) {
+    console.error("Data inválida:", dataHoraISO);
+    return [null, null]; // Retorne valores padrão em caso de erro
+  }
+
   // Formatar data para yyyy-MM-dd, compatível com o input de data
   const dataFormatada = data.toISOString().split("T")[0];
 
@@ -58,45 +63,53 @@ window.showTaloes = function (paginaAtual = 1) {
   } else {
     taloesPaginados.forEach((talao) => {
       if (talao) {
-        // Formatar data e hora no formato brasileiro
-        const [data, hora] = formatarDataHora(talao.dataHora);
+        // Verificar se a dataHora é válida
+        if (talao.dataHora) {
+          // Formatar data e hora no formato brasileiro
+          const [data, hora] = formatarDataHora(talao.dataHora);
 
-        // Gerar os cards com as informações do talão
-        cardRows += `
-          <div class="col-md-4 col-sm-6 mb-4">
-            <div class="card h-100 shadow-sm">
-              <div class="card-body">
-                <h5 class="card-title">Talão ID: ${talao.id}</h5>
-                <p class="card-text">
-                  <strong>Loja:</strong> ${talao.loja}<br>
-                  <strong>Data:</strong> ${data}<br>
-                  <strong>Hora:</strong> ${hora}<br>
-                  <strong>Quantidade:</strong> ${talao.quantidade}<br>
-                  <span class="badge ${
-                    talao.status === "Solicitado"
-                      ? "bg-warning"
-                      : talao.status === "Recebido"
-                      ? "bg-success"
-                      : "bg-secondary"
-                  }">${talao.status}</span>
-                </p>
-              </div>
-              <div class="card-footer text-center">
-                <i class="fas fa-eye mx-2" style="cursor: pointer;" onclick="visualizarDetalhes(${
-                  talao.id
-                })" data-bs-toggle="tooltip" title="Detalhes"></i>
-                <i class="fas fa-edit mx-2" style="cursor: pointer;" onclick="editarTalao(${
-                  talao.id
-                })" data-bs-toggle="tooltip" title="Editar"></i>
-                <i class="fas fa-trash mx-2" style="cursor: pointer;" onclick="excluirTalao(${
-                  talao.id
-                })" data-bs-toggle="tooltip" title="Excluir"></i>
-                <i class="fas fa-file-export mx-2" style="cursor: pointer;" onclick="exportarTalao(${
-                  talao.id
-                })" data-bs-toggle="tooltip" title="Exportar"></i>
-              </div>
-            </div>
-          </div>`;
+          // Verifique se a data e hora foram formatadas corretamente
+          if (data && hora) {
+            // Gerar os cards com as informações do talão
+            cardRows += `
+              <div class="col-md-4 col-sm-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                  <div class="card-body">
+                    <h5 class="card-title">Talão ID: ${talao.id}</h5>
+                    <p class="card-text">
+                      <strong>Loja:</strong> ${talao.loja}<br>
+                      <strong>Data:</strong> ${data}<br>
+                      <strong>Hora:</strong> ${hora}<br>
+                      <strong>Quantidade:</strong> ${talao.quantidade}<br>
+                      <span class="badge ${
+                        talao.status === "Solicitado"
+                          ? "bg-warning"
+                          : talao.status === "Recebido"
+                          ? "bg-success"
+                          : "bg-secondary"
+                      }">${talao.status}</span>
+                    </p>
+                  </div>
+                  <div class="card-footer text-center">
+                    <i class="fas fa-eye mx-2" style="cursor: pointer;" onclick="visualizarDetalhes(${
+                      talao.id
+                    })" data-bs-toggle="tooltip" title="Detalhes"></i>
+                    <i class="fas fa-edit mx-2" style="cursor: pointer;" onclick="editarTalao(${
+                      talao.id
+                    })" data-bs-toggle="tooltip" title="Editar"></i>
+                    <i class="fas fa-trash mx-2" style="cursor: pointer;" onclick="excluirTalao(${
+                      talao.id
+                    })" data-bs-toggle="tooltip" title="Excluir"></i>
+                    <i class="fas fa-file-export mx-2" style="cursor: pointer;" onclick="exportarTalao(${
+                      talao.id
+                    })" data-bs-toggle="tooltip" title="Exportar"></i>
+                  </div>
+                </div>
+              </div>`;
+          }
+        } else {
+          console.error("Talão sem data:", talao);
+        }
       }
     });
   }
@@ -187,6 +200,7 @@ window.showTaloes = function (paginaAtual = 1) {
 
   setActiveButton("Talões");
 };
+
 
 // Função para editar talão
 window.editarTalao = function (id) {
