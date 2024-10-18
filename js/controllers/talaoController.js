@@ -14,17 +14,29 @@ function formatarDataHora(dataHoraISO) {
   return [dataFormatada, horaFormatada];
 }
 
-// Exibir talões na tela
-window.showTaloes = function (paginaAtual = 1, itensPorPagina = 2) {
+// Função para exibir a lista de talões
+window.showTaloes = function (paginaAtual = 1) {
   const content = document.getElementById("mainContent");
   const taloes = Talao.listarTaloes();
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
 
   let tableRows = "";
 
+  // Verifica se o usuário é AdminRoot da Matriz
   const isAdminRootMatriz =
     usuarioLogado.perfil === "AdminRoot" && usuarioLogado.loja === "Matriz";
 
+  // Ajusta a quantidade de itens por página com base no tamanho da tela
+  let itensPorPagina;
+  if (window.innerWidth >= 1200) {
+    itensPorPagina = 10; // Telas grandes (desktops)
+  } else if (window.innerWidth >= 768) {
+    itensPorPagina = 3; // Telas médias (tablets)
+  } else {
+    itensPorPagina = 2; // Telas pequenas (smartphones)
+  }
+
+  // Filtra os talões com base na loja do usuário logado
   const taloesFiltrados = taloes.filter((talao) => {
     return isAdminRootMatriz || talao.loja === usuarioLogado.loja;
   });
@@ -47,8 +59,8 @@ window.showTaloes = function (paginaAtual = 1, itensPorPagina = 2) {
   } else {
     taloesPaginados.forEach((talao) => {
       if (talao) {
-        // Formatar data e hora no formato brasileiro (dd/mm/yyyy)
-        const [data, hora] = formatarDataHora(talao.dataHora); // Formato brasileiro para data
+        // Formatar data e hora no formato brasileiro
+        const [data, hora] = formatarDataHora(talao.dataHora);
 
         tableRows += `
               <tr>
@@ -98,34 +110,29 @@ window.showTaloes = function (paginaAtual = 1, itensPorPagina = 2) {
       <td colspan="7">
         <nav>
           <ul class="pagination justify-content-center">
-            <!-- Botão Previous (desabilitado na primeira página) -->
             <li class="page-item ${paginaAtual === 1 ? "disabled" : ""}">
               <a class="page-link" href="#" aria-label="Previous" onclick="showTaloes(${
                 paginaAtual - 1
-              }, ${itensPorPagina})">
+              })">
                 <span aria-hidden="true">&laquo;</span>
               </a>
             </li>
-
-            <!-- Números da paginação -->
             ${Array.from(
               { length: totalPaginas },
               (_, i) => `
               <li class="page-item ${i + 1 === paginaAtual ? "active" : ""}">
-                <a class="page-link" href="#" onclick="showTaloes(${
-                  i + 1
-                }, ${itensPorPagina})">${i + 1}</a>
+                <a class="page-link" href="#" onclick="showTaloes(${i + 1})">${
+                i + 1
+              }</a>
               </li>
             `
             ).join("")}
-
-            <!-- Botão Next (desabilitado na última página) -->
             <li class="page-item ${
               paginaAtual === totalPaginas ? "disabled" : ""
             }">
               <a class="page-link" href="#" aria-label="Next" onclick="showTaloes(${
                 paginaAtual + 1
-              }, ${itensPorPagina})">
+              })">
                 <span aria-hidden="true">&raquo;</span>
               </a>
             </li>
@@ -153,7 +160,6 @@ window.showTaloes = function (paginaAtual = 1, itensPorPagina = 2) {
             </div>
         </div>
 
-        <!-- Espaçamento adicional entre a tabela e os botões -->
         <div class="table-responsive mb-4">
             <table class="table table-striped">
             <thead>

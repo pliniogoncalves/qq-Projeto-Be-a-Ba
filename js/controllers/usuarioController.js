@@ -2,13 +2,24 @@ import { Usuario } from "../models/Usuario.js";
 import { Perfil } from "../models/Perfil.js";
 import { Loja } from "../models/Loja.js";
 
-window.showUsuarios = function (paginaAtual = 1, itensPorPagina = 5) {
+// Função para exibir a lista de usuários
+window.showUsuarios = function (paginaAtual = 1) {
   const content = document.getElementById("mainContent");
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
   const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
   content.innerHTML = "";
 
   let tableRows = "";
+
+  // Ajusta a quantidade de itens por página com base no tamanho da tela
+  let itensPorPagina;
+  if (window.innerWidth >= 1200) {
+    itensPorPagina = 10; // Telas grandes (desktops)
+  } else if (window.innerWidth >= 768) {
+    itensPorPagina = 6; // Telas médias (tablets)
+  } else {
+    itensPorPagina = 5; // Telas pequenas (smartphones)
+  }
 
   // Filtra usuários com base no perfil do usuário logado
   const usuariosFiltrados = usuarios.filter((user) => {
@@ -38,15 +49,11 @@ window.showUsuarios = function (paginaAtual = 1, itensPorPagina = 5) {
   } else {
     usuariosPaginados.forEach((user) => {
       if (user) {
-        // Verifica se 'user' existe e se 'perfil' está definido
-        let lojaNome = user.loja ? user.loja.nome : "Nenhuma loja"; // Acessando a propriedade correta
-
-        // Se o usuário for AdminRoot, atribui um valor padrão para loja
+        let lojaNome = user.loja ? user.loja.nome : "Nenhuma loja";
         if (user.perfil === "AdminRoot") {
-          lojaNome = "Matriz"; // Ou qualquer valor padrão que você deseje
+          lojaNome = "Matriz"; // Nome da loja padrão para AdminRoot
         }
 
-        // Verifica se o perfil do usuário é "Nenhuma" ou está vazio
         const perfilDisplay =
           !user.perfil || user.perfil === "Nenhuma" ? "" : user.perfil;
 
@@ -71,34 +78,29 @@ window.showUsuarios = function (paginaAtual = 1, itensPorPagina = 5) {
       <td colspan="4">
         <nav>
           <ul class="pagination justify-content-center">
-            <!-- Botão Previous (desabilitado na primeira página) -->
             <li class="page-item ${paginaAtual === 1 ? "disabled" : ""}">
               <a class="page-link" href="#" aria-label="Previous" onclick="showUsuarios(${
                 paginaAtual - 1
-              }, ${itensPorPagina})">
+              })">
                 <span aria-hidden="true">&laquo;</span>
               </a>
             </li>
-
-            <!-- Números da paginação -->
             ${Array.from(
               { length: totalPaginas },
               (_, i) => `
               <li class="page-item ${i + 1 === paginaAtual ? "active" : ""}">
                 <a class="page-link" href="#" onclick="showUsuarios(${
                   i + 1
-                }, ${itensPorPagina})">${i + 1}</a>
+                })">${i + 1}</a>
               </li>
             `
             ).join("")}
-
-            <!-- Botão Next (desabilitado na última página) -->
             <li class="page-item ${
               paginaAtual === totalPaginas ? "disabled" : ""
             }">
               <a class="page-link" href="#" aria-label="Next" onclick="showUsuarios(${
                 paginaAtual + 1
-              }, ${itensPorPagina})">
+              })">
                 <span aria-hidden="true">&raquo;</span>
               </a>
             </li>
@@ -108,7 +110,7 @@ window.showUsuarios = function (paginaAtual = 1, itensPorPagina = 5) {
     </tr>
   `;
 
-  // Renderização final do conteúdo HTML com o mesmo padrão de cores e botões
+  // Renderização final do conteúdo HTML
   content.innerHTML = `
       <div class="overlay" id="overlay"></div>
       <h1 class="text-center mb-4">Lista de Usuários</h1>

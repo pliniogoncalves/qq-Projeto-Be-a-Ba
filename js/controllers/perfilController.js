@@ -56,9 +56,19 @@ function gerarLinhas(perfis) {
 }
 
 // Função para exibir os perfis de acesso
-window.showPerfis = async function (paginaAtual = 1, itensPorPagina = 1) {
+window.showPerfis = async function (paginaAtual = 1) {
   const content = document.getElementById("mainContent");
   const perfis = await Perfil.listarPerfis();
+
+  // Definir quantidade de itens por página com base no tamanho da tela
+  let itensPorPagina;
+  if (window.innerWidth >= 1200) {
+    itensPorPagina = 3; // Para telas grandes (desktops)
+  } else if (window.innerWidth >= 768) {
+    itensPorPagina = 2; // Para tablets e telas médias
+  } else {
+    itensPorPagina = 1; // Para telas pequenas (smartphones)
+  }
 
   // Paginação
   const totalPaginas = Math.ceil(perfis.length / itensPorPagina);
@@ -78,7 +88,7 @@ window.showPerfis = async function (paginaAtual = 1, itensPorPagina = 1) {
             <li class="page-item ${paginaAtual === 1 ? "disabled" : ""}">
               <a class="page-link" href="#" aria-label="Previous" onclick="showPerfis(${
                 paginaAtual - 1
-              }, ${itensPorPagina})">
+              })">
                 <span aria-hidden="true">&laquo;</span>
               </a>
             </li>
@@ -86,9 +96,9 @@ window.showPerfis = async function (paginaAtual = 1, itensPorPagina = 1) {
               { length: totalPaginas },
               (_, i) => `
               <li class="page-item ${i + 1 === paginaAtual ? "active" : ""}">
-                <a class="page-link" href="#" onclick="showPerfis(${
-                  i + 1
-                }, ${itensPorPagina})">${i + 1}</a>
+                <a class="page-link" href="#" onclick="showPerfis(${i + 1})">${
+                i + 1
+              }</a>
               </li>
             `
             ).join("")}
@@ -97,7 +107,7 @@ window.showPerfis = async function (paginaAtual = 1, itensPorPagina = 1) {
             }">
               <a class="page-link" href="#" aria-label="Next" onclick="showPerfis(${
                 paginaAtual + 1
-              }, ${itensPorPagina})">
+              })">
                 <span aria-hidden="true">&raquo;</span>
               </a>
             </li>

@@ -1,11 +1,21 @@
 import { Loja } from "../models/Loja.js";
 
-// Exibe a lista de lojas cadastradas
-window.showLojas = function (paginaAtual = 1, itensPorPagina = 5) {
+// Função para exibir a lista de lojas cadastradas
+window.showLojas = function (paginaAtual = 1) {
   const content = document.getElementById("mainContent");
   const lojas = JSON.parse(localStorage.getItem("lojas")) || [];
 
   let tableRows = "";
+
+  // Ajusta a quantidade de itens por página com base no tamanho da tela
+  let itensPorPagina;
+  if (window.innerWidth >= 1200) {
+    itensPorPagina = 10; // Telas grandes (desktops)
+  } else if (window.innerWidth >= 768) {
+    itensPorPagina = 7;  // Telas médias (tablets)
+  } else {
+    itensPorPagina = 5;  // Telas pequenas (smartphones)
+  }
 
   // Calcular o total de páginas
   const totalPaginas = Math.ceil(lojas.length / itensPorPagina);
@@ -46,7 +56,7 @@ window.showLojas = function (paginaAtual = 1, itensPorPagina = 5) {
             <li class="page-item ${paginaAtual === 1 ? "disabled" : ""}">
               <a class="page-link" href="#" aria-label="Previous" onclick="showLojas(${
                 paginaAtual - 1
-              }, ${itensPorPagina})">
+              })">
                 <span aria-hidden="true">&laquo;</span>
               </a>
             </li>
@@ -54,18 +64,14 @@ window.showLojas = function (paginaAtual = 1, itensPorPagina = 5) {
               { length: totalPaginas },
               (_, i) => `
               <li class="page-item ${i + 1 === paginaAtual ? "active" : ""}">
-                <a class="page-link" href="#" onclick="showLojas(${
-                  i + 1
-                }, ${itensPorPagina})">${i + 1}</a>
+                <a class="page-link" href="#" onclick="showLojas(${i + 1})">${i + 1}</a>
               </li>
             `
             ).join("")}
-            <li class="page-item ${
-              paginaAtual === totalPaginas ? "disabled" : ""
-            }">
+            <li class="page-item ${paginaAtual === totalPaginas ? "disabled" : ""}">
               <a class="page-link" href="#" aria-label="Next" onclick="showLojas(${
                 paginaAtual + 1
-              }, ${itensPorPagina})">
+              })">
                 <span aria-hidden="true">&raquo;</span>
               </a>
             </li>
@@ -122,6 +128,7 @@ window.showLojas = function (paginaAtual = 1, itensPorPagina = 5) {
 
   setActiveButton("Lojas");
 };
+
 
 // Função para filtrar lojas com base no nome
 window.buscarLoja = function () {
