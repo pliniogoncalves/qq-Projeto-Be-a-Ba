@@ -318,6 +318,7 @@ window.salvarSolicitacaoTalao = function (event) {
     document.getElementById("quantidadeTalao").value,
     10
   );
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado")); // Adiciona o usuário logado
 
   // Validação adicional
   if (!loja || !data || !hora || isNaN(quantidade) || quantidade < 1) {
@@ -326,7 +327,7 @@ window.salvarSolicitacaoTalao = function (event) {
   }
 
   const dataHora = new Date(`${data}T${hora}`).toISOString();
-  Talao.criarTalao(loja, dataHora, quantidade, "Solicitado");
+  Talao.criarTalao(loja, dataHora, quantidade, usuarioLogado.nome); // Passa o nome do funcionário
   showTaloes();
 };
 
@@ -384,17 +385,18 @@ window.registrarEnvio = function () {
 // Confirmar envio
 window.confirmarEnvio = function (id) {
   const talao = Talao.buscarTalao(id);
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado")); // Adiciona o usuário logado
   if (talao) {
-    talao.status = "Enviado";
     Talao.atualizarTalao(
       id,
       talao.loja,
       talao.dataHora,
       talao.quantidade,
-      "Enviado"
+      "Enviado",
+      usuarioLogado.nome // Passa o nome do funcionário para registrar o envio
     );
     alert("Talão registrado como enviado.");
-    showTaloes(); // Atualiza a lista de talões
+    showTaloes();
   }
 };
 
@@ -458,29 +460,47 @@ window.registrarRecebimento = function () {
 // Confirmar recebimento
 window.confirmarRecebimento = function (id) {
   const talao = Talao.buscarTalao(id);
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado")); // Adiciona o usuário logado
   if (talao) {
-    talao.status = "Recebido";
     Talao.atualizarTalao(
       id,
       talao.loja,
       talao.dataHora,
       talao.quantidade,
-      "Recebido"
+      "Recebido",
+      usuarioLogado.nome // Passa o nome do funcionário para registrar o recebimento
     );
     alert("Recebimento confirmado.");
-    showTaloes(); // Atualiza a lista de talões
+    showTaloes();
   }
 };
 
-// Função para exportar talões para CSV
+// Função para exportar talão específico para CSV
 window.exportarTalao = function (id) {
   const talao = Talao.buscarTalao(id);
 
-  const csvContent = `ID,Loja,Data,Hora,Quantidade,Status\n${talao.id},${
-    talao.loja
-  },${formatarDataHora(talao.dataHora).join(",")},${talao.quantidade},${
-    talao.status
-  }`;
+  // Formata as datas se disponíveis, utilizando a função de formatação existente
+  const dataSolicitado = talao.timestamps.solicitado
+    ? formatarDataHora(talao.timestamps.solicitado.dataHora)
+    : ["", ""]; // Retorna vazio se a data não existir
+  const funcionarioSolicitante = talao.timestamps.solicitado?.funcionario || "";
+
+  const dataEnviado = talao.timestamps.enviado
+    ? formatarDataHora(talao.timestamps.enviado.dataHora)
+    : ["", ""]; // Retorna vazio se a data não existir
+  const funcionarioEnviou = talao.timestamps.enviado?.funcionario || "";
+
+  const dataRecebido = talao.timestamps.recebido
+    ? formatarDataHora(talao.timestamps.recebido.dataHora)
+    : ["", ""]; // Retorna vazio se a data não existir
+  const funcionarioRecebeu = talao.timestamps.recebido?.funcionario || "";
+
+  // Cabeçalho e dados do CSV organizados nas colunas corretas
+  const csvContent =
+    `ID,Loja,Data Solicitado,Funcionario Solicitante,Data Enviado,Funcionario Enviou,Data Recebido,Funcionario Recebeu,Quantidade,Status\n` +
+    `${talao.id},${talao.loja},${dataSolicitado[0]},${funcionarioSolicitante},${dataEnviado[0]},${funcionarioEnviou},${dataRecebido[0]},${funcionarioRecebeu},${talao.quantidade},${talao.status}`;
+
+  // Função para baixar o arquivo CSV
   downloadCSV(csvContent, `talao_${talao.id}.csv`);
 };
 
@@ -492,12 +512,33 @@ window.exportarTodosTaloes = function () {
     return;
   }
 
-  let csvContent = "ID,Loja,Data,Hora,Quantidade,Status\n";
+  // Cabeçalho correto do CSV
+  let csvContent =
+    "ID,Loja,Data Solicitado,Funcionario Solicitante,Data Enviado,Funcionario Enviou,Data Recebido,Funcionario Recebeu,Quantidade,Status\n";
+
   taloes.forEach((talao) => {
-    csvContent += `${talao.id},${talao.loja},${formatarDataHora(
-      talao.dataHora
-    ).join(",")},${talao.quantidade},${talao.status}\n`;
+    // Formatar a data e hora de cada evento, tratando dados inválidos
+    const dataHoraSolicitado = talao.timestamps.solicitado
+      ? formatarDataHora(talao.timestamps.solicitado.dataHora)
+      : ["", ""]; // Formata a data de solicitação
+    const dataHoraEnviado = talao.timestamps.enviado
+      ? formatarDataHora(talao.timestamps.enviado.dataHora)
+      : ["", ""]; // Formata a data de envio
+    const dataHoraRecebido = talao.timestamps.recebido
+      ? formatarDataHora(talao.timestamps.recebido.dataHora)
+      : ["", ""]; // Formata a data de recebimento
+
+    // Montar a linha do CSV com os dados corretos em cada coluna
+    csvContent += `${talao.id},${talao.loja},${dataHoraSolicitado[0]},${
+      talao.timestamps.solicitado?.funcionario || ""
+    },${dataHoraEnviado[0]},${talao.timestamps.enviado?.funcionario || ""},${
+      dataHoraRecebido[0]
+    },${talao.timestamps.recebido?.funcionario || ""},${talao.quantidade},${
+      talao.status
+    }\n`;
   });
+
+  // Função auxiliar para baixar o CSV
   downloadCSV(csvContent, "taloes.csv");
 };
 
@@ -535,23 +576,40 @@ function downloadCSV(csvContent, fileName) {
 // Função para visualizar detalhes do talão
 window.visualizarDetalhes = function (id) {
   const talao = Talao.buscarTalao(id);
-
   const [data, hora] = formatarDataHora(talao.dataHora);
 
-  // Prepara o conteúdo do modal
+  const dataSolicitado = talao.timestamps.solicitado
+    ? new Date(talao.timestamps.solicitado.dataHora).toLocaleString("pt-BR")
+    : "Não disponível";
+  const funcionarioSolicitante =
+    talao.timestamps.solicitado?.funcionario || "Não disponível";
+  const dataEnviado = talao.timestamps.enviado
+    ? new Date(talao.timestamps.enviado.dataHora).toLocaleString("pt-BR")
+    : "Não disponível";
+  const funcionarioEnviou =
+    talao.timestamps.enviado?.funcionario || "Não disponível";
+  const dataRecebido = talao.timestamps.recebido
+    ? new Date(talao.timestamps.recebido.dataHora).toLocaleString("pt-BR")
+    : "Não disponível";
+  const funcionarioRecebeu =
+    talao.timestamps.recebido?.funcionario || "Não disponível";
+
   const modalBody = document.getElementById("modalBody");
   modalBody.innerHTML = `
     <h1 class="h4 mb-4">Detalhes do Talão</h1>
     <p><strong>ID:</strong> ${talao.id}</p>
     <p><strong>Loja:</strong> ${talao.loja}</p>
-    <p><strong>Data:</strong> ${data}</p>
-    <p><strong>Hora:</strong> ${hora}</p>
+    <p><strong>Data Solicitado:</strong> ${dataSolicitado}</p>
+    <p><strong>Funcionario Solicitante:</strong> ${funcionarioSolicitante}</p>
+    <p><strong>Data Enviado:</strong> ${dataEnviado}</p>
+    <p><strong>Funcionario Enviou:</strong> ${funcionarioEnviou}</p>
+    <p><strong>Data Recebido:</strong> ${dataRecebido}</p>
+    <p><strong>Funcionario Recebeu:</strong> ${funcionarioRecebeu}</p>
     <p><strong>Quantidade:</strong> ${talao.quantidade}</p>
     <p><strong>Status:</strong> ${talao.status}</p>
     <button class="btn btn-primary" onclick="fecharModal()">Fechar</button>
   `;
 
-  // Exibe o modal
   const modal = document.getElementById("detalhesModal");
   modal.style.display = "block";
 };
