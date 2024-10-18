@@ -7,7 +7,7 @@ function formatarPermissao(permissao) {
     .replace(/\b\w/g, (letra) => letra.toUpperCase()); // Capitaliza a primeira letra de cada palavra
 }
 
-// Função para gerar linhas da tabela
+// Função para gerar linhas da tabela de perfis
 function gerarLinhas(perfis) {
   return perfis
     .map(
@@ -16,54 +16,104 @@ function gerarLinhas(perfis) {
         <td>${perfil.nome}</td>
         <td>
           <strong>Administrativas:</strong><br>
-          ${perfil.permissoes
-            .filter(
-              (perm) =>
-                perm === "cadastrar_usuario" ||
-                perm === "excluir_usuario" ||
-                perm === "manutencao_perfis" ||
-                perm === "configurar_permissoes"
-            )
-            .map(formatarPermissao)
-            .join(", ") || "Nenhuma"}<br>
+          ${
+            perfil.permissoes
+              .filter(
+                (perm) =>
+                  perm === "cadastrar_usuario" ||
+                  perm === "excluir_usuario" ||
+                  perm === "manutencao_perfis" ||
+                  perm === "configurar_permissoes"
+              )
+              .map(formatarPermissao)
+              .join(", ") || "Nenhuma"
+          }<br>
           <strong>Operacionais:</strong><br>
-          ${perfil.permissoes
-            .filter(
-              (perm) =>
-                perm !== "cadastrar_usuario" &&
-                perm !== "excluir_usuario" &&
-                perm !== "manutencao_perfis" &&
-                perm !== "configurar_permissoes"
-            )
-            .map(formatarPermissao)
-            .join(", ") || "Nenhuma"}
+          ${
+            perfil.permissoes
+              .filter(
+                (perm) =>
+                  perm !== "cadastrar_usuario" &&
+                  perm !== "excluir_usuario" &&
+                  perm !== "manutencao_perfis" &&
+                  perm !== "configurar_permissoes"
+              )
+              .map(formatarPermissao)
+              .join(", ") || "Nenhuma"
+          }
         </td>
         <td>
           <i class="fas fa-edit" style="cursor: pointer; margin-right: 10px;" onclick="editarPerfil(${
             perfil.id
-          })"></i>
+          })" data-bs-toggle="tooltip" title="Editar"></i>
           <i class="fas fa-trash" style="cursor: pointer;" onclick="excluirPerfil(${
             perfil.id
-          })"></i>
+          })" data-bs-toggle="tooltip" title="Excluir"></i>
         </td>
       </tr>`
     )
     .join("");
 }
 
-
-window.showPerfis = async function () {
+// Função para exibir os perfis de acesso
+window.showPerfis = async function (paginaAtual = 1, itensPorPagina = 1) {
   const content = document.getElementById("mainContent");
-  const perfis = await Perfil.listarPerfis(); // Adicionado await para lidar com possível Promise
+  const perfis = await Perfil.listarPerfis();
 
-  let tableRows = gerarLinhas(perfis);
+  // Paginação
+  const totalPaginas = Math.ceil(perfis.length / itensPorPagina);
+  const inicio = (paginaAtual - 1) * itensPorPagina;
+  const perfisPaginados = perfis.slice(inicio, inicio + itensPorPagina);
 
+  let tableRows = perfisPaginados.length
+    ? gerarLinhas(perfisPaginados)
+    : `<tr><td colspan="3" class="text-center">Nenhum perfil encontrado.</td></tr>`;
+
+  // Geração da paginação dentro da tabela com setas "Previous" e "Next"
+  const paginacao = `
+    <tr>
+      <td colspan="3">
+        <nav>
+          <ul class="pagination justify-content-center">
+            <li class="page-item ${paginaAtual === 1 ? "disabled" : ""}">
+              <a class="page-link" href="#" aria-label="Previous" onclick="showPerfis(${
+                paginaAtual - 1
+              }, ${itensPorPagina})">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            ${Array.from(
+              { length: totalPaginas },
+              (_, i) => `
+              <li class="page-item ${i + 1 === paginaAtual ? "active" : ""}">
+                <a class="page-link" href="#" onclick="showPerfis(${
+                  i + 1
+                }, ${itensPorPagina})">${i + 1}</a>
+              </li>
+            `
+            ).join("")}
+            <li class="page-item ${
+              paginaAtual === totalPaginas ? "disabled" : ""
+            }">
+              <a class="page-link" href="#" aria-label="Next" onclick="showPerfis(${
+                paginaAtual + 1
+              }, ${itensPorPagina})">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </td>
+    </tr>
+  `;
+
+  // Inserindo o conteúdo na página com o novo layout
   content.innerHTML = `
     <div class="overlay" id="overlay"></div>
-    <h1 class="text-center">Lista de Perfis de Acesso</h1>
-    <p class="text-center">Veja a lista de perfis de acesso e suas permissões.</p>
+    <h1 class="text-center mb-4">Lista de Perfis de Acesso</h1>
+    <p class="text-center mb-4">Veja a lista de perfis e suas respectivas permissões.</p>
 
-    <div class="container">
+    <div class="container mb-4">
       <div class="row justify-content-center">
         <div class="col-md-8 col-sm-12 mb-4">
           <div class="input-group">
@@ -76,7 +126,7 @@ window.showPerfis = async function () {
       </div>
     </div>
 
-    <div class="table-responsive">
+    <div class="table-responsive mb-4">
       <table class="table table-striped">
         <thead>
           <tr>
@@ -87,13 +137,29 @@ window.showPerfis = async function () {
         </thead>
         <tbody id="tableBody">
           ${tableRows}
+          ${paginacao} <!-- Adiciona paginação dentro da tabela -->
         </tbody>
       </table>
     </div>
+
     <div class="text-center mb-4">
-      <button class="btn btn-custom" type="button" onclick="cadastrarPerfil()">Cadastrar Novo Perfil</button>
+      <div class="row justify-content-center">
+        <div class="col-12 col-sm-6 col-md-3 mb-2">
+          <button class="btn btn-custom w-100" style="background-color: #269447; color: white;" type="button" onclick="cadastrarPerfil()">
+            <i class="fas fa-plus-circle"></i> Cadastrar Perfil
+          </button>
+        </div>
+      </div>
     </div>
   `;
+
+  // Inicializa tooltips
+  const tooltipTriggerList = [].slice.call(
+    document.querySelectorAll('[data-bs-toggle="tooltip"]')
+  );
+  tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+  });
 
   setActiveButton("Perfis de Acesso");
 };
@@ -117,12 +183,14 @@ window.cadastrarPerfil = function () {
   const content = document.getElementById("mainContent");
 
   content.innerHTML = `
+    <div class="overlay" id="overlay"></div>
+    <h1 class="text-center mb-4">Novo Perfil de Acesso</h1>
+    <p class="text-center mb-4">Preencha os dados abaixo para cadastrar um novo perfil.</p>
     <div class="form-container">
-      <h1 class="h4 mb-4">Novo Perfil de Acesso</h1>
       <form id="perfilForm">
         <div class="mb-3">
           <label for="nomePerfil" class="form-label">Nome do Perfil</label>
-          <input type="text" class="form-control" id="nomePerfil" placeholder="Digite o nome do perfil">
+          <input type="text" class="form-control" id="nomePerfil" placeholder="Digite o nome do perfil" required>
         </div>
 
         <div class="mb-3">
@@ -149,11 +217,21 @@ window.cadastrarPerfil = function () {
           </div>
         </div>
 
-        <button type="button" class="btn btn-submit" onclick="submitCadastroPerfil()">Cadastrar Perfil</button>
+        <div class="text-center mb-4">
+          <div class="row justify-content-center">
+            <div class="col-12 col-sm-6 col-md-3 mb-2">
+              <button type="button" class="btn btn-custom w-100" style="background-color: #269447; color: white;" onclick="submitCadastroPerfil()">
+                <i class="fas fa-plus-circle"></i> Cadastrar Perfil
+              </button>
+            </div>
+          </div>
+        </div>
       </form>
     </div>
   `;
 };
+
+
 
 // Função para marcar/desmarcar todas as permissões de uma categoria
 window.marcarTodas = function (categoria) {
@@ -216,34 +294,24 @@ window.editarPerfil = async function (id) {
   const content = document.getElementById("mainContent");
 
   content.innerHTML = `
+    <div class="overlay" id="overlay"></div>
+    <h1 class="text-center mb-4">Editar Perfil de Acesso</h1>
+    <p class="text-center mb-4">Atualize as informações do perfil conforme necessário.</p>
     <div class="form-container">
-      <h1 class="h4 mb-4">Editar Perfil de Acesso</h1>
       <form id="perfilForm">
         <div class="mb-3">
           <label for="nomePerfil" class="form-label">Nome do Perfil</label>
-          <input type="text" class="form-control" id="nomePerfil" value="${
-            perfil.nome
-          }">
+          <input type="text" class="form-control" id="nomePerfil" value="${perfil.nome}" required>
         </div>
 
         <div class="mb-3">
           <label class="form-label">Permissões Administrativas</label>
           <div>
             <input type="checkbox" id="permAdminTotal" onclick="marcarTodas('admin')"> <strong>Marcar Todas</strong><br>
-            <input type="checkbox" class="admin" id="permCadastrarUsuario" value="cadastrar_usuario" ${
-              perfil.permissoes.includes("cadastrar_usuario") ? "checked" : ""
-            }> Cadastrar Usuário<br>
-            <input type="checkbox" class="admin" id="permExcluirUsuario" value="excluir_usuario" ${
-              perfil.permissoes.includes("excluir_usuario") ? "checked" : ""
-            }> Excluir Usuário<br>
-            <input type="checkbox" class="admin" id="permManutencaoPerfis" value="manutencao_perfis" ${
-              perfil.permissoes.includes("manutencao_perfis") ? "checked" : ""
-            }> Manutenção de Perfis<br>
-            <input type="checkbox" class="admin" id="permConfigurarPermissoes" value="configurar_permissoes" ${
-              perfil.permissoes.includes("configurar_permissoes")
-                ? "checked"
-                : ""
-            }> Configurar Permissões<br>
+            <input type="checkbox" class="admin" id="permCadastrarUsuario" value="cadastrar_usuario" ${perfil.permissoes.includes("cadastrar_usuario") ? "checked" : ""}> Cadastrar Usuário<br>
+            <input type="checkbox" class="admin" id="permExcluirUsuario" value="excluir_usuario" ${perfil.permissoes.includes("excluir_usuario") ? "checked" : ""}> Excluir Usuário<br>
+            <input type="checkbox" class="admin" id="permManutencaoPerfis" value="manutencao_perfis" ${perfil.permissoes.includes("manutencao_perfis") ? "checked" : ""}> Manutenção de Perfis<br>
+            <input type="checkbox" class="admin" id="permConfigurarPermissoes" value="configurar_permissoes" ${perfil.permissoes.includes("configurar_permissoes") ? "checked" : ""}> Configurar Permissões<br>
           </div>
         </div>
 
@@ -251,36 +319,30 @@ window.editarPerfil = async function (id) {
           <label class="form-label">Permissões Operacionais</label>
           <div>
             <input type="checkbox" id="permOperacionalTotal" onclick="marcarTodas('operacional')"> <strong>Marcar Todas</strong><br>
-            <input type="checkbox" class="operacional" id="permAcessarRelatorios" value="acessar_relatorios" ${
-              perfil.permissoes.includes("acessar_relatorios") ? "checked" : ""
-            }> Acessar Relatórios<br>
-            <input type="checkbox" class="operacional" id="permGerenciarTaloes" value="gerenciar_taloes" ${
-              perfil.permissoes.includes("gerenciar_taloes") ? "checked" : ""
-            }> Gerenciar Talões<br>
-            <input type="checkbox" class="operacional" id="permVerEstoque" value="ver_estoque" ${
-              perfil.permissoes.includes("ver_estoque") ? "checked" : ""
-            }> Ver Estoque<br>
-            <input type="checkbox" class="operacional" id="permConsultarEnvio" value="consultar_envio" ${
-              perfil.permissoes.includes("consultar_envio") ? "checked" : ""
-            }> Consultar Envio<br>
-            <input type="checkbox" class="operacional" id="permConsultarRecebimento" value="consultar_recebimento" ${
-              perfil.permissoes.includes("consultar_recebimento")
-                ? "checked"
-                : ""
-            }> Consultar Recebimento<br>
-            <input type="checkbox" class="operacional" id="permRegistrarEntrega" value="registrar_entrega" ${
-              perfil.permissoes.includes("registrar_entrega") ? "checked" : ""
-            }> Registrar Entrega<br>
+            <input type="checkbox" class="operacional" id="permAcessarRelatorios" value="acessar_relatorios" ${perfil.permissoes.includes("acessar_relatorios") ? "checked" : ""}> Acessar Relatórios<br>
+            <input type="checkbox" class="operacional" id="permGerenciarTaloes" value="gerenciar_taloes" ${perfil.permissoes.includes("gerenciar_taloes") ? "checked" : ""}> Gerenciar Talões<br>
+            <input type="checkbox" class="operacional" id="permVerEstoque" value="ver_estoque" ${perfil.permissoes.includes("ver_estoque") ? "checked" : ""}> Ver Estoque<br>
+            <input type="checkbox" class="operacional" id="permConsultarEnvio" value="consultar_envio" ${perfil.permissoes.includes("consultar_envio") ? "checked" : ""}> Consultar Envio<br>
+            <input type="checkbox" class="operacional" id="permConsultarRecebimento" value="consultar_recebimento" ${perfil.permissoes.includes("consultar_recebimento") ? "checked" : ""}> Consultar Recebimento<br>
+            <input type="checkbox" class="operacional" id="permRegistrarEntrega" value="registrar_entrega" ${perfil.permissoes.includes("registrar_entrega") ? "checked" : ""}> Registrar Entrega<br>
           </div>
         </div>
 
-        <button type="button" class="btn btn-submit" onclick="submitEdicaoPerfil(${
-          perfil.id
-        })">Salvar Alterações</button>
+        <div class="text-center mb-4">
+          <div class="row justify-content-center">
+            <div class="col-12 col-sm-6 col-md-3 mb-2">
+              <button type="button" class="btn btn-custom w-100" style="background-color: #269447; color: white;" onclick="submitEdicaoPerfil(${perfil.id})">
+                <i class="fas fa-save"></i> Salvar Alterações
+              </button>
+            </div>
+          </div>
+        </div>
       </form>
     </div>
   `;
 };
+
+
 
 window.submitEdicaoPerfil = async function (id) {
   const nome = document.getElementById("nomePerfil").value;
@@ -324,7 +386,6 @@ window.submitEdicaoPerfil = async function (id) {
   await Perfil.atualizarPerfil(id, nome, permissoes);
   await showPerfis(); // Aguarda o recarregamento da lista de perfis
 };
-
 
 window.excluirPerfil = function (id) {
   const confirmacao = confirm("Tem certeza que deseja excluir este perfil?");

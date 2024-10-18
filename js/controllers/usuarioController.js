@@ -2,10 +2,11 @@ import { Usuario } from "../models/Usuario.js";
 import { Perfil } from "../models/Perfil.js";
 import { Loja } from "../models/Loja.js";
 
-window.showUsuarios = function () {
+window.showUsuarios = function (paginaAtual = 1, itensPorPagina = 5) {
   const content = document.getElementById("mainContent");
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
   const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+  content.innerHTML = "";
 
   let tableRows = "";
 
@@ -18,54 +19,115 @@ window.showUsuarios = function () {
     }
   });
 
-  usuariosFiltrados.forEach((user) => {
-    if (user) {
-      // Verifica se 'user' existe e se 'perfil' está definido
-      let lojaNome = user.loja ? user.loja.nome : "Nenhuma loja"; // Acessando a propriedade correta
+  // Calcula o número total de páginas
+  const totalPaginas = Math.ceil(usuariosFiltrados.length / itensPorPagina);
 
-      // Se o usuário for AdminRoot, atribui um valor padrão para loja
-      if (user.perfil === "AdminRoot") {
-        lojaNome = "Matriz"; // Ou qualquer valor padrão que você deseje
-      }
+  // Paginação dos usuários
+  const inicio = (paginaAtual - 1) * itensPorPagina;
+  const usuariosPaginados = usuariosFiltrados.slice(
+    inicio,
+    inicio + itensPorPagina
+  );
 
-      // Verifica se o perfil do usuário é "Nenhuma" ou está vazio
-      const perfilDisplay = !user.perfil || user.perfil === "Nenhuma" ? "" : user.perfil;
+  // Verifica se há usuários para exibir
+  if (usuariosPaginados.length === 0) {
+    tableRows = `
+      <tr>
+        <td colspan="4" class="text-center">Nenhum usuário encontrado.</td>
+      </tr>`;
+  } else {
+    usuariosPaginados.forEach((user) => {
+      if (user) {
+        // Verifica se 'user' existe e se 'perfil' está definido
+        let lojaNome = user.loja ? user.loja.nome : "Nenhuma loja"; // Acessando a propriedade correta
 
-      tableRows += `
+        // Se o usuário for AdminRoot, atribui um valor padrão para loja
+        if (user.perfil === "AdminRoot") {
+          lojaNome = "Matriz"; // Ou qualquer valor padrão que você deseje
+        }
+
+        // Verifica se o perfil do usuário é "Nenhuma" ou está vazio
+        const perfilDisplay =
+          !user.perfil || user.perfil === "Nenhuma" ? "" : user.perfil;
+
+        tableRows += `
           <tr>
               <td>${user.nome}</td>
               <td>${perfilDisplay}</td>
               <td>${lojaNome}</td> <!-- Exibindo o nome da loja -->
               <td>
-                  <i class="fas fa-edit" style="cursor: pointer; margin-right: 10px;" onclick="editarUsuario(${user.id})"></i>
-                  <i class="fas fa-trash" style="cursor: pointer;" onclick="excluirUsuario(${user.id})"></i>
+                  <i class="fas fa-edit" style="cursor: pointer; margin-right: 10px;" onclick="editarUsuario(${user.id})" data-bs-toggle="tooltip" title="Editar"></i>
+                  <i class="fas fa-trash" style="cursor: pointer;" onclick="excluirUsuario(${user.id})" data-bs-toggle="tooltip" title="Excluir"></i>
               </td>
           </tr>
-          `;
-    } else {
-      console.error("Usuário inválido encontrado: ", user); // Log para depuração
-    }
-  });
+        `;
+      }
+    });
+  }
 
+  // Geração da paginação dentro da tabela com setas "Previous" e "Next"
+  const paginacao = `
+    <tr>
+      <td colspan="4">
+        <nav>
+          <ul class="pagination justify-content-center">
+            <!-- Botão Previous (desabilitado na primeira página) -->
+            <li class="page-item ${paginaAtual === 1 ? "disabled" : ""}">
+              <a class="page-link" href="#" aria-label="Previous" onclick="showUsuarios(${
+                paginaAtual - 1
+              }, ${itensPorPagina})">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+
+            <!-- Números da paginação -->
+            ${Array.from(
+              { length: totalPaginas },
+              (_, i) => `
+              <li class="page-item ${i + 1 === paginaAtual ? "active" : ""}">
+                <a class="page-link" href="#" onclick="showUsuarios(${
+                  i + 1
+                }, ${itensPorPagina})">${i + 1}</a>
+              </li>
+            `
+            ).join("")}
+
+            <!-- Botão Next (desabilitado na última página) -->
+            <li class="page-item ${
+              paginaAtual === totalPaginas ? "disabled" : ""
+            }">
+              <a class="page-link" href="#" aria-label="Next" onclick="showUsuarios(${
+                paginaAtual + 1
+              }, ${itensPorPagina})">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </td>
+    </tr>
+  `;
+
+  // Renderização final do conteúdo HTML com o mesmo padrão de cores e botões
   content.innerHTML = `
       <div class="overlay" id="overlay"></div>
-      <h1 class="text-center">Lista de Usuários</h1>
-      <p class="text-center">Veja a lista de usuários cadastrados e suas respectivas situações.</p>
+      <h1 class="text-center mb-4">Lista de Usuários</h1>
+      <p class="text-center mb-4">Veja a lista de usuários cadastrados e suas respectivas situações.</p>
 
-      <div class="container">
+      <div class="container mb-4">
           <div class="row justify-content-center">
               <div class="col-md-8 col-sm-12 mb-4">
                   <div class="input-group">
                       <input type="text" class="form-control" id="userSearchInput" placeholder="Procurar por usuário" oninput="buscarUsuario()">
                       <div class="input-icon">
                             <i class="fas fa-search"></i>
-                        </div>
+                      </div>
                   </div>
               </div>
           </div>
       </div>
 
-      <div class="table-responsive">
+      <div class="table-responsive mb-4">
           <table class="table table-striped">
           <thead>
               <tr>
@@ -77,11 +139,19 @@ window.showUsuarios = function () {
           </thead>
           <tbody id="userTableBody">
               ${tableRows}
+              ${paginacao} <!-- Adiciona paginação dentro da tabela -->
           </tbody>
           </table>
       </div>
+
       <div class="text-center mb-4">
-          <button class="btn btn-custom" type="button" onclick="cadastrarUsuario()">Cadastrar Novo Usuário</button>
+          <div class="row justify-content-center">
+              <div class="col-12 col-sm-6 col-md-3 mb-2">
+                  <button class="btn btn-custom w-100" style="background-color: #269447; color: white;" type="button" onclick="cadastrarUsuario()">
+                      <i class="fas fa-plus-circle"></i> Cadastrar Novo Usuário
+                  </button>
+              </div>
+          </div>
       </div>
   `;
 
@@ -97,9 +167,8 @@ window.cadastrarUsuario = function () {
     return;
   }
 
-  const isAdminRoot = usuarioLogado.perfil === "AdminRoot"; // Verifica se o logado é AdminRoot
-
   const content = document.getElementById("mainContent");
+  content.innerHTML = "";
 
   // Recupera as lojas do LocalStorage
   const lojas = JSON.parse(localStorage.getItem("lojas")) || [];
@@ -108,43 +177,54 @@ window.cadastrarUsuario = function () {
   const perfis = JSON.parse(localStorage.getItem("perfis")) || [];
 
   // Criar opções de função a partir dos perfis de acesso
-  const opcoesFuncoes = perfis
-    .map((perfil) => `<option value="${perfil.nome}">${perfil.nome}</option>`)
-    .join("")+ `<option value="Nenhum">Nenhum</option>`;
+  const opcoesFuncoes =
+    perfis
+      .map((perfil) => `<option value="${perfil.nome}">${perfil.nome}</option>`)
+      .join("") + `<option value="Nenhum">Nenhum</option>`;
 
   content.innerHTML = `
-      <div class="form-container">
-        <h1 class="h4 mb-4">Novo Usuário</h1>
-        <form id="userForm">
-          <div class="mb-3">
-            <label for="nome" class="form-label">Nome do Usuário</label>
-            <input type="text" class="form-control" id="nome" placeholder="Digite o nome de usuário">
+    <div class="overlay" id="overlay"></div>
+    <h1 class="text-center mb-4">Cadastrar Novo Usuário</h1>
+    <p class="text-center mb-4">Preencha as informações abaixo para cadastrar um novo usuário.</p>
+    <div class="form-container">
+      <form id="userForm">
+        <div class="mb-3">
+          <label for="nome" class="form-label">Nome do Usuário</label>
+          <input type="text" class="form-control" id="nome" placeholder="Digite o nome de usuário" required>
+        </div>
+        <div class="mb-3">
+          <label for="matricula" class="form-label">Matrícula</label>
+          <input type="number" class="form-control" id="matricula" placeholder="Digite a Matrícula" required>
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">E-mail</label>
+          <input type="email" class="form-control" id="email" placeholder="Digite o e-mail" required>
+        </div>
+        <div class="mb-3">
+          <label for="senha" class="form-label">Senha</label>
+          <input type="password" class="form-control" id="senha" placeholder="Digite a senha" required>
+        </div>
+        <div class="mb-3">
+          <label for="funcao" class="form-label">Função</label>
+          <select id="funcao" class="form-select" onchange="atualizarLojaCadastro()">
+            ${opcoesFuncoes}
+          </select>
+        </div>
+        <div class="mb-3" id="loja-container">
+          <!-- O campo de loja será atualizado pela função 'atualizarLojaCadastro' -->
+        </div>
+        <div class="text-center mb-4">
+          <div class="row justify-content-center">
+            <div class="col-12 col-sm-6 col-md-3 mb-2">
+              <button class="btn btn-custom w-100" style="background-color: #269447; color: white;" type="button" onclick="submitCadastro()">
+                <i class="fas fa-user-plus"></i> Cadastrar Usuário
+              </button>
+            </div>
           </div>
-          <div class="mb-3">
-            <label for="matricula" class="form-label">Matrícula</label>
-            <input type="number" class="form-control" id="matricula" placeholder="Digite a Matrícula">
-          </div>
-          <div class="mb-3">
-            <label for="email" class="form-label">E-mail</label>
-            <input type="email" class="form-control" id="email" placeholder="Digite o e-mail">
-          </div>
-          <div class="mb-3">
-            <label for="senha" class="form-label">Senha</label>
-            <input type="password" class="form-control" id="senha" placeholder="Digite a senha">
-          </div>
-          <div class="mb-3">
-            <label for="funcao" class="form-label">Função</label>
-            <select id="funcao" class="form-select" onchange="atualizarLojaCadastro()">
-              ${opcoesFuncoes}
-            </select>
-          </div>
-          <div class="mb-3" id="loja-container">
-            <!-- O campo de loja será atualizado pela função 'atualizarLojaCadastro' -->
-          </div>
-          <button type="button" class="btn btn-submit" onclick="submitCadastro()">Cadastrar Usuário</button>
-        </form>
-      </div>
-      `;
+        </div>
+      </form>
+    </div>
+  `;
 
   // Inicializar o campo de loja com base no perfil inicial
   atualizarLojaCadastro();
@@ -181,7 +261,10 @@ window.submitCadastro = function () {
   const matricula = document.getElementById("matricula").value;
   const email = document.getElementById("email").value;
   const senha = document.getElementById("senha").value;
-  const perfil = document.getElementById("funcao").value !== "Nenhum" ? document.getElementById("funcao").value : null;
+  const perfil =
+    document.getElementById("funcao").value !== "Nenhum"
+      ? document.getElementById("funcao").value
+      : null;
 
   // Carregar as lojas do LocalStorage
   const lojas = JSON.parse(localStorage.getItem("lojas")) || [];
@@ -215,6 +298,7 @@ window.editarUsuario = function (id) {
   }
 
   const content = document.getElementById("mainContent");
+  content.innerHTML = "";
 
   // Recupera as lojas do LocalStorage
   const lojas = JSON.parse(localStorage.getItem("lojas")) || [];
@@ -229,15 +313,19 @@ window.editarUsuario = function (id) {
       : perfis.filter((perfil) => perfil.nome !== "AdminRoot"); // Caso contrário, exclui "AdminRoot"
 
   // Gerar opções de perfil a partir da lista de perfis filtrados
-  const opcoesPerfis = perfisFiltrados
-    .map(
-      (perfil) => `
+  const opcoesPerfis =
+    perfisFiltrados
+      .map(
+        (perfil) => `
     <option value="${perfil.nome}" ${
-        usuario.perfil === perfil.nome ? "selected" : ""
-      }>${perfil.nome}</option>
+          usuario.perfil === perfil.nome ? "selected" : ""
+        }>${perfil.nome}</option>
   `
-    )
-    .join("")+ `<option value="Nenhuma" ${usuario.perfil === "Nenhum" ? "selected" : ""}>Nenhum</option>`;
+      )
+      .join("") +
+    `<option value="Nenhuma" ${
+      usuario.perfil === "Nenhum" ? "selected" : ""
+    }>Nenhum</option>`;
 
   // Gerar opções de lojas
   const lojaOptions = lojas
@@ -251,26 +339,26 @@ window.editarUsuario = function (id) {
     .join("");
 
   content.innerHTML = `
-    <div class="form-container">
+    <div class="form-container mt-4">
         <h1 class="h4 mb-4">Editar Usuário</h1>
         <form id="userForm">
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome do Usuário</label>
                 <input type="text" class="form-control" id="nome" value="${
                   usuario.nome
-                }">
+                }" required>
             </div>
             <div class="mb-3">
                 <label for="matricula" class="form-label">Matrícula</label>
                 <input type="text" class="form-control" id="matricula" value="${
                   usuario.matricula
-                }">
+                }" required>
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">E-mail</label>
                 <input type="email" class="form-control" id="email" value="${
                   usuario.email
-                }">
+                }" required>
             </div>
             <div class="mb-3">
                 <label for="senha" class="form-label">Senha</label>
@@ -298,7 +386,15 @@ window.editarUsuario = function (id) {
                   `
                 }
             </div>
-            <button type="button" class="btn btn-submit" onclick="submitEdicao(${id})">Salvar Alterações</button>
+            <div class="text-center mb-4">
+              <div class="row justify-content-center">
+                <div class="col-12 col-sm-6 col-md-3 mb-2">
+                  <button type="button" class="btn btn-custom w-100" style="background-color: #269447; color: white;" onclick="submitEdicao(${id})">
+                    <i class="fas fa-save"></i> Salvar Alterações
+                  </button>
+                </div>
+              </div>
+            </div>
         </form>
     </div>
   `;
@@ -309,18 +405,16 @@ window.submitEdicao = function (id) {
   const matricula = document.getElementById("matricula").value;
   const email = document.getElementById("email").value;
   const senha = document.getElementById("senha").value || null; // Permite senha vazia
-  const perfil = document.getElementById("funcao").value !== "Nenhum" ? document.getElementById("funcao").value : null;
+  const perfil =
+    document.getElementById("funcao").value !== "Nenhum"
+      ? document.getElementById("funcao").value
+      : null;
   const lojaId = document.getElementById("loja")
     ? document.getElementById("loja").value
     : null;
 
   // Verificar se todos os campos obrigatórios estão preenchidos
-  if (
-    !nome ||
-    !matricula ||
-    !email ||
-    (perfil !== "AdminRoot" && !lojaId)
-  ) {
+  if (!nome || !matricula || !email || (perfil !== "AdminRoot" && !lojaId)) {
     alert("Preencha todos os campos obrigatórios.");
     return;
   }
