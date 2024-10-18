@@ -19,42 +19,26 @@ function formatarDataHora(dataHoraISO) {
   return [dataFormatada, horaFormatada];
 }
 
-window.showTaloes = function (paginaAtual = 1) {
+window.showTaloes = function (paginaAtual = 1, taloesFiltrados = null) {
   const content = document.getElementById("mainContent");
-  const taloes = Talao.listarTaloes();
+  const todosTaloes = Talao.listarTaloes();
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
 
   let cardRows = "";
 
-  // Verifica se o usuário é AdminRoot da Matriz
   const isAdminRootMatriz =
     usuarioLogado.perfil === "AdminRoot" && usuarioLogado.loja === "Matriz";
 
-  // Ajusta a quantidade de itens por página com base no tamanho da tela
-  let itensPorPagina;
-  if (window.innerWidth >= 1200) {
-    itensPorPagina = 3; // Telas grandes (desktops)
-  } else if (window.innerWidth >= 768) {
-    itensPorPagina = 3; // Telas médias (tablets)
-  } else {
-    itensPorPagina = 1; // Telas pequenas (smartphones)
-  }
+  let itensPorPagina = window.innerWidth >= 768 ? 3 : 1;
 
-  // Filtra os talões com base na loja do usuário logado
-  const taloesFiltrados = taloes.filter((talao) => {
-    return isAdminRootMatriz || talao.loja === usuarioLogado.loja;
-  });
-
-  const totalPaginas = Math.ceil(taloesFiltrados.length / itensPorPagina);
-
-  // Paginar talões
-  const inicio = (paginaAtual - 1) * itensPorPagina;
-  const taloesPaginados = taloesFiltrados.slice(
-    inicio,
-    inicio + itensPorPagina
+  const taloes = taloesFiltrados || todosTaloes.filter(
+    (talao) => isAdminRootMatriz || talao.loja === usuarioLogado.loja
   );
 
-  // Verificar se há talões para exibir
+  const totalPaginas = Math.ceil(taloes.length / itensPorPagina);
+  const inicio = (paginaAtual - 1) * itensPorPagina;
+  const taloesPaginados = taloes.slice(inicio, inicio + itensPorPagina);
+
   if (taloesPaginados.length === 0) {
     cardRows = `
       <div class="col-12 text-center">
@@ -62,116 +46,71 @@ window.showTaloes = function (paginaAtual = 1) {
       </div>`;
   } else {
     taloesPaginados.forEach((talao) => {
-      if (talao) {
-        // Verificar se a dataHora é válida
-        if (talao.dataHora) {
-          // Formatar data e hora no formato brasileiro
-          const [data, hora] = formatarDataHora(talao.dataHora);
-
-          // Verifique se a data e hora foram formatadas corretamente
-          if (data && hora) {
-            // Gerar os cards com as informações do talão
-            cardRows += `
-              <div class="col-md-4 col-sm-6 mb-4">
-                <div class="card h-100 shadow-sm">
-                  <div class="card-body">
-                    <h5 class="card-title">Talão ID: ${talao.id}</h5>
-                    <p class="card-text">
-                      <strong>Loja:</strong> ${talao.loja}<br>
-                      <strong>Data:</strong> ${data}<br>
-                      <strong>Hora:</strong> ${hora}<br>
-                      <strong>Quantidade:</strong> ${talao.quantidade}<br>
-                      <span class="badge ${
-                        talao.status === "Solicitado"
-                          ? "bg-warning"
-                          : talao.status === "Recebido"
-                          ? "bg-success"
-                          : "bg-secondary"
-                      }">${talao.status}</span>
-                    </p>
-                  </div>
-                  <div class="card-footer text-center">
-                    <i class="fas fa-eye mx-2" style="cursor: pointer;" onclick="visualizarDetalhes(${
-                      talao.id
-                    })" data-bs-toggle="tooltip" title="Detalhes"></i>
-                    <i class="fas fa-edit mx-2" style="cursor: pointer;" onclick="editarTalao(${
-                      talao.id
-                    })" data-bs-toggle="tooltip" title="Editar"></i>
-                    <i class="fas fa-trash mx-2" style="cursor: pointer;" onclick="excluirTalao(${
-                      talao.id
-                    })" data-bs-toggle="tooltip" title="Excluir"></i>
-                    <i class="fas fa-file-export mx-2" style="cursor: pointer;" onclick="exportarTalao(${
-                      talao.id
-                    })" data-bs-toggle="tooltip" title="Exportar"></i>
-                  </div>
-                </div>
-              </div>`;
-          }
-        } else {
-          console.error("Talão sem data:", talao);
-        }
-      }
+      const [data, hora] = formatarDataHora(talao.dataHora);
+      cardRows += `
+        <div class="col-md-4 col-sm-6 mb-4">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">Talão ID: ${talao.id}</h5>
+              <p class="card-text">
+                <strong>Loja:</strong> ${talao.loja}<br>
+                <strong>Data:</strong> ${data}<br>
+                <strong>Hora:</strong> ${hora}<br>
+                <strong>Quantidade:</strong> ${talao.quantidade}<br>
+                <span class="badge ${
+                  talao.status === "Solicitado"
+                    ? "bg-warning"
+                    : talao.status === "Recebido"
+                    ? "bg-success"
+                    : "bg-secondary"
+                }">${talao.status}</span>
+              </p>
+            </div>
+            <div class="card-footer text-center">
+              <i class="fas fa-eye mx-2" style="cursor: pointer;" onclick="visualizarDetalhes(${talao.id})" data-bs-toggle="tooltip" title="Detalhes"></i>
+              <i class="fas fa-edit mx-2" style="cursor: pointer;" onclick="editarTalao(${talao.id})" data-bs-toggle="tooltip" title="Editar"></i>
+              <i class="fas fa-trash mx-2" style="cursor: pointer;" onclick="excluirTalao(${talao.id})" data-bs-toggle="tooltip" title="Excluir"></i>
+              <i class="fas fa-file-export mx-2" style="cursor: pointer;" onclick="exportarTalao(${talao.id})" data-bs-toggle="tooltip" title="Exportar"></i>
+            </div>
+          </div>
+        </div>`;
     });
   }
 
-  // Geração da paginação abaixo dos cards
   const paginacao = `
     <nav class="d-flex justify-content-center">
       <ul class="pagination">
         <li class="page-item ${paginaAtual === 1 ? "disabled" : ""}">
-          <a class="page-link" href="#" aria-label="Previous" onclick="showTaloes(${
-            paginaAtual - 1
-          })">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
+          <a class="page-link" href="#" onclick="showTaloes(${paginaAtual - 1})">&laquo;</a>
         </li>
-        ${Array.from(
-          { length: totalPaginas },
-          (_, i) => `
+        ${Array.from({ length: totalPaginas }, (_, i) => `
           <li class="page-item ${i + 1 === paginaAtual ? "active" : ""}">
-            <a class="page-link" href="#" onclick="showTaloes(${i + 1})">${
-            i + 1
-          }</a>
-          </li>
-        `
-        ).join("")}
+            <a class="page-link" href="#" onclick="showTaloes(${i + 1})">${i + 1}</a>
+          </li>`).join("")}
         <li class="page-item ${paginaAtual === totalPaginas ? "disabled" : ""}">
-          <a class="page-link" href="#" aria-label="Next" onclick="showTaloes(${
-            paginaAtual + 1
-          })">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
+          <a class="page-link" href="#" onclick="showTaloes(${paginaAtual + 1})">&raquo;</a>
         </li>
       </ul>
-    </nav>
-  `;
+    </nav>`;
 
   content.innerHTML = `
     <div class="overlay" id="overlay"></div>
     <h1 class="text-center mb-4">Gestão de Talões</h1>
     <p class="text-center mb-4">Veja a lista de talões e suas respectivas situações.</p>
-
     <div class="container mb-4">
       <div class="row justify-content-center">
         <div class="col-md-8 col-sm-12 mb-4">
           <div class="input-group">
-            <input type="text" class="form-control" id="talaoSearchInput" placeholder="Procurar por talão" oninput="buscarTalao()">
-            <div class="input-icon">
-              <i class="fas fa-search"></i>
-            </div>
+            <input type="text" class="form-control" id="talaoSearchInput" placeholder="Procurar por talão" oninput="buscarTalao()" value="${document.getElementById("talaoSearchInput")?.value || ''}">
+            <span class="input-group-text"><i class="fas fa-search"></i></span>
           </div>
         </div>
       </div>
     </div>
-
     <div class="container">
-      <div class="row">
-        ${cardRows}
-      </div>
+      <div class="row">${cardRows}</div>
     </div>
-
     ${paginacao}
-
     <div class="text-center mb-4">
       <div class="row justify-content-center">
         <div class="col-12 col-sm-6 col-md-3 mb-2">
@@ -195,12 +134,10 @@ window.showTaloes = function (paginaAtual = 1) {
           </button>
         </div>
       </div>
-    </div>
-  `;
+    </div>`;
 
   setActiveButton("Talões");
 };
-
 
 // Função para editar talão
 window.editarTalao = function (id) {
@@ -677,19 +614,19 @@ window.visualizarDetalhes = function (id) {
 
 // Função para buscar talões
 window.buscarTalao = function () {
-  const searchInput = document
-    .getElementById("talaoSearchInput")
-    .value.toLowerCase();
-  const cards = document.querySelectorAll(".card"); // Seletor para os cards
+  const searchInput = document.getElementById("talaoSearchInput").value.toLowerCase();
+  const todosTaloes = Talao.listarTaloes();
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+  const isAdminRootMatriz = usuarioLogado.perfil === "AdminRoot" && usuarioLogado.loja === "Matriz";
 
-  cards.forEach((card) => {
-    const id = card.querySelector(".card-title").textContent.toLowerCase(); // Captura o ID do talão
+  const taloesFiltrados = todosTaloes.filter((talao) =>
+    (isAdminRootMatriz || talao.loja === usuarioLogado.loja) &&
+    talao.id.toString().includes(searchInput)
+  );
 
-    // Verifica se o input de busca está incluído no texto do ID do card
-    if (id.includes(`talão id: ${searchInput}`)) {
-      card.style.display = ""; // Exibe o card
-    } else {
-      card.style.display = "none"; // Oculte o card
-    }
-  });
+  if (searchInput) {
+    showTaloes(1, taloesFiltrados); // Exibe os resultados filtrados
+  } else {
+    showTaloes(1); // Volta à listagem original
+  }
 };
