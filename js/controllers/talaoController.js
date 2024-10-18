@@ -135,7 +135,7 @@ window.showTaloes = function (paginaAtual = 1) {
 
   content.innerHTML = `
     <div class="overlay" id="overlay"></div>
-    <h1 class="text-center mb-4">Lista de Talões</h1>
+    <h1 class="text-center mb-4">Gestão de Talões</h1>
     <p class="text-center mb-4">Veja a lista de talões e suas respectivas situações.</p>
 
     <div class="container mb-4">

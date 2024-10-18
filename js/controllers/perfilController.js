@@ -120,7 +120,7 @@ window.showPerfis = async function (paginaAtual = 1) {
   // Inserindo o conteúdo na página com o novo layout
   content.innerHTML = `
     <div class="overlay" id="overlay"></div>
-    <h1 class="text-center mb-4">Lista de Perfis de Acesso</h1>
+    <h1 class="text-center mb-4">Gestão de Perfis de Acesso</h1>
     <p class="text-center mb-4">Veja a lista de perfis e suas respectivas permissões.</p>
 
     <div class="container mb-4">

@@ -83,7 +83,7 @@ window.showLojas = function (paginaAtual = 1) {
 
   content.innerHTML = `
     <div class="overlay" id="overlay"></div>
-    <h1 class="text-center mb-4">Lista de Lojas</h1>
+    <h1 class="text-center mb-4">Gestão de Lojas</h1>
     <p class="text-center mb-4">Veja a lista de lojas cadastradas.</p>
 
     <div class="container">

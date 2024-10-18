@@ -113,7 +113,7 @@ window.showUsuarios = function (paginaAtual = 1) {
   // Renderização final do conteúdo HTML
   content.innerHTML = `
       <div class="overlay" id="overlay"></div>
-      <h1 class="text-center mb-4">Lista de Usuários</h1>
+      <h1 class="text-center mb-4">Gestão de Usuários</h1>
       <p class="text-center mb-4">Veja a lista de usuários cadastrados e suas respectivas situações.</p>
 
       <div class="container mb-4">
