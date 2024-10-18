@@ -153,14 +153,6 @@ window.showPerfis = async function (paginaAtual = 1, itensPorPagina = 1) {
     </div>
   `;
 
-  // Inicializa tooltips
-  const tooltipTriggerList = [].slice.call(
-    document.querySelectorAll('[data-bs-toggle="tooltip"]')
-  );
-  tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl);
-  });
-
   setActiveButton("Perfis de Acesso");
 };
 
@@ -231,8 +223,6 @@ window.cadastrarPerfil = function () {
   `;
 };
 
-
-
 // Função para marcar/desmarcar todas as permissões de uma categoria
 window.marcarTodas = function (categoria) {
   const checkboxes = document.querySelectorAll(
@@ -301,17 +291,29 @@ window.editarPerfil = async function (id) {
       <form id="perfilForm">
         <div class="mb-3">
           <label for="nomePerfil" class="form-label">Nome do Perfil</label>
-          <input type="text" class="form-control" id="nomePerfil" value="${perfil.nome}" required>
+          <input type="text" class="form-control" id="nomePerfil" value="${
+            perfil.nome
+          }" required>
         </div>
 
         <div class="mb-3">
           <label class="form-label">Permissões Administrativas</label>
           <div>
             <input type="checkbox" id="permAdminTotal" onclick="marcarTodas('admin')"> <strong>Marcar Todas</strong><br>
-            <input type="checkbox" class="admin" id="permCadastrarUsuario" value="cadastrar_usuario" ${perfil.permissoes.includes("cadastrar_usuario") ? "checked" : ""}> Cadastrar Usuário<br>
-            <input type="checkbox" class="admin" id="permExcluirUsuario" value="excluir_usuario" ${perfil.permissoes.includes("excluir_usuario") ? "checked" : ""}> Excluir Usuário<br>
-            <input type="checkbox" class="admin" id="permManutencaoPerfis" value="manutencao_perfis" ${perfil.permissoes.includes("manutencao_perfis") ? "checked" : ""}> Manutenção de Perfis<br>
-            <input type="checkbox" class="admin" id="permConfigurarPermissoes" value="configurar_permissoes" ${perfil.permissoes.includes("configurar_permissoes") ? "checked" : ""}> Configurar Permissões<br>
+            <input type="checkbox" class="admin" id="permCadastrarUsuario" value="cadastrar_usuario" ${
+              perfil.permissoes.includes("cadastrar_usuario") ? "checked" : ""
+            }> Cadastrar Usuário<br>
+            <input type="checkbox" class="admin" id="permExcluirUsuario" value="excluir_usuario" ${
+              perfil.permissoes.includes("excluir_usuario") ? "checked" : ""
+            }> Excluir Usuário<br>
+            <input type="checkbox" class="admin" id="permManutencaoPerfis" value="manutencao_perfis" ${
+              perfil.permissoes.includes("manutencao_perfis") ? "checked" : ""
+            }> Manutenção de Perfis<br>
+            <input type="checkbox" class="admin" id="permConfigurarPermissoes" value="configurar_permissoes" ${
+              perfil.permissoes.includes("configurar_permissoes")
+                ? "checked"
+                : ""
+            }> Configurar Permissões<br>
           </div>
         </div>
 
@@ -319,19 +321,35 @@ window.editarPerfil = async function (id) {
           <label class="form-label">Permissões Operacionais</label>
           <div>
             <input type="checkbox" id="permOperacionalTotal" onclick="marcarTodas('operacional')"> <strong>Marcar Todas</strong><br>
-            <input type="checkbox" class="operacional" id="permAcessarRelatorios" value="acessar_relatorios" ${perfil.permissoes.includes("acessar_relatorios") ? "checked" : ""}> Acessar Relatórios<br>
-            <input type="checkbox" class="operacional" id="permGerenciarTaloes" value="gerenciar_taloes" ${perfil.permissoes.includes("gerenciar_taloes") ? "checked" : ""}> Gerenciar Talões<br>
-            <input type="checkbox" class="operacional" id="permVerEstoque" value="ver_estoque" ${perfil.permissoes.includes("ver_estoque") ? "checked" : ""}> Ver Estoque<br>
-            <input type="checkbox" class="operacional" id="permConsultarEnvio" value="consultar_envio" ${perfil.permissoes.includes("consultar_envio") ? "checked" : ""}> Consultar Envio<br>
-            <input type="checkbox" class="operacional" id="permConsultarRecebimento" value="consultar_recebimento" ${perfil.permissoes.includes("consultar_recebimento") ? "checked" : ""}> Consultar Recebimento<br>
-            <input type="checkbox" class="operacional" id="permRegistrarEntrega" value="registrar_entrega" ${perfil.permissoes.includes("registrar_entrega") ? "checked" : ""}> Registrar Entrega<br>
+            <input type="checkbox" class="operacional" id="permAcessarRelatorios" value="acessar_relatorios" ${
+              perfil.permissoes.includes("acessar_relatorios") ? "checked" : ""
+            }> Acessar Relatórios<br>
+            <input type="checkbox" class="operacional" id="permGerenciarTaloes" value="gerenciar_taloes" ${
+              perfil.permissoes.includes("gerenciar_taloes") ? "checked" : ""
+            }> Gerenciar Talões<br>
+            <input type="checkbox" class="operacional" id="permVerEstoque" value="ver_estoque" ${
+              perfil.permissoes.includes("ver_estoque") ? "checked" : ""
+            }> Ver Estoque<br>
+            <input type="checkbox" class="operacional" id="permConsultarEnvio" value="consultar_envio" ${
+              perfil.permissoes.includes("consultar_envio") ? "checked" : ""
+            }> Consultar Envio<br>
+            <input type="checkbox" class="operacional" id="permConsultarRecebimento" value="consultar_recebimento" ${
+              perfil.permissoes.includes("consultar_recebimento")
+                ? "checked"
+                : ""
+            }> Consultar Recebimento<br>
+            <input type="checkbox" class="operacional" id="permRegistrarEntrega" value="registrar_entrega" ${
+              perfil.permissoes.includes("registrar_entrega") ? "checked" : ""
+            }> Registrar Entrega<br>
           </div>
         </div>
 
         <div class="text-center mb-4">
           <div class="row justify-content-center">
             <div class="col-12 col-sm-6 col-md-3 mb-2">
-              <button type="button" class="btn btn-custom w-100" style="background-color: #269447; color: white;" onclick="submitEdicaoPerfil(${perfil.id})">
+              <button type="button" class="btn btn-custom w-100" style="background-color: #269447; color: white;" onclick="submitEdicaoPerfil(${
+                perfil.id
+              })">
                 <i class="fas fa-save"></i> Salvar Alterações
               </button>
             </div>
@@ -341,8 +359,6 @@ window.editarPerfil = async function (id) {
     </div>
   `;
 };
-
-
 
 window.submitEdicaoPerfil = async function (id) {
   const nome = document.getElementById("nomePerfil").value;

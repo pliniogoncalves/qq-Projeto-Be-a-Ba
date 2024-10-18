@@ -15,7 +15,7 @@ function formatarDataHora(dataHoraISO) {
 }
 
 // Exibir talões na tela
-window.showTaloes = function (paginaAtual = 1, itensPorPagina = 5) {
+window.showTaloes = function (paginaAtual = 1, itensPorPagina = 2) {
   const content = document.getElementById("mainContent");
   const taloes = Talao.listarTaloes();
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
@@ -200,14 +200,6 @@ window.showTaloes = function (paginaAtual = 1, itensPorPagina = 5) {
         </div>
     `;
 
-  // Inicializa tooltips
-  const tooltipTriggerList = [].slice.call(
-    document.querySelectorAll('[data-bs-toggle="tooltip"]')
-  );
-  tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl);
-  });
-
   setActiveButton("Talões");
 };
 
@@ -253,7 +245,7 @@ window.editarTalao = function (id) {
   }
 
   content.innerHTML = `
-          <div class="form-container">
+      <div class="form-container">
           <h1 class="h4 mb-4">Editar Talão</h1>
           <form id="talaoEditForm" onsubmit="salvarEdicaoTalao(event, ${id})">
               <div class="mb-3">
@@ -272,11 +264,21 @@ window.editarTalao = function (id) {
                   <label for="quantidadeTalaoEdit" class="form-label">Quantidade de Talões</label>
                   <input type="number" class="form-control" id="quantidadeTalaoEdit" value="${talao.quantidade}" min="1" required>
               </div>
-              <button type="submit" class="btn btn-submit">Salvar Edição</button>
+              <div class="text-center mb-4">
+                <div class="row justify-content-center">
+                  <div class="col-12 col-sm-6 col-md-3 mb-2">
+                    <button type="submit" class="btn btn-custom w-100" style="background-color: #269447; color: white;">
+                      <i class="fas fa-save"></i> Salvar Edição
+                    </button>
+                  </div>
+                </div>
+              </div>
           </form>
       </div>
-      `;
+  `;
 };
+
+
 
 // Salvar edição de talão
 window.salvarEdicaoTalao = function (event, id) {
@@ -365,11 +367,17 @@ window.solicitarTalao = function () {
           <label for="quantidadeTalao" class="form-label">Quantidade de Talões</label>
           <input type="number" class="form-control" id="quantidadeTalao" placeholder="Digite a quantidade" min="1" required>
         </div>
-        <button type="submit" class="btn btn-submit" ${
-          lojasCadastradas.length === 0 ? "disabled" : ""
-        }>
-          Solicitar Talão
-        </button>
+        <div class="text-center mb-4">
+          <div class="row justify-content-center">
+            <div class="col-12 col-sm-6 col-md-3 mb-2">
+              <button type="submit" class="btn btn-custom w-100" style="background-color: #269447; color: white;" ${
+                lojasCadastradas.length === 0 ? "disabled" : ""
+              }>
+                <i class="fas fa-plus-circle"></i> Solicitar Talão
+              </button>
+            </div>
+          </div>
+        </div>
         ${
           lojasCadastradas.length === 0
             ? '<p class="text-danger mt-2">Nenhuma loja cadastrada. Por favor, cadastre uma loja para continuar.</p>'
@@ -379,6 +387,7 @@ window.solicitarTalao = function () {
     </div>
   `;
 };
+
 
 // Salvar solicitação de talão
 window.salvarSolicitacaoTalao = function (event) {
