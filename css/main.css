@@ -282,6 +282,25 @@ table thead {
   cursor: pointer;
 }
 
+/* cards */
+.card {
+  border-radius: 8px;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: scale(1.02);
+}
+
+.card-footer i {
+  cursor: pointer;
+  font-size: 1.2em;
+}
+
+.card-footer i:hover {
+  color: #007bff;
+}
+
 /* Responsividade para telas menores */
 /* Ajustes para tela 1366x768 */
 @media only screen and (min-width: 1280px) and (max-width: 1400px) {

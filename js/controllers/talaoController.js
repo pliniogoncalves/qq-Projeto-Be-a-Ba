@@ -14,13 +14,12 @@ function formatarDataHora(dataHoraISO) {
   return [dataFormatada, horaFormatada];
 }
 
-// Função para exibir a lista de talões
 window.showTaloes = function (paginaAtual = 1) {
   const content = document.getElementById("mainContent");
   const taloes = Talao.listarTaloes();
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
 
-  let tableRows = "";
+  let cardRows = "";
 
   // Verifica se o usuário é AdminRoot da Matriz
   const isAdminRootMatriz =
@@ -29,11 +28,11 @@ window.showTaloes = function (paginaAtual = 1) {
   // Ajusta a quantidade de itens por página com base no tamanho da tela
   let itensPorPagina;
   if (window.innerWidth >= 1200) {
-    itensPorPagina = 10; // Telas grandes (desktops)
+    itensPorPagina = 3; // Telas grandes (desktops)
   } else if (window.innerWidth >= 768) {
     itensPorPagina = 3; // Telas médias (tablets)
   } else {
-    itensPorPagina = 2; // Telas pequenas (smartphones)
+    itensPorPagina = 1; // Telas pequenas (smartphones)
   }
 
   // Filtra os talões com base na loja do usuário logado
@@ -52,159 +51,139 @@ window.showTaloes = function (paginaAtual = 1) {
 
   // Verificar se há talões para exibir
   if (taloesPaginados.length === 0) {
-    tableRows = `
-      <tr>
-        <td colspan="7" class="text-center">Nenhum talão encontrado.</td>
-      </tr>`;
+    cardRows = `
+      <div class="col-12 text-center">
+        <p>Nenhum talão encontrado.</p>
+      </div>`;
   } else {
     taloesPaginados.forEach((talao) => {
       if (talao) {
         // Formatar data e hora no formato brasileiro
         const [data, hora] = formatarDataHora(talao.dataHora);
 
-        tableRows += `
-              <tr>
-                  <td>${talao.id}</td>
-                  <td>${talao.loja}</td>
-                  <td>${data}</td>
-                  <td>${hora}</td>
-                  <td>${talao.quantidade}</td>
-                  <td><span class="badge ${
+        // Gerar os cards com as informações do talão
+        cardRows += `
+          <div class="col-md-4 col-sm-6 mb-4">
+            <div class="card h-100 shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title">Talão ID: ${talao.id}</h5>
+                <p class="card-text">
+                  <strong>Loja:</strong> ${talao.loja}<br>
+                  <strong>Data:</strong> ${data}<br>
+                  <strong>Hora:</strong> ${hora}<br>
+                  <strong>Quantidade:</strong> ${talao.quantidade}<br>
+                  <span class="badge ${
                     talao.status === "Solicitado"
                       ? "bg-warning"
                       : talao.status === "Recebido"
                       ? "bg-success"
                       : "bg-secondary"
-                  }">${talao.status}</span></td>
-                  <td>
-                      <i class="fas fa-eye" 
-                         style="cursor: pointer; margin-right: 10px;" 
-                         onclick="visualizarDetalhes(${talao.id})" 
-                         data-bs-toggle="tooltip" 
-                         title="Detalhes"></i>
-                      <i class="fas fa-edit" 
-                         style="cursor: pointer; margin-right: 10px;" 
-                         onclick="editarTalao(${talao.id})" 
-                         data-bs-toggle="tooltip" 
-                         title="Editar"></i>
-                      <i class="fas fa-trash" 
-                         style="cursor: pointer; margin-right: 10px;" 
-                         onclick="excluirTalao(${talao.id})" 
-                         data-bs-toggle="tooltip" 
-                         title="Excluir"></i>
-                      <i class="fas fa-file-export" 
-                         style="cursor: pointer;" 
-                         onclick="exportarTalao(${talao.id})" 
-                         data-bs-toggle="tooltip" 
-                         title="Exportar"></i>
-                  </td>
-              </tr>
-          `;
+                  }">${talao.status}</span>
+                </p>
+              </div>
+              <div class="card-footer text-center">
+                <i class="fas fa-eye mx-2" style="cursor: pointer;" onclick="visualizarDetalhes(${
+                  talao.id
+                })" data-bs-toggle="tooltip" title="Detalhes"></i>
+                <i class="fas fa-edit mx-2" style="cursor: pointer;" onclick="editarTalao(${
+                  talao.id
+                })" data-bs-toggle="tooltip" title="Editar"></i>
+                <i class="fas fa-trash mx-2" style="cursor: pointer;" onclick="excluirTalao(${
+                  talao.id
+                })" data-bs-toggle="tooltip" title="Excluir"></i>
+                <i class="fas fa-file-export mx-2" style="cursor: pointer;" onclick="exportarTalao(${
+                  talao.id
+                })" data-bs-toggle="tooltip" title="Exportar"></i>
+              </div>
+            </div>
+          </div>`;
       }
     });
   }
 
-  // Geração da paginação dentro da tabela com setas "Previous" e "Next"
+  // Geração da paginação abaixo dos cards
   const paginacao = `
-    <tr>
-      <td colspan="7">
-        <nav>
-          <ul class="pagination justify-content-center">
-            <li class="page-item ${paginaAtual === 1 ? "disabled" : ""}">
-              <a class="page-link" href="#" aria-label="Previous" onclick="showTaloes(${
-                paginaAtual - 1
-              })">
-                <span aria-hidden="true">&laquo;</span>
-              </a>
-            </li>
-            ${Array.from(
-              { length: totalPaginas },
-              (_, i) => `
-              <li class="page-item ${i + 1 === paginaAtual ? "active" : ""}">
-                <a class="page-link" href="#" onclick="showTaloes(${i + 1})">${
-                i + 1
-              }</a>
-              </li>
-            `
-            ).join("")}
-            <li class="page-item ${
-              paginaAtual === totalPaginas ? "disabled" : ""
-            }">
-              <a class="page-link" href="#" aria-label="Next" onclick="showTaloes(${
-                paginaAtual + 1
-              })">
-                <span aria-hidden="true">&raquo;</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </td>
-    </tr>
+    <nav class="d-flex justify-content-center">
+      <ul class="pagination">
+        <li class="page-item ${paginaAtual === 1 ? "disabled" : ""}">
+          <a class="page-link" href="#" aria-label="Previous" onclick="showTaloes(${
+            paginaAtual - 1
+          })">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+        ${Array.from(
+          { length: totalPaginas },
+          (_, i) => `
+          <li class="page-item ${i + 1 === paginaAtual ? "active" : ""}">
+            <a class="page-link" href="#" onclick="showTaloes(${i + 1})">${
+            i + 1
+          }</a>
+          </li>
+        `
+        ).join("")}
+        <li class="page-item ${paginaAtual === totalPaginas ? "disabled" : ""}">
+          <a class="page-link" href="#" aria-label="Next" onclick="showTaloes(${
+            paginaAtual + 1
+          })">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
   `;
 
   content.innerHTML = `
-        <div class="overlay" id="overlay"></div>
-        <h1 class="text-center mb-4">Lista de Talões</h1>
-        <p class="text-center mb-4">Veja a lista de talões e suas respectivas situações.</p>
-  
-        <div class="container mb-4">
-            <div class="row justify-content-center">
-                <div class="col-md-8 col-sm-12 mb-4">
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="talaoSearchInput" placeholder="Procurar por talão" oninput="buscarTalao()">
-                        <div class="input-icon">
-                            <i class="fas fa-search"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="overlay" id="overlay"></div>
+    <h1 class="text-center mb-4">Lista de Talões</h1>
+    <p class="text-center mb-4">Veja a lista de talões e suas respectivas situações.</p>
 
-        <div class="table-responsive mb-4">
-            <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Loja</th>
-                    <th>Data</th>
-                    <th>Hora</th>
-                    <th>Quantidade</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody id="talaoTableBody">
-                ${tableRows}
-                ${paginacao} <!-- Adiciona paginação dentro da tabela -->
-            </tbody>
-            </table>
-        </div>
-        
-        <div class="text-center mb-4">
-            <div class="row justify-content-center">
-                <div class="col-12 col-sm-6 col-md-3 mb-2">
-                    <button class="btn btn-custom w-100" style="background-color: #269447; color: white;" type="button" onclick="solicitarTalao()">
-                        <i class="fas fa-plus-circle"></i> Solicitar Talão
-                    </button>
-                </div>
-                <div class="col-12 col-sm-6 col-md-3 mb-2">
-                    <button class="btn w-100" style="background-color: #69a841; color: white;" type="button" onclick="registrarEnvio()">
-                        <i class="fas fa-paper-plane"></i> Registrar Envio
-                    </button>
-                </div>
-                <div class="col-12 col-sm-6 col-md-3 mb-2">
-                    <button class="btn w-100" style="background-color: #f7e800; color: #20512e;" type="button" onclick="registrarRecebimento()">
-                        <i class="fas fa-check-circle"></i> Registrar Recebimento
-                    </button>
-                </div>
-                <div class="col-12 col-sm-6 col-md-3 mb-2">
-                    <button class="btn w-100" style="background-color: #20512e; color: white;" type="button" onclick="exportarTodosTaloes()">
-                        <i class="fas fa-file-export"></i> Exportar Todos
-                    </button>
-                </div>
+    <div class="container mb-4">
+      <div class="row justify-content-center">
+        <div class="col-md-8 col-sm-12 mb-4">
+          <div class="input-group">
+            <input type="text" class="form-control" id="talaoSearchInput" placeholder="Procurar por talão" oninput="buscarTalao()">
+            <div class="input-icon">
+              <i class="fas fa-search"></i>
             </div>
+          </div>
         </div>
-    `;
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row">
+        ${cardRows}
+      </div>
+    </div>
+
+    ${paginacao}
+
+    <div class="text-center mb-4">
+      <div class="row justify-content-center">
+        <div class="col-12 col-sm-6 col-md-3 mb-2">
+          <button class="btn btn-custom w-100" style="background-color: #269447; color: white;" type="button" onclick="solicitarTalao()">
+            <i class="fas fa-plus-circle"></i> Solicitar Talão
+          </button>
+        </div>
+        <div class="col-12 col-sm-6 col-md-3 mb-2">
+          <button class="btn w-100" style="background-color: #69a841; color: white;" type="button" onclick="registrarEnvio()">
+            <i class="fas fa-paper-plane"></i> Registrar Envio
+          </button>
+        </div>
+        <div class="col-12 col-sm-6 col-md-3 mb-2">
+          <button class="btn w-100" style="background-color: #f7e800; color: #20512e;" type="button" onclick="registrarRecebimento()">
+            <i class="fas fa-check-circle"></i> Registrar Recebimento
+          </button>
+        </div>
+        <div class="col-12 col-sm-6 col-md-3 mb-2">
+          <button class="btn w-100" style="background-color: #20512e; color: white;" type="button" onclick="exportarTodosTaloes()">
+            <i class="fas fa-file-export"></i> Exportar Todos
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
 
   setActiveButton("Talões");
 };
@@ -628,24 +607,6 @@ window.exportarTodosTaloes = function () {
   downloadCSV(csvContent, "taloes.csv");
 };
 
-// Função para buscar talões
-window.buscarTalao = function () {
-  const searchInput = document
-    .getElementById("talaoSearchInput")
-    .value.toLowerCase();
-  const tableRows = document.querySelectorAll("#talaoTableBody tr");
-
-  tableRows.forEach((row) => {
-    const lojaCell = row.cells[1].textContent.toLowerCase();
-    const idCell = row.cells[0].textContent.toLowerCase();
-    if (lojaCell.includes(searchInput) || idCell.includes(searchInput)) {
-      row.style.display = "";
-    } else {
-      row.style.display = "none";
-    }
-  });
-};
-
 // Função auxiliar para download de CSV
 function downloadCSV(csvContent, fileName) {
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -698,4 +659,23 @@ window.visualizarDetalhes = function (id) {
 
   const modal = document.getElementById("detalhesModal");
   modal.style.display = "block";
+};
+
+// Função para buscar talões
+window.buscarTalao = function () {
+  const searchInput = document
+    .getElementById("talaoSearchInput")
+    .value.toLowerCase();
+  const cards = document.querySelectorAll(".card"); // Seletor para os cards
+
+  cards.forEach((card) => {
+    const id = card.querySelector(".card-title").textContent.toLowerCase(); // Captura o ID do talão
+
+    // Verifica se o input de busca está incluído no texto do ID do card
+    if (id.includes(`talão id: ${searchInput}`)) {
+      card.style.display = ""; // Exibe o card
+    } else {
+      card.style.display = "none"; // Oculte o card
+    }
+  });
 };
