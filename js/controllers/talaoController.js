@@ -15,7 +15,7 @@ function formatarDataHora(dataHoraISO) {
 }
 
 // Exibir talões na tela
-window.showTaloes = function () {
+window.showTaloes = function (paginaAtual = 1, itensPorPagina = 5) {
   const content = document.getElementById("mainContent");
   const taloes = Talao.listarTaloes();
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
@@ -29,14 +29,23 @@ window.showTaloes = function () {
     return isAdminRootMatriz || talao.loja === usuarioLogado.loja;
   });
 
+  const totalPaginas = Math.ceil(taloesFiltrados.length / itensPorPagina);
+
+  // Paginar talões
+  const inicio = (paginaAtual - 1) * itensPorPagina;
+  const taloesPaginados = taloesFiltrados.slice(
+    inicio,
+    inicio + itensPorPagina
+  );
+
   // Verificar se há talões para exibir
-  if (taloesFiltrados.length === 0) {
+  if (taloesPaginados.length === 0) {
     tableRows = `
       <tr>
         <td colspan="7" class="text-center">Nenhum talão encontrado.</td>
       </tr>`;
   } else {
-    taloesFiltrados.forEach((talao) => {
+    taloesPaginados.forEach((talao) => {
       if (talao) {
         // Formatar data e hora no formato brasileiro (dd/mm/yyyy)
         const [data, hora] = formatarDataHora(talao.dataHora); // Formato brasileiro para data
@@ -83,6 +92,49 @@ window.showTaloes = function () {
     });
   }
 
+  // Geração da paginação dentro da tabela com setas "Previous" e "Next"
+  const paginacao = `
+    <tr>
+      <td colspan="7">
+        <nav>
+          <ul class="pagination justify-content-center">
+            <!-- Botão Previous (desabilitado na primeira página) -->
+            <li class="page-item ${paginaAtual === 1 ? "disabled" : ""}">
+              <a class="page-link" href="#" aria-label="Previous" onclick="showTaloes(${
+                paginaAtual - 1
+              }, ${itensPorPagina})">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+
+            <!-- Números da paginação -->
+            ${Array.from(
+              { length: totalPaginas },
+              (_, i) => `
+              <li class="page-item ${i + 1 === paginaAtual ? "active" : ""}">
+                <a class="page-link" href="#" onclick="showTaloes(${
+                  i + 1
+                }, ${itensPorPagina})">${i + 1}</a>
+              </li>
+            `
+            ).join("")}
+
+            <!-- Botão Next (desabilitado na última página) -->
+            <li class="page-item ${
+              paginaAtual === totalPaginas ? "disabled" : ""
+            }">
+              <a class="page-link" href="#" aria-label="Next" onclick="showTaloes(${
+                paginaAtual + 1
+              }, ${itensPorPagina})">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </td>
+    </tr>
+  `;
+
   content.innerHTML = `
         <div class="overlay" id="overlay"></div>
         <h1 class="text-center mb-4">Lista de Talões</h1>
@@ -96,13 +148,13 @@ window.showTaloes = function () {
                         <div class="input-icon">
                             <i class="fas fa-search"></i>
                         </div>
-                        <button class="btn btn-outline-secondary" type="button" onclick="exportarTodosTaloes()">Exportar Todos</button>
                     </div>
                 </div>
             </div>
         </div>
-  
-        <div class="table-responsive">
+
+        <!-- Espaçamento adicional entre a tabela e os botões -->
+        <div class="table-responsive mb-4">
             <table class="table table-striped">
             <thead>
                 <tr>
@@ -117,14 +169,34 @@ window.showTaloes = function () {
             </thead>
             <tbody id="talaoTableBody">
                 ${tableRows}
+                ${paginacao} <!-- Adiciona paginação dentro da tabela -->
             </tbody>
             </table>
         </div>
         
         <div class="text-center mb-4">
-            <button class="btn btn-custom btn-primary" type="button" onclick="solicitarTalao()">Solicitar Talão</button>
-            <button class="btn btn-info" type="button" onclick="registrarEnvio()">Registrar Envio</button>
-            <button class="btn btn-success" type="button" onclick="registrarRecebimento()">Registrar Recebimento</button>
+            <div class="row justify-content-center">
+                <div class="col-12 col-sm-6 col-md-3 mb-2">
+                    <button class="btn btn-custom w-100" style="background-color: #269447; color: white;" type="button" onclick="solicitarTalao()">
+                        <i class="fas fa-plus-circle"></i> Solicitar Talão
+                    </button>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3 mb-2">
+                    <button class="btn w-100" style="background-color: #69a841; color: white;" type="button" onclick="registrarEnvio()">
+                        <i class="fas fa-paper-plane"></i> Registrar Envio
+                    </button>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3 mb-2">
+                    <button class="btn w-100" style="background-color: #f7e800; color: #20512e;" type="button" onclick="registrarRecebimento()">
+                        <i class="fas fa-check-circle"></i> Registrar Recebimento
+                    </button>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3 mb-2">
+                    <button class="btn w-100" style="background-color: #20512e; color: white;" type="button" onclick="exportarTodosTaloes()">
+                        <i class="fas fa-file-export"></i> Exportar Todos
+                    </button>
+                </div>
+            </div>
         </div>
     `;
 
