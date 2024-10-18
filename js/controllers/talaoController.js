@@ -31,9 +31,11 @@ window.showTaloes = function (paginaAtual = 1, taloesFiltrados = null) {
 
   let itensPorPagina = window.innerWidth >= 768 ? 3 : 1;
 
-  const taloes = taloesFiltrados || todosTaloes.filter(
-    (talao) => isAdminRootMatriz || talao.loja === usuarioLogado.loja
-  );
+  const taloes =
+    taloesFiltrados ||
+    todosTaloes.filter(
+      (talao) => isAdminRootMatriz || talao.loja === usuarioLogado.loja
+    );
 
   const totalPaginas = Math.ceil(taloes.length / itensPorPagina);
   const inicio = (paginaAtual - 1) * itensPorPagina;
@@ -47,9 +49,22 @@ window.showTaloes = function (paginaAtual = 1, taloesFiltrados = null) {
   } else {
     taloesPaginados.forEach((talao) => {
       const [data, hora] = formatarDataHora(talao.dataHora);
+
+      // Define a classe da borda de acordo com o status
+      let borderClass = "default"; // Classe padrão
+      let badgeClass = "badge-default"; // Classe padrão do badge
+      if (talao.status === "Solicitado") {
+        borderClass = "solicitado";
+        badgeClass = "badge-solicitado"; // Atualiza a classe do badge para solicitado
+      } else if (talao.status === "Recebido") {
+        borderClass = "recebido";
+        badgeClass = "badge-recebido"; // Classe do badge para recebido
+      }
+
+      // Geração do card
       cardRows += `
         <div class="col-md-4 col-sm-6 mb-4">
-          <div class="card h-100 shadow-sm">
+          <div class="card h-100 shadow-sm ${borderClass}"> <!-- Adiciona a classe da borda -->
             <div class="card-body">
               <h5 class="card-title">Talão ID: ${talao.id}</h5>
               <p class="card-text">
@@ -57,20 +72,14 @@ window.showTaloes = function (paginaAtual = 1, taloesFiltrados = null) {
                 <strong>Data:</strong> ${data}<br>
                 <strong>Hora:</strong> ${hora}<br>
                 <strong>Quantidade:</strong> ${talao.quantidade}<br>
-                <span class="badge ${
-                  talao.status === "Solicitado"
-                    ? "bg-warning"
-                    : talao.status === "Recebido"
-                    ? "bg-success"
-                    : "bg-secondary"
-                }">${talao.status}</span>
+                <span class="badge ${badgeClass}">${talao.status}</span> <!-- Aplica a classe do badge -->
               </p>
             </div>
             <div class="card-footer text-center">
-              <i class="fas fa-eye mx-2" style="cursor: pointer;" onclick="visualizarDetalhes(${talao.id})" data-bs-toggle="tooltip" title="Detalhes"></i>
-              <i class="fas fa-edit mx-2" style="cursor: pointer;" onclick="editarTalao(${talao.id})" data-bs-toggle="tooltip" title="Editar"></i>
-              <i class="fas fa-trash mx-2" style="cursor: pointer;" onclick="excluirTalao(${talao.id})" data-bs-toggle="tooltip" title="Excluir"></i>
-              <i class="fas fa-file-export mx-2" style="cursor: pointer;" onclick="exportarTalao(${talao.id})" data-bs-toggle="tooltip" title="Exportar"></i>
+              <i class="fas fa-eye mx-2" onclick="visualizarDetalhes(${talao.id})" data-bs-toggle="tooltip" title="Detalhes"></i>
+              <i class="fas fa-edit mx-2" onclick="editarTalao(${talao.id})" data-bs-toggle="tooltip" title="Editar"></i>
+              <i class="fas fa-trash mx-2" onclick="excluirTalao(${talao.id})" data-bs-toggle="tooltip" title="Excluir"></i>
+              <i class="fas fa-file-export mx-2" onclick="exportarTalao(${talao.id})" data-bs-toggle="tooltip" title="Exportar"></i>
             </div>
           </div>
         </div>`;
@@ -81,14 +90,23 @@ window.showTaloes = function (paginaAtual = 1, taloesFiltrados = null) {
     <nav class="d-flex justify-content-center">
       <ul class="pagination">
         <li class="page-item ${paginaAtual === 1 ? "disabled" : ""}">
-          <a class="page-link" href="#" onclick="showTaloes(${paginaAtual - 1})">&laquo;</a>
+          <a class="page-link" href="#" onclick="showTaloes(${
+            paginaAtual - 1
+          })">&laquo;</a>
         </li>
-        ${Array.from({ length: totalPaginas }, (_, i) => `
+        ${Array.from(
+          { length: totalPaginas },
+          (_, i) => `
           <li class="page-item ${i + 1 === paginaAtual ? "active" : ""}">
-            <a class="page-link" href="#" onclick="showTaloes(${i + 1})">${i + 1}</a>
-          </li>`).join("")}
+            <a class="page-link" href="#" onclick="showTaloes(${i + 1})">${
+            i + 1
+          }</a>
+          </li>`
+        ).join("")}
         <li class="page-item ${paginaAtual === totalPaginas ? "disabled" : ""}">
-          <a class="page-link" href="#" onclick="showTaloes(${paginaAtual + 1})">&raquo;</a>
+          <a class="page-link" href="#" onclick="showTaloes(${
+            paginaAtual + 1
+          })">&raquo;</a>
         </li>
       </ul>
     </nav>`;
@@ -101,7 +119,9 @@ window.showTaloes = function (paginaAtual = 1, taloesFiltrados = null) {
       <div class="row justify-content-center">
         <div class="col-md-8 col-sm-12 mb-4">
           <div class="input-group">
-            <input type="text" class="form-control" id="talaoSearchInput" placeholder="Procurar por talão" oninput="buscarTalao()" value="${document.getElementById("talaoSearchInput")?.value || ''}">
+            <input type="text" class="form-control" id="talaoSearchInput" placeholder="Procurar por talão" oninput="buscarTalao()" value="${
+              document.getElementById("talaoSearchInput")?.value || ""
+            }">
             <span class="input-group-text"><i class="fas fa-search"></i></span>
           </div>
         </div>
@@ -614,14 +634,18 @@ window.visualizarDetalhes = function (id) {
 
 // Função para buscar talões
 window.buscarTalao = function () {
-  const searchInput = document.getElementById("talaoSearchInput").value.toLowerCase();
+  const searchInput = document
+    .getElementById("talaoSearchInput")
+    .value.toLowerCase();
   const todosTaloes = Talao.listarTaloes();
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
-  const isAdminRootMatriz = usuarioLogado.perfil === "AdminRoot" && usuarioLogado.loja === "Matriz";
+  const isAdminRootMatriz =
+    usuarioLogado.perfil === "AdminRoot" && usuarioLogado.loja === "Matriz";
 
-  const taloesFiltrados = todosTaloes.filter((talao) =>
-    (isAdminRootMatriz || talao.loja === usuarioLogado.loja) &&
-    talao.id.toString().includes(searchInput)
+  const taloesFiltrados = todosTaloes.filter(
+    (talao) =>
+      (isAdminRootMatriz || talao.loja === usuarioLogado.loja) &&
+      talao.id.toString().includes(searchInput)
   );
 
   if (searchInput) {

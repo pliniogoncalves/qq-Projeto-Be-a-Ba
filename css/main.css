@@ -301,6 +301,31 @@ table thead {
   color: #007bff;
 }
 
+.card.solicitado {
+  border: 2px solid #b30d14; /* Vermelho */
+}
+
+.card.recebido {
+  border: 2px solid #28a745; /* Verde */
+}
+
+.card.default {
+  border: 2px solid #ffc107; /* Amarelo */
+}
+
+/* Badge de status */
+.badge-solicitado {
+  background-color: #b30d14; /* Cor do badge para 'Solicitado' */
+}
+
+.badge-recebido {
+  background-color: #28a745; /* Cor do badge para 'Recebido' */
+}
+
+.badge-default {
+  background-color: #ffc107; /* Cor do badge para status padrão */
+}
+
 /* Responsividade para telas menores */
 /* Ajustes para tela 1366x768 */
 @media only screen and (min-width: 1280px) and (max-width: 1400px) {
