@@ -122,7 +122,9 @@ window.showTaloes = function (paginaAtual = 1, taloesFiltrados = null) {
             <input type="text" class="form-control" id="talaoSearchInput" placeholder="Procurar por talão" oninput="buscarTalao()" value="${
               document.getElementById("talaoSearchInput")?.value || ""
             }">
-            <span class="input-group-text"><i class="fas fa-search"></i></span>
+              <div class="input-icon">
+                <i class="fas fa-search"></i>
+              </div>
           </div>
         </div>
       </div>
@@ -625,7 +627,6 @@ window.visualizarDetalhes = function (id) {
     <p><strong>Funcionario Recebeu:</strong> ${funcionarioRecebeu}</p>
     <p><strong>Quantidade:</strong> ${talao.quantidade}</p>
     <p><strong>Status:</strong> ${talao.status}</p>
-    <button class="btn btn-primary" onclick="fecharModal()">Fechar</button>
   `;
 
   const modal = document.getElementById("detalhesModal");
