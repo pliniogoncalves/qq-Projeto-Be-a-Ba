@@ -479,26 +479,26 @@ window.confirmarRecebimento = function (id) {
 window.exportarTalao = function (id) {
   const talao = Talao.buscarTalao(id);
 
-  // Formata as datas se disponíveis, utilizando a função de formatação existente
-  const dataSolicitado = talao.timestamps.solicitado
+  // Formata as datas e horas se disponíveis
+  const dataHoraSolicitado = talao.timestamps.solicitado
     ? formatarDataHora(talao.timestamps.solicitado.dataHora)
-    : ["", ""]; // Retorna vazio se a data não existir
+    : ["", ""]; // Formata a data e hora de solicitação
   const funcionarioSolicitante = talao.timestamps.solicitado?.funcionario || "";
 
-  const dataEnviado = talao.timestamps.enviado
+  const dataHoraEnviado = talao.timestamps.enviado
     ? formatarDataHora(talao.timestamps.enviado.dataHora)
-    : ["", ""]; // Retorna vazio se a data não existir
+    : ["", ""]; // Formata a data e hora de envio
   const funcionarioEnviou = talao.timestamps.enviado?.funcionario || "";
 
-  const dataRecebido = talao.timestamps.recebido
+  const dataHoraRecebido = talao.timestamps.recebido
     ? formatarDataHora(talao.timestamps.recebido.dataHora)
-    : ["", ""]; // Retorna vazio se a data não existir
+    : ["", ""]; // Formata a data e hora de recebimento
   const funcionarioRecebeu = talao.timestamps.recebido?.funcionario || "";
 
   // Cabeçalho e dados do CSV organizados nas colunas corretas
   const csvContent =
-    `ID,Loja,Data Solicitado,Funcionario Solicitante,Data Enviado,Funcionario Enviou,Data Recebido,Funcionario Recebeu,Quantidade,Status\n` +
-    `${talao.id},${talao.loja},${dataSolicitado[0]},${funcionarioSolicitante},${dataEnviado[0]},${funcionarioEnviou},${dataRecebido[0]},${funcionarioRecebeu},${talao.quantidade},${talao.status}`;
+    `ID,Loja,Data Solicitado,Hora Solicitado,Funcionario Solicitante,Data Enviado,Hora Enviado,Funcionario Enviou,Data Recebido,Hora Recebido,Funcionario Recebeu,Quantidade,Status\n` +
+    `${talao.id},${talao.loja},${dataHoraSolicitado[0]},${dataHoraSolicitado[1]},${funcionarioSolicitante},${dataHoraEnviado[0]},${dataHoraEnviado[1]},${funcionarioEnviou},${dataHoraRecebido[0]},${dataHoraRecebido[1]},${funcionarioRecebeu},${talao.quantidade},${talao.status}`;
 
   // Função para baixar o arquivo CSV
   downloadCSV(csvContent, `talao_${talao.id}.csv`);
@@ -514,25 +514,27 @@ window.exportarTodosTaloes = function () {
 
   // Cabeçalho correto do CSV
   let csvContent =
-    "ID,Loja,Data Solicitado,Funcionario Solicitante,Data Enviado,Funcionario Enviou,Data Recebido,Funcionario Recebeu,Quantidade,Status\n";
+    "ID,Loja,Data Solicitado,Hora Solicitado,Funcionario Solicitante,Data Enviado,Hora Enviado,Funcionario Enviou,Data Recebido,Hora Recebido,Funcionario Recebeu,Quantidade,Status\n";
 
   taloes.forEach((talao) => {
-    // Formatar a data e hora de cada evento, tratando dados inválidos
+    // Formatar a data e hora de cada evento
     const dataHoraSolicitado = talao.timestamps.solicitado
       ? formatarDataHora(talao.timestamps.solicitado.dataHora)
-      : ["", ""]; // Formata a data de solicitação
+      : ["", ""]; // Formata a data e hora de solicitação
     const dataHoraEnviado = talao.timestamps.enviado
       ? formatarDataHora(talao.timestamps.enviado.dataHora)
-      : ["", ""]; // Formata a data de envio
+      : ["", ""]; // Formata a data e hora de envio
     const dataHoraRecebido = talao.timestamps.recebido
       ? formatarDataHora(talao.timestamps.recebido.dataHora)
-      : ["", ""]; // Formata a data de recebimento
+      : ["", ""]; // Formata a data e hora de recebimento
 
     // Montar a linha do CSV com os dados corretos em cada coluna
     csvContent += `${talao.id},${talao.loja},${dataHoraSolicitado[0]},${
-      talao.timestamps.solicitado?.funcionario || ""
-    },${dataHoraEnviado[0]},${talao.timestamps.enviado?.funcionario || ""},${
-      dataHoraRecebido[0]
+      dataHoraSolicitado[1]
+    },${talao.timestamps.solicitado?.funcionario || ""},${dataHoraEnviado[0]},${
+      dataHoraEnviado[1]
+    },${talao.timestamps.enviado?.funcionario || ""},${dataHoraRecebido[0]},${
+      dataHoraRecebido[1]
     },${talao.timestamps.recebido?.funcionario || ""},${talao.quantidade},${
       talao.status
     }\n`;
