@@ -278,8 +278,6 @@ window.editarTalao = function (id) {
   `;
 };
 
-
-
 // Salvar edição de talão
 window.salvarEdicaoTalao = function (event, id) {
   event.preventDefault();
@@ -387,7 +385,6 @@ window.solicitarTalao = function () {
     </div>
   `;
 };
-
 
 // Salvar solicitação de talão
 window.salvarSolicitacaoTalao = function (event) {

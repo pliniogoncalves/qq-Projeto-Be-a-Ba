@@ -146,7 +146,7 @@ window.showPerfis = async function (paginaAtual = 1, itensPorPagina = 1) {
       <div class="row justify-content-center">
         <div class="col-12 col-sm-6 col-md-3 mb-2">
           <button class="btn btn-custom w-100" style="background-color: #269447; color: white;" type="button" onclick="cadastrarPerfil()">
-            <i class="fas fa-plus-circle"></i> Cadastrar Perfil
+            <i class="fas fa-plus-circle"></i> Cadastrar Novo Perfil
           </button>
         </div>
       </div>
