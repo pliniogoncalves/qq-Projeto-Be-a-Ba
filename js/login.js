@@ -9,12 +9,12 @@ document
     const senha = document.getElementById("senha");
     const eyeIcon = document.getElementById("eyeIcon");
 
-    if (senha.type === "password") {  // Corrigido para 'password'
+    if (senha.type === "password") { 
       senha.type = "text";
       eyeIcon.classList.remove("bi-eye-slash");
       eyeIcon.classList.add("bi-eye");
     } else {
-      senha.type = "password";  // Corrigido para 'password'
+      senha.type = "password";
       eyeIcon.classList.remove("bi-eye");
       eyeIcon.classList.add("bi-eye-slash");
     }
@@ -28,7 +28,7 @@ window.login = function () {
 
   // Verificar se matricula e senha estão preenchidos
   if (!matricula || !senha) {
-    alert("Por favor, preencha todos os campos.");
+    mostrarModal("Por favor, preencha todos os campos.");
     return;
   }
 
@@ -43,11 +43,11 @@ window.login = function () {
   if (usuarioEncontrado) {
     // Login bem-sucedido, armazenar usuário logado (simulando uma sessão)
     localStorage.setItem("usuarioLogado", JSON.stringify(usuarioEncontrado));
-    alert(`Bem-vindo, ${usuarioEncontrado.nome}!`);
+    mostrarModal(`Bem-vindo, ${usuarioEncontrado.nome}!`);
     // Redirecionar para a página principal (dashboard, por exemplo)
     window.location.href = "../html/main.html"; // Alterar o caminho conforme sua estrutura
   } else {
-    alert("Matrícula ou senha incorretos. Tente novamente.");
+    mostrarModal("Matrícula ou senha incorretos. Tente novamente.");
   }
 };
 
@@ -55,3 +55,15 @@ window.login = function () {
 window.showAjuda = function () {
   alert("Entre em contato com o suporte para ajuda com o login.");
 };
+
+window.mostrarModal = function(mensagem) {
+  const modalBody = document.getElementById("modalBody");
+  modalBody.innerHTML = `<p>${mensagem}</p>`; // Define a mensagem que será exibida
+  const modal = document.getElementById("detalhesModal");
+  modal.style.display = "block"; // Exibe o modal
+}
+
+window.fecharModal = function() {
+  const modal = document.getElementById("detalhesModal");
+  modal.style.display = "none";
+}

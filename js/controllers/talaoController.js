@@ -548,7 +548,7 @@ window.exportarTodosTaloes = function () {
     return;
   }
 
-  // Cabeçalho correto do CSV
+  // Cabeçalho do CSV
   let csvContent =
     "ID,Loja,Data Solicitado,Hora Solicitado,Funcionario Solicitante,Data Enviado,Hora Enviado,Funcionario Enviou,Data Recebido,Hora Recebido,Funcionario Recebeu,Quantidade,Status\n";
 
