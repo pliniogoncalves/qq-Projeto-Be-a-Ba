@@ -43,17 +43,17 @@ window.login = function () {
   if (usuarioEncontrado) {
     // Login bem-sucedido, armazenar usuário logado (simulando uma sessão)
     localStorage.setItem("usuarioLogado", JSON.stringify(usuarioEncontrado));
-    mostrarModal(`Bem-vindo, ${usuarioEncontrado.nome}!`);
+    //mostrarModal(`Bem-vindo, ${usuarioEncontrado.nome}!`);
     // Redirecionar para a página principal (dashboard, por exemplo)
     window.location.href = "../html/main.html"; // Alterar o caminho conforme sua estrutura
   } else {
-    mostrarModal("Matrícula ou senha incorretos. Tente novamente.");
+    mostrarModal("Matrícula ou senha incorretos.");
   }
 };
 
 // Função para mostrar a ajuda
 window.showAjuda = function () {
-  alert("Entre em contato com o suporte para ajuda com o login.");
+  mostrarModal("Entre em contato com o suporte para ajuda com o login.");
 };
 
 window.mostrarModal = function(mensagem) {
@@ -63,7 +63,12 @@ window.mostrarModal = function(mensagem) {
   modal.style.display = "block"; // Exibe o modal
 }
 
-window.fecharModal = function() {
-  const modal = document.getElementById("detalhesModal");
+window.mostrarRecuperacaoModal = function() {
+  const modal = document.getElementById("recuperacaoModal");
+  modal.style.display = "block";
+}
+
+window.fecharModal = function(modalId) {
+  const modal = document.getElementById(modalId);
   modal.style.display = "none";
 }
