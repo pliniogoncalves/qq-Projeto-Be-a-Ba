@@ -19,7 +19,7 @@ export class Loja {
       const novaLoja = new Loja(nome, numero);
       Loja.lojas.push(novaLoja);
       Loja.salvarNoLocalStorage();
-      alert(`Loja ${nome} criada com sucesso!`);
+      mostrarModal(`${nome} criada com sucesso!`);
       return novaLoja;
     }
   
@@ -32,21 +32,21 @@ export class Loja {
     static atualizarLoja(id, novoNome, novonumero) {
       const loja = Loja.lojas.find((l) => l.id === id);
       if (!loja) {
-        alert("Loja não encontrada.");
+        mostrarModal("Loja não encontrada.");
         return;
       }
   
       loja.nome = novoNome || loja.nome;
       loja.numero = novonumero || loja.numero; // Atualiza apenas se novonumero for fornecido
       Loja.salvarNoLocalStorage();
-      alert(`Loja ${loja.nome} atualizada com sucesso!`);
+      mostrarModal(`${loja.nome} atualizada com sucesso!`);
     }
   
     // DELETE: Remover uma Loja
     static excluirLoja(id) {
       Loja.lojas = Loja.lojas.filter((l) => l.id !== id);
       Loja.salvarNoLocalStorage();
-      alert("Loja removida com sucesso!");
+      mostrarModal("Loja removida com sucesso!");
     }
   }
   

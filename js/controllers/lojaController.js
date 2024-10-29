@@ -1,4 +1,5 @@
 import { Loja } from "../models/Loja.js";
+import { Usuario } from "../models/Usuario.js";
 
 // Função para exibir a lista de lojas cadastradas
 window.showLojas = function (paginaAtual = 1) {
@@ -87,8 +88,8 @@ window.showLojas = function (paginaAtual = 1) {
 
   content.innerHTML = `
     <div class="overlay" id="overlay"></div>
-    <h1 class="text-center mb-4">Gestão de Lojas</h1>
-    <p class="text-center mb-4">Veja a lista de lojas cadastradas.</p>
+    <h1 class="text-center">Gestão de Lojas</h1>
+    <p class="text-center">Veja a lista de lojas cadastradas.</p>
 
     <div class="container">
       <div class="row justify-content-center">
@@ -122,7 +123,7 @@ window.showLojas = function (paginaAtual = 1) {
     <div class="text-center mb-4">
       <div class="row justify-content-center">
         <div class="col-12 col-sm-6 col-md-3 mb-2">
-          <button class="btn btn-custom w-100" style="background-color: #269447; color: white;" type="button" onclick="cadastrarLoja()">
+          <button class="btn btn-custom w-100" type="button" onclick="cadastrarLoja()">
             <i class="fas fa-plus-circle"></i> Cadastrar Nova Loja
           </button>
         </div>
@@ -163,11 +164,24 @@ window.buscarLoja = function () {
 
 // Função para cadastrar nova loja
 window.cadastrarLoja = function () {
+
+  // Salva o estado atual da função no histórico, permitindo navegação reversa
+  historico.push({ funcao: cadastrarLoja });
+
   const content = document.getElementById("mainContent");
 
   content.innerHTML = `
+   <div class="overlay" id="overlay"></div>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <button class="btn btn-voltar" onclick="voltar()">
+         Voltar
+        </button>
+        <div class="w-100 text-center me-4 me-md-5">
+          <h1>Cadastrar Nova Loja</h1>
+          <p>Preencha as informações abaixo para cadastrar um nova Loja.</p>
+        </div>
+      </div>
     <div class="form-container">
-      <h1 class="h4 mb-4">Nova Loja</h1>
       <form id="lojaForm">
         <div class="mb-3">
           <label for="nome" class="form-label">Nome da Loja</label>
@@ -180,7 +194,7 @@ window.cadastrarLoja = function () {
         <div class="text-center mb-4">
           <div class="row justify-content-center">
             <div class="col-12 col-sm-6 col-md-4 mb-2">
-              <button type="button" class="btn btn-custom w-100" style="background-color: #269447; color: white;" onclick="submitLojaCadastro()">
+              <button type="button" class="btn btn-custom w-100" onclick="submitLojaCadastro()">
                 <i class="fas fa-plus-circle"></i> Cadastrar Loja
               </button>
             </div>
@@ -197,7 +211,7 @@ window.submitLojaCadastro = function () {
   const numero = document.getElementById("numero").value;
 
   if (!nome || !numero) {
-    alert("Preencha todos os campos.");
+    mostrarModal("Preencha todos os campos.");
     return;
   }
 
@@ -207,19 +221,32 @@ window.submitLojaCadastro = function () {
 
 // Função para editar loja
 window.editarLoja = function (id) {
+
+  // Salva o estado atual da função no histórico, permitindo navegação reversa
+  historico.push({ funcao: editarLoja });
+
   const loja = Loja.lojas.find((l) => l.id === id);
 
   // Verifica se a loja foi encontrada
   if (!loja) {
-    alert("Loja não encontrada.");
+    mostrarModal("Loja não encontrada.");
     return;
   }
 
   const content = document.getElementById("mainContent");
 
   content.innerHTML = `
+    <div class="overlay" id="overlay"></div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <button class="btn btn-voltar" onclick="voltar()">
+              Voltar
+            </button>
+            <div class="w-100 text-center me-2 me-md-5">
+              <h1>Editar Loja</h1>
+              <p>Preencha as informações abaixo para Editar a Loja.</p>
+            </div>
+        </div>
     <div class="form-container">
-      <h1 class="h4 mb-4">Editar Loja</h1>
       <form id="lojaForm">
         <div class="mb-3">
           <label for="nome" class="form-label">Nome da Loja</label>
@@ -232,7 +259,7 @@ window.editarLoja = function (id) {
         <div class="text-center mb-4">
           <div class="row justify-content-center">
             <div class="col-12 col-sm-6 col-md-4 mb-2">
-              <button type="button" class="btn btn-custom w-100" style="background-color: #269447; color: white;" onclick="submitEdicaoLoja(${id})">
+              <button type="button" class="btn btn-custom w-100" onclick="submitEdicaoLoja(${id})">
                 <i class="fas fa-save"></i> Salvar Alterações
               </button>
             </div>
@@ -249,7 +276,7 @@ window.submitEdicaoLoja = function (id) {
   const numero = document.getElementById("numero").value;
 
   if (!nome || !numero) {
-    alert("Preencha todos os campos.");
+    mostrarModal("Preencha todos os campos.");
     return;
   }
 
@@ -261,8 +288,20 @@ window.submitEdicaoLoja = function (id) {
 
 // Função para excluir loja
 window.excluirLoja = function (id) {
-  if (confirm("Você tem certeza que deseja excluir esta loja?")) {
-    Loja.excluirLoja(id);
-    showLojas();
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+  const usuario = Usuario.usuarios.find((user) => user.id === id);
+
+  // Controle de Acesso
+  if (!usuarioLogado || usuarioLogado.perfil !== "AdminRoot") {
+    mostrarModal("Você não tem permissão para excluir esta Loja.");
+    return;
   }
+
+  mostrarConfirmacao(
+    "Tem certeza que deseja excluir esta Loja?",
+    function () {
+      Loja.excluirLoja(id);
+      showLojas();
+    }
+  );
 };

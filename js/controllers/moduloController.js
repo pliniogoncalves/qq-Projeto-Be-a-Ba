@@ -6,5 +6,5 @@ window.showModulos = function () {
         <p>Gerencie os Módulos do sistema.</p>
     `;
 
-  setActiveButton("Módulos");
+  setActiveButton("Relatórios");
 };

@@ -360,7 +360,7 @@ window.editarUsuario = function (id) {
         <div class="overlay" id="overlay"></div>
         <div class="d-flex justify-content-between align-items-center mb-4">
             <button class="btn btn-voltar" onclick="voltar()">
-                <i class="bi bi-arrow-left"></i> Voltar
+              Voltar
             </button>
             <div class="w-100 text-center me-2 me-md-5">
               <h1>Editar Usuário</h1>
