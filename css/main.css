@@ -29,7 +29,7 @@ header {
 
 header .img-fluid {
   height: 5rem; /* Tamanho padrão para a logo */
-  margin-left: 15rem; /* Espaço entre a logo e o texto */
+  margin-left: 14rem; /* Espaço entre a logo e o texto */
 }
 
 header::after {
@@ -80,6 +80,7 @@ table thead {
 .btn-voltar {
   background-color: #269447; /* Cor de fundo */
   color: white; /* Cor do texto */
+  margin-top: -40px; /* Ajuste a margem superior */
 }
 
 .btn-voltar:hover {
@@ -528,5 +529,9 @@ table thead {
   .modal-content {
     margin-top: 20%; 
     margin-left: 5%; 
+  }
+
+  .btn-voltar{
+    display: none;
   }
 }

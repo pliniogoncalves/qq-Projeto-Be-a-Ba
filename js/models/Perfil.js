@@ -17,14 +17,14 @@ export class Perfil {
     // CREATE: Adicionar um novo perfil com validação
     static criarPerfil(nome, permissoes) {
       if (!Array.isArray(permissoes) || permissoes.length === 0) {
-        alert("Permissões inválidas. Por favor, adicione pelo menos uma permissão.");
+        mostrarModal("Permissões inválidas. Por favor, adicione pelo menos uma permissão.");
         return null;
       }
   
       const novoPerfil = new Perfil(nome, permissoes);
       Perfil.perfis.push(novoPerfil);
       Perfil.salvarNoLocalStorage();
-      alert(`Perfil ${nome} criado com sucesso!`);
+      mostrarModal(`Perfil ${nome} criado com sucesso!`);
       return novoPerfil;
     }
   
@@ -46,21 +46,21 @@ export class Perfil {
     static atualizarPerfil(id, novoNome, novasPermissoes) {
       const perfil = Perfil.perfis.find(p => p.id === id);
       if (!perfil) {
-        alert("Perfil não encontrado.");
+        mostrarModal("Perfil não encontrado.");
         return;
       }
   
       perfil.nome = novoNome || perfil.nome;
       perfil.permissoes = Array.isArray(novasPermissoes) ? novasPermissoes : perfil.permissoes;
       Perfil.salvarNoLocalStorage();
-      alert(`Perfil ${perfil.nome} atualizado com sucesso!`);
+      mostrarModal(`Perfil ${perfil.nome} atualizado com sucesso!`);
     }
   
     // DELETE: Remover um perfil
     static excluirPerfil(id) {
       Perfil.perfis = Perfil.perfis.filter(p => p.id !== id);
       Perfil.salvarNoLocalStorage();
-      alert("Perfil removido com sucesso!");
+      mostrarModal("Perfil removido com sucesso!");
     }
   }
   

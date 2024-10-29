@@ -125,8 +125,8 @@ window.showPerfis = async function (paginaAtual = 1) {
   // Inserindo o conteúdo na página com o novo layout
   content.innerHTML = `
     <div class="overlay" id="overlay"></div>
-    <h1 class="text-center mb-4">Gestão de Perfis de Acesso</h1>
-    <p class="text-center mb-4">Veja a lista de perfis e suas respectivas permissões.</p>
+    <h1 class="text-center">Gestão de Perfis de Acesso</h1>
+    <p class="text-center">Veja a lista de perfis e suas respectivas permissões.</p>
 
     <div class="container mb-4">
       <div class="row justify-content-center">
@@ -160,7 +160,7 @@ window.showPerfis = async function (paginaAtual = 1) {
     <div class="text-center mb-4">
       <div class="row justify-content-center">
         <div class="col-12 col-sm-6 col-md-3 mb-2">
-          <button class="btn btn-custom w-100" style="background-color: #269447; color: white;" type="button" onclick="cadastrarPerfil()">
+          <button class="btn btn-custom w-100" type="button" onclick="cadastrarPerfil()">
             <i class="fas fa-plus-circle"></i> Cadastrar Novo Perfil
           </button>
         </div>
@@ -186,6 +186,7 @@ window.buscarPerfis = async function () {
   tableBody.innerHTML = gerarLinhas(filteredPerfis);
 };
 
+//cadastrar perfil de acesso
 window.cadastrarPerfil = function () {
 
   // Salva o estado atual da função no histórico, permitindo navegação reversa
@@ -199,9 +200,9 @@ window.cadastrarPerfil = function () {
         <button class="btn btn-voltar" onclick="voltar()">
           <i class="bi bi-arrow-left"></i> Voltar
         </button>
-        <div class="w-100 text-center">
+        <div class="w-100 text-center me-4 me-md-5">
           <h1>Cadastrar Novo Perfil</h1>
-          <p class="mb-3">Preencha os dados abaixo para cadastrar um novo perfil.</p>
+          <p>Preencha os dados abaixo para cadastrar um novo perfil.</p>
         </div>
       </div>
     <div class="form-container">
@@ -297,7 +298,7 @@ window.submitCadastroPerfil = function () {
   });
 
   if (!nome || permissoes.length === 0) {
-    alert("Preencha todos os campos e selecione pelo menos uma permissão.");
+    mostrarModal("Preencha todos os campos e selecione pelo menos uma permissão.");
     return;
   }
 
@@ -315,8 +316,15 @@ window.editarPerfil = async function (id) {
 
   content.innerHTML = `
     <div class="overlay" id="overlay"></div>
-    <h1 class="text-center mb-4">Editar Perfil de Acesso</h1>
-    <p class="text-center mb-4">Atualize as informações do perfil conforme necessário.</p>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <button class="btn btn-voltar" onclick="voltar()">
+          <i class="bi bi-arrow-left"></i> Voltar
+        </button>
+        <div class="w-100 text-center me-4 me-md-5">
+          <h1>Editar Perfil de Acesso</h1>
+          <p>Atualize as informações do perfil conforme necessário.</p>
+        </div>
+      </div>
     <div class="form-container">
       <form id="perfilForm">
         <div class="mb-3">
@@ -424,7 +432,7 @@ window.submitEdicaoPerfil = async function (id) {
   });
 
   if (!nome || permissoes.length === 0) {
-    alert("Preencha todos os campos e selecione pelo menos uma permissão.");
+    mostrarModal("Preencha todos os campos e selecione pelo menos uma permissão.");
     return;
   }
 

@@ -113,7 +113,7 @@ window.showUsuarios = function (paginaAtual = 1) {
   // Renderiza HTML final na página
   content.innerHTML = `
       <div class="overlay" id="overlay"></div>
-      <h1 class="text-center mb-4">Gestão de Usuários</h1>
+      <h1 class="text-center">Gestão de Usuários</h1>
       <p class="text-center mb-4">Veja a lista de usuários cadastrados e suas respectivas situações.</p>
 
       <div class="container mb-4">
@@ -194,11 +194,11 @@ window.cadastrarUsuario = function () {
     <div class="overlay" id="overlay"></div>
       <div class="d-flex justify-content-between align-items-center mb-4">
         <button class="btn btn-voltar" onclick="voltar()">
-          <i class="bi bi-arrow-left"></i> Voltar
+         Voltar
         </button>
-        <div class="w-100 text-center">
+        <div class="w-100 text-center me-4 me-md-5">
           <h1>Cadastrar Novo Usuário</h1>
-          <p class="mb-4">Preencha as informações abaixo para cadastrar um novo Usuário.</p>
+          <p>Preencha as informações abaixo para cadastrar um novo Usuário.</p>
         </div>
       </div>
     <div class="form-container">
@@ -357,14 +357,14 @@ window.editarUsuario = function (id) {
     .join("");
 
   content.innerHTML = `
-    <div class="form-container mt-4">
+        <div class="overlay" id="overlay"></div>
         <div class="d-flex justify-content-between align-items-center mb-4">
             <button class="btn btn-voltar" onclick="voltar()">
                 <i class="bi bi-arrow-left"></i> Voltar
             </button>
-            <div class="w-100 text-center">
+            <div class="w-100 text-center me-2 me-md-5">
               <h1>Editar Usuário</h1>
-              <p class="mb-4">Preencha as informações abaixo para Editar o Usuário.</p>
+              <p>Preencha as informações abaixo para Editar o Usuário.</p>
             </div>
         </div>
         <form id="userForm">
