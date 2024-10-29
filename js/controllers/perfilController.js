@@ -84,7 +84,7 @@ window.showPerfis = async function (paginaAtual = 1) {
     <tr>
       <td colspan="3">
         <nav>
-          <ul class="pagination justify-content-center">
+          <ul class="pagination justify-content-center custom-pagination">
             <li class="page-item ${paginaAtual === 1 ? "disabled" : ""}">
               <a class="page-link" href="#" aria-label="Previous" onclick="showPerfis(${
                 paginaAtual - 1

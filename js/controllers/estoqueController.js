@@ -67,7 +67,7 @@ window.showEstoque = function (paginaAtual = 1, termoBusca = "") {
     <tr>
       <td colspan="5">
         <nav>
-          <ul class="pagination justify-content-center">
+          <ul class="pagination justify-content-center custom-pagination">
             <li class="page-item ${paginaAtual === 1 ? "disabled" : ""}">
               <a class="page-link" href="#" onclick="showEstoque(${paginaAtual - 1}, '${termoBusca}')">&laquo;</a>
             </li>

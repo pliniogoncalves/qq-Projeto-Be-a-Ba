@@ -88,7 +88,7 @@ window.showTaloes = function (paginaAtual = 1, taloesFiltrados = null) {
 
   const paginacao = `
     <nav class="d-flex justify-content-center">
-      <ul class="pagination">
+      <ul class="pagination custom-pagination">
         <li class="page-item ${paginaAtual === 1 ? "disabled" : ""}">
           <a class="page-link" href="#" onclick="showTaloes(${
             paginaAtual - 1

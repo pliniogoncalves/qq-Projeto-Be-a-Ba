@@ -235,6 +235,16 @@ table thead {
   width: 30%;
 }
 
+.btn-cancelar {
+  background-color: #269447;
+  color: white;
+}
+
+.btn-cancelar:hover {
+  background-color: #1f5d3d; 
+  color: white;
+}
+
 /* Hamburger Menu */
 .hamburger {
   font-size: 2rem;
@@ -368,6 +378,25 @@ table thead {
   color: white;
 }
 
+/*PAGINAÇÃO*/
+.custom-pagination .page-item .page-link {
+  color: #1f5d3d; /* Cor do texto */
+}
+
+.custom-pagination .page-item.disabled .page-link {
+  background-color: #ccc; /* Cor de fundo para o estado desativado */
+  color: #1f5d3d; /* Cor do texto para o estado desativado */
+}
+
+.custom-pagination .page-item.active .page-link {
+  background-color: #1f5d3d; /* Cor de fundo para o item ativo */
+  color: white; /* Cor do texto do item ativo */
+}
+
+.custom-pagination .page-item .page-link:hover {
+  background-color: #1f5d3d; /* Cor de fundo no hover */
+  color: white; /* Cor do texto no hover */
+}
 
 /* Responsividade para telas menores */
 /* Ajustes para tela 1366x768 */
