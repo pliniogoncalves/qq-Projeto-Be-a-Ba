@@ -184,11 +184,15 @@ window.voltar = function () {
 //notificações//
 
 let notificationCount = 0;
-const notifications = []; // Array para armazenar notificações
+const notifications = []; // Array para armazenar notificações com informações de leitura e hora
 
 function adicionarNotificacao(mensagem) {
+  const horaAtual = new Date().toLocaleTimeString("pt-BR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
   notificationCount++;
-  notifications.push(mensagem); // Armazena a mensagem na lista de notificações
+  notifications.push({ mensagem, lida: false, hora: horaAtual });
   atualizarBotaoNotificacao();
 }
 
@@ -197,11 +201,13 @@ function atualizarBotaoNotificacao() {
   const notificationButton = document.querySelector('.btn-alert-circle');
   const notificationCountEl = document.getElementById('notificationCount');
   
-  if (notificationCount > 0) {
+  const unreadCount = notifications.filter((n) => !n.lida).length;
+  notificationCountEl.textContent = unreadCount;
+
+  if (unreadCount > 0) {
     notificationButton.classList.add('has-notifications');
     notificationButton.style.backgroundColor = '#851306'; // Botão vermelho com notificações
     notificationCountEl.style.display = 'inline';
-    notificationCountEl.textContent = notificationCount;
   } else {
     notificationButton.classList.remove('has-notifications');
     notificationButton.style.backgroundColor = '#1f5d3d'; // Botão verde sem notificações
@@ -217,10 +223,12 @@ function mostrarNotificacao() {
   modalNotificacaoBody.innerHTML = ''; // Limpa o conteúdo antes de adicionar
 
   if (notifications.length > 0) {
-    notifications.forEach((notificacao) => {
-      const p = document.createElement('p'); // Usar <p> para cada notificação
-      p.textContent = notificacao; // Adiciona o texto da notificação
-      modalNotificacaoBody.appendChild(p); // Insere no corpo do modal
+    notifications.forEach((notificacao, index) => {
+      const p = document.createElement('p');
+      p.classList.add(notificacao.lida ? 'notificacao-lida' : 'notificacao-nao-lida');
+      p.textContent = `${notificacao.hora} - ${notificacao.mensagem}`;
+      p.addEventListener('click', () => marcarNotificacaoIndividual(index)); // Torna a notificação clicável
+      modalNotificacaoBody.appendChild(p);
     });
   } else {
     modalNotificacaoBody.innerHTML = '<p>Sem notificações</p>';
@@ -229,12 +237,25 @@ function mostrarNotificacao() {
   modal.style.display = 'flex'; // Exibe o modal
 }
 
-// Marca todas as notificações como lidas e fecha o modal
-function marcarTodasLidas() {
-  notificationCount = 0;
-  notifications.length = 0; // Limpa as notificações armazenadas
+// Marca uma notificação individual como lida ou não lida
+function marcarNotificacaoIndividual(index) {
+  if (!notifications[index].lida) {
+    notifications[index].lida = true;
+    notificationCount--; // Decrementa a contagem ao marcar como lida
+  } else {
+    notifications[index].lida = false;
+    notificationCount++; // Incrementa a contagem se marcada como não lida novamente
+  }
   atualizarBotaoNotificacao();
-  fecharModal('modalNotificacao'); // Fecha o modal após marcar como lidas
+  mostrarNotificacao(); // Atualiza o modal após marcar
+}
+
+// Marca todas as notificações como lidas
+function marcarTodasLidas() {
+  notifications.forEach((notificacao) => (notificacao.lida = true));
+  notificationCount = 0;
+  atualizarBotaoNotificacao();
+  mostrarNotificacao(); // Atualiza o modal após marcar todas como lidas
 }
 
 // Exemplo de adição de notificações para testes

@@ -19,13 +19,11 @@
       <span class="hamburger" onclick="toggleSidebar()">&#9776;</span>
       <img src="../logo.png" alt="Logo Quero-Quero" class="img-fluid" />
 
-    
       <!-- Botão de alerta -->
       <button class="btn-alert-circle" onclick="mostrarNotificacao()">
         <i class="fas fa-bell"></i>
         <span id="notificationCount" class="notification-count">0</span>
       </button>
-
     </header>
 
     <div class="container-fluid">
@@ -160,19 +158,23 @@
       </div>
     </div>
 
- <!-- Modal de Notificações -->
-<div id="modalNotificacao" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="fecharModal('modalNotificacao')">&times;</span>
-    <div id="modalNotificacaoBody">
-      <!-- Mensagens de notificação serão inseridas aqui -->
+    <!-- Modal de Notificações -->
+    <div id="modalNotificacao" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="fecharModal('modalNotificacao')"
+          >&times;</span
+        >
+        <h2 class="modal-title">Notificações</h2>
+        <div id="modalNotificacaoBody">
+          <!-- Mensagens de notificação serão inseridas aqui -->
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-marcar-todas" onclick="marcarTodasLidas()">
+            Marcar todas como lidas
+          </button>
+        </div>
+      </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-marcar-todas" onclick="marcarTodasLidas()">Marcar todas como lidas</button>
-      <button class="btn btn-cancelar" onclick="fecharModal('modalNotificacao')">Fechar</button>
-    </div>
-  </div>
-</div>
 
     <script src="../js/main.js"></script>
     <script type="module" src="../js/controllers/estoqueController.js"></script>
