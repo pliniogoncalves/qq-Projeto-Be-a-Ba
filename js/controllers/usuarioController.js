@@ -147,14 +147,19 @@ window.showUsuarios = function (paginaAtual = 1) {
       </div>
 
       <div class="text-center mb-4">
-          <div class="row justify-content-center">
-              <div class="col-12 col-sm-6 col-md-3 mb-2">
-                  <button class="btn btn-custom w-100"  type="button" onclick="cadastrarUsuario()">
-                      <i class="fas fa-plus-circle"></i> Cadastrar Novo Usuário
-                  </button>
-              </div>
-          </div>
-      </div>
+            <div class="row justify-content-center">
+                <div class="col-12 col-sm-6 col-md-3 mb-2">
+                    <button class="btn btn-custom w-100" type="button" onclick="cadastrarUsuario()">
+                        <i class="fas fa-plus-circle"></i> Cadastrar Novo Usuário
+                    </button>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3 mb-2">
+                    <button class="btn btn-secondary w-100" type="button" onclick="exportarUsuariosCSV()">
+                        <i class="fas fa-file-export"></i> Exportar CSV
+                    </button>
+                </div>
+            </div>
+        </div>
   `;
 
   setActiveButton("Usuários");
@@ -489,4 +494,30 @@ window.buscarUsuario = function () {
       rows[i].style.display = "none";
     }
   }
+};
+
+// Função para exportar todos os usuários como um arquivo CSV
+window.exportarUsuariosCSV = function () {
+  const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+
+  // Define cabeçalhos do CSV
+  let csvContent = "ID,Nome,Matrícula,Email,Perfil,Loja\n";
+
+  // Adiciona dados de cada usuário
+  usuarios.forEach(user => {
+      const lojaNome = user.loja && user.loja.nome ? user.loja.nome : "Nenhuma";
+      const perfil = user.perfil || "Nenhum";
+      
+      csvContent += `${user.id},${user.nome},${user.matricula},${user.email},${perfil},${lojaNome}\n`;
+  });
+
+  // Cria o arquivo CSV e faz download
+  const blob = new Blob([csvContent], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.setAttribute('href', url);
+  a.setAttribute('download', 'usuarios.csv');
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 };
