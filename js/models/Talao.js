@@ -46,8 +46,8 @@ export class Talao {
     );
     Talao.taloes.push(novoTalao);
     Talao.salvarNoLocalStorage();
-    alert(
-      `Talão criado para a loja ${loja} na data ${new Date(
+    mostrarModal(
+      `Talão solicitado para a ${loja} na data ${new Date(
         dataHora
       ).toLocaleString()} com quantidade ${quantidade}!`
     );
@@ -96,9 +96,9 @@ export class Talao {
       }
 
       Talao.salvarNoLocalStorage();
-      alert(`Talão da loja ${talao.loja} atualizado com sucesso!`);
+      mostrarModal(`Talão da ${talao.loja} com Id ${talao.id} atualizado com sucesso!`);
     } else {
-      alert("Talão não encontrado.");
+      mostrarModal("Talão não encontrado.");
     }
   }
 
@@ -108,16 +108,16 @@ export class Talao {
     if (talaoIndex !== -1) {
       Talao.taloes.splice(talaoIndex, 1);
       Talao.salvarNoLocalStorage();
-      alert(`Talão removido com sucesso!`);
+      mostrarModal(`Talão removido com sucesso!`);
     } else {
-      alert("Talão não encontrado.");
+      mostrarModal("Talão não encontrado.");
     }
   }
 
   // EXPORT: Exportar todos os talões para CSV, incluindo as atualizações
   static exportarTodosTaloesCSV() {
     if (Talao.taloes.length === 0) {
-      alert("Não há talões para exportar.");
+      mostrarModal("Não há talões para exportar.");
       return;
     }
 

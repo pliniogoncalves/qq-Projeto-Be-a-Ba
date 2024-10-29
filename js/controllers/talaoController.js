@@ -1,5 +1,6 @@
 import { Talao } from "../models/Talao.js";
 import { Loja } from "../models/Loja.js";
+import { Usuario } from "../models/Usuario.js";
 
 // Função para formatar data e hora para os campos de input
 function formatarDataHora(dataHoraISO) {
@@ -20,6 +21,10 @@ function formatarDataHora(dataHoraISO) {
 }
 
 window.showTaloes = function (paginaAtual = 1, taloesFiltrados = null) {
+
+  // Salva o estado atual para histórico de navegação
+  historico.push({ funcao: showTaloes, args: [paginaAtual] });
+
   const content = document.getElementById("mainContent");
   const todosTaloes = Talao.listarTaloes();
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
@@ -152,7 +157,7 @@ window.showTaloes = function (paginaAtual = 1, taloesFiltrados = null) {
   </div>
   <div class="col-12 col-sm-6 col-md-3 mb-2">
     <button class="btn btn-exportar w-100" type="button" onclick="exportarTodosTaloes()" aria-label="Exportar Todos">
-      <i class="fas fa-file-export"></i> Exportar Todos
+      <i class="fas fa-file-export"></i> Exportar Dados
     </button>
   </div>
        
@@ -164,6 +169,10 @@ window.showTaloes = function (paginaAtual = 1, taloesFiltrados = null) {
 
 // Função para editar talão
 window.editarTalao = function (id) {
+
+  // Salva o estado atual da função no histórico, permitindo navegação reversa
+  historico.push({ funcao: editarTalao });
+
   console.log(`Editando talão com ID: ${id}`); // Log para verificar o ID
   const talao = Talao.buscarTalao(id);
 
@@ -204,8 +213,16 @@ window.editarTalao = function (id) {
   }
 
   content.innerHTML = `
-      <div class="form-container">
-          <h1 class="h4 mb-4">Editar Talão</h1>
+    <div class="overlay" id="overlay"></div>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <button class="btn btn-voltar" onclick="voltar()">
+          <i class="bi bi-arrow-left"></i> Voltar
+        </button>
+        <div class="w-100 text-center me-4 me-md-5">
+          <h1>Editar Talão</h1>
+          <p>Atualize as informações do Talão conforme necessário.</p>
+        </div>
+      </div>
           <form id="talaoEditForm" onsubmit="salvarEdicaoTalao(event, ${id})">
               <div class="mb-3">
                   <label for="lojaTalaoEdit" class="form-label">Loja</label>
@@ -226,7 +243,7 @@ window.editarTalao = function (id) {
               <div class="text-center mb-4">
                 <div class="row justify-content-center">
                   <div class="col-12 col-sm-6 col-md-3 mb-2">
-                    <button type="submit" class="btn btn-custom w-100" style="background-color: #269447; color: white;">
+                    <button type="submit" class="btn btn-custom w-100">
                       <i class="fas fa-save"></i> Salvar Edição
                     </button>
                   </div>
@@ -251,7 +268,7 @@ window.salvarEdicaoTalao = function (event, id) {
   );
 
   if (!loja || !data || !hora || isNaN(quantidade) || quantidade < 1) {
-    alert("Por favor, preencha todos os campos corretamente.");
+    mostrarModal("Por favor, preencha todos os campos corretamente.");
     return;
   }
 
@@ -265,17 +282,12 @@ window.salvarEdicaoTalao = function (event, id) {
   showTaloes();
 };
 
-// Excluir talão
-window.excluirTalao = function (id) {
-  const confirmacao = confirm("Tem certeza que deseja excluir este talão?");
-  if (confirmacao) {
-    Talao.excluirTalao(id);
-    showTaloes();
-  }
-};
-
 // Solicitar talão
 window.solicitarTalao = function () {
+
+  // Salva o estado atual da função no histórico, permitindo navegação reversa
+  historico.push({ funcao: solicitarTalao });
+
   const content = document.getElementById("mainContent");
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
 
@@ -305,8 +317,16 @@ window.solicitarTalao = function () {
 
   // Mostrar conteúdo dinâmico do formulário
   content.innerHTML = `
-    <div class="form-container">
-      <h1 class="h4 mb-4">Solicitar Talão</h1>
+    <div class="overlay" id="overlay"></div>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <button class="btn btn-voltar" onclick="voltar()">
+          <i class="bi bi-arrow-left"></i> Voltar
+        </button>
+        <div class="w-100 text-center me-4 me-md-5">
+          <h1>Solicitar Talão</h1>
+          <p>Preencha os dados abaixo para Solicitar um novo Talão.</p>
+        </div>
+      </div>
       <form id="talaoForm" onsubmit="salvarSolicitacaoTalao(event)">
         <div class="mb-3">
           <label for="lojaTalao" class="form-label">Loja</label>
@@ -327,7 +347,7 @@ window.solicitarTalao = function () {
         <div class="text-center mb-4">
           <div class="row justify-content-center">
             <div class="col-12 col-sm-6 col-md-3 mb-2">
-              <button type="submit" class="btn btn-custom w-100" style="background-color: #269447; color: white;" ${
+              <button type="submit" class="btn btn-custom w-100" ${
                 lojasCadastradas.length === 0 ? "disabled" : ""
               }>
                 <i class="fas fa-plus-circle"></i> Solicitar Talão
@@ -359,7 +379,7 @@ window.salvarSolicitacaoTalao = function (event) {
 
   // Validação adicional
   if (!loja || !data || !hora || isNaN(quantidade) || quantidade < 1) {
-    alert("Por favor, preencha todos os campos corretamente.");
+    mostrarModal("Por favor, preencha todos os campos corretamente.");
     return;
   }
 
@@ -368,8 +388,32 @@ window.salvarSolicitacaoTalao = function (event) {
   showTaloes();
 };
 
+// Excluir talão
+window.excluirTalao = function (id) {
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+  const usuario = Usuario.usuarios.find((user) => user.id === id);
+
+  // Controle de Acesso
+  if (!usuarioLogado || usuarioLogado.perfil !== "AdminRoot") {
+    mostrarModal("Você não tem permissão para excluir este usuário.");
+    return;
+  }
+
+  mostrarConfirmacao(
+    "Tem certeza que deseja excluir este Talão?",
+    function () {
+      Talao.excluirTalao(id);
+      showTaloes();
+    }
+  );
+};
+
 // Função para registrar o envio
 window.registrarEnvio = function () {
+
+  // Salva o estado atual da função no histórico, permitindo navegação reversa
+  historico.push({ funcao: registrarEnvio });
+
   const content = document.getElementById("mainContent");
   const taloes = Talao.listarTaloes();
   const taloesSolicitados = taloes.filter(
@@ -377,7 +421,7 @@ window.registrarEnvio = function () {
   );
 
   if (taloesSolicitados.length === 0) {
-    alert("Não há talões solicitados para registrar envio.");
+    mostrarModal("Não há talões solicitados para registrar envio.");
     return;
   }
 
@@ -392,15 +436,24 @@ window.registrarEnvio = function () {
             <td>${hora}</td>
             <td>${talao.quantidade}</td>
             <td>
-                <button class="btn btn-success" onclick="confirmarEnvio(${talao.id})">Confirmar Envio</button>
+                <button class="btn btn-success" onclick="confirmarEnvio(${talao.id})"><i class="fas fa-check"></i></button>
             </td>
         </tr>
       `;
   });
 
   content.innerHTML = `
-        <h1 class="h4 mb-4">Registrar Envio</h1>
-        <p>Confirme o envio dos talões solicitados.</p>
+        <div class="overlay" id="overlay"></div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+        <button class="btn btn-voltar" onclick="voltar()">
+          Voltar
+        </button>
+        <div class="w-100 text-center me-4 me-md-5">
+          <h1>Registrar Envio</h1>
+          <p>Confirme o envio dos talões solicitados.</p>
+        </div>
+      </div>
+      <div class="table-responsive">
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -416,6 +469,7 @@ window.registrarEnvio = function () {
                 ${tableRows}
             </tbody>
         </table>
+      </div>
     `;
 };
 
@@ -432,13 +486,17 @@ window.confirmarEnvio = function (id) {
       "Enviado",
       usuarioLogado.nome // Passa o nome do funcionário para registrar o envio
     );
-    alert("Talão registrado como enviado.");
+    mostrarModal(`Talão ${talao.id} enviado para ${talao.loja}.`);
     showTaloes();
   }
 };
 
 // Registrar recebimento
 window.registrarRecebimento = function () {
+
+  // Salva o estado atual da função no histórico, permitindo navegação reversa
+  historico.push({ funcao: registrarRecebimento });
+
   const content = document.getElementById("mainContent");
   const taloes = Talao.listarTaloes();
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
@@ -452,7 +510,7 @@ window.registrarRecebimento = function () {
     .filter((talao) => talao.status === "Enviado");
 
   if (taloesEnviados.length === 0) {
-    alert("Não há talões enviados para registrar recebimento.");
+    mostrarModal("Não há talões enviados para registrar recebimento.");
     return;
   }
 
@@ -467,15 +525,24 @@ window.registrarRecebimento = function () {
             <td>${hora}</td>
             <td>${talao.quantidade}</td>
             <td>
-                <button class="btn btn-success" onclick="confirmarRecebimento(${talao.id})">Confirmar Recebimento</button>
+                <button class="btn btn-success" onclick="confirmarRecebimento(${talao.id})"><i class="fas fa-check"></i></button>
             </td>
         </tr>
       `;
   });
 
   content.innerHTML = `
-        <h1 class="h4 mb-4">Registrar Recebimento</h1>
-        <p>Confirme o recebimento dos talões enviados.</p>
+        <div class="overlay" id="overlay"></div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+        <button class="btn btn-voltar" onclick="voltar()">
+          Voltar
+        </button>
+        <div class="w-100 text-center me-4 me-md-5">
+          <h1>Registrar Recebimento</h1>
+          <p>Confirme o recebimento dos Talões enviados.</p>
+        </div>
+      </div>
+        
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -492,6 +559,8 @@ window.registrarRecebimento = function () {
             </tbody>
         </table>
     `;
+
+
 };
 
 // Confirmar recebimento
@@ -507,7 +576,7 @@ window.confirmarRecebimento = function (id) {
       "Recebido",
       usuarioLogado.nome // Passa o nome do funcionário para registrar o recebimento
     );
-    alert("Recebimento confirmado.");
+    mostrarModal(`Recebimento do Talão ${talao.id} confirmado.`);
     showTaloes();
   }
 };
@@ -545,7 +614,7 @@ window.exportarTalao = function (id) {
 window.exportarTodosTaloes = function () {
   const taloes = Talao.listarTaloes();
   if (taloes.length === 0) {
-    alert("Nenhum talão disponível para exportação.");
+    mostrarModal("Nenhum talão disponível para exportação.");
     return;
   }
 
