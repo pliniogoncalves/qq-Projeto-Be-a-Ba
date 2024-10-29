@@ -158,7 +158,8 @@ window.registrarEnvio = function () {
     // Permite que AdminRoot selecione uma loja
     if (lojasCadastradas.length > 0) {
       lojaInput = `
-        <select class="form-select" id="lojaTalao" required>
+        <select class="form-select" id="lojaTalao" onchange="preencherQuantidadeNecessaria()" required>
+          <option value="" disabled selected>Selecione uma loja</option>
           ${lojasCadastradas.map((loja) => `<option value="${loja.nome}">${loja.nome}</option>`).join("")}
         </select>`;
     } else {
@@ -200,17 +201,36 @@ window.registrarEnvio = function () {
       </div>
       <div class="mb-3">
         <label for="quantidadeTalao" class="form-label">Quantidade de Talões</label>
-        <input type="number" class="form-control" id="quantidadeTalao" placeholder="Digite a quantidade" min="1" required>
+        <input type="number" class="form-control" id="quantidadeTalao" placeholder="Quantidade necessária será preenchida automaticamente" min="1" required>
       </div>
       <div class="text-center mb-4">
-        <button type="submit" class="btn btn-custom w-100" ${lojasCadastradas.length === 0 ? "disabled" : ""}>
-          <i class="fas fa-paper-plane"></i> Registrar Envio
-        </button>
+        <div class="row justify-content-center">
+          <div class="col-12 col-sm-6 col-md-3 mb-2">
+            <button type="submit" class="btn btn-custom w-100">
+              <i class="fas fa-paper-plane"></i> Registrar Envio
+            </button>
+          </div>
+        </div>
       </div>
       ${lojasCadastradas.length === 0 ? '<p class="text-danger mt-2">Nenhuma loja cadastrada. Por favor, cadastre uma loja para continuar.</p>' : ""}
     </form>
   `;
 };
+
+
+// Função para preencher a quantidade necessária de talões com base na loja selecionada
+window.preencherQuantidadeNecessaria = function () {
+  const lojaNome = document.getElementById("lojaTalao").value;
+  const lojas = JSON.parse(localStorage.getItem("lojas")) || [];
+  const loja = lojas.find((l) => l.nome === lojaNome);
+  
+  if (loja) {
+    // Calcula a quantidade necessária como diferença entre quantidade recomendada e mínima
+    const quantidadeNecessaria = loja.quantidadeRecomendada - loja.quantidadeMinima;
+    document.getElementById("quantidadeTalao").value = quantidadeNecessaria > 0 ? quantidadeNecessaria : 1;
+  }
+};
+
 
 // Função para salvar registro de envio
 window.salvarRegistroEnvio = function (event) {
@@ -300,7 +320,9 @@ window.registrarRecebimento = function () {
 window.confirmarRecebimento = function (id) {
   const talao = Talao.buscarTalao(id);
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+  
   if (talao) {
+    // Atualiza o status do talão para "Recebido"
     Talao.atualizarTalao(
       id,
       talao.loja,
@@ -309,10 +331,31 @@ window.confirmarRecebimento = function (id) {
       "Recebido",
       usuarioLogado.nome
     );
+
+    // Atualiza o estoque da loja com a quantidade de talões recebida
+    atualizarEstoqueLoja(talao.loja, talao.quantidade);
+
     mostrarModal(`Recebimento do Talão ${talao.id} confirmado.`);
     showTaloes();
   }
 };
+
+// Função auxiliar para atualizar o estoque da loja após o recebimento dos talões
+function atualizarEstoqueLoja(lojaNome, quantidadeRecebida) {
+  const lojas = JSON.parse(localStorage.getItem("lojas")) || [];
+  const loja = lojas.find((l) => l.nome === lojaNome);
+
+  if (loja) {
+    // Atualiza o estoque mínimo da loja com a quantidade recebida
+    loja.quantidadeMinima = loja.quantidadeRecomendada;
+    
+    // Atualiza o status do estoque para "Estoque adequado" após o recebimento
+    loja.status = "Estoque adequado";
+
+    // Salva as atualizações no localStorage
+    localStorage.setItem("lojas", JSON.stringify(lojas));
+  }
+}
 
 
 // Função para editar talão
@@ -359,47 +402,59 @@ window.editarTalao = function (id) {
       <input type="text" class="form-control" id="lojaTalaoEdit" value="${talao.loja}" readonly required>`;
   }
 
+  // Adiciona o campo de status para edição
+  const statusOptions = `
+    <select id="statusTalaoEdit" class="form-select" required>
+      <option value="Enviado" ${talao.status === "Enviado" ? "selected" : ""}>Enviado</option>
+      <option value="Recebido" ${talao.status === "Recebido" ? "selected" : ""}>Recebido</option>
+    </select>`;
+
+  // Monta o formulário de edição com o novo campo de status
   content.innerHTML = `
     <div class="overlay" id="overlay"></div>
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <button class="btn btn-voltar" onclick="voltar()">
-          <i class="bi bi-arrow-left"></i> Voltar
-        </button>
-        <div class="w-100 text-center me-4 me-md-5">
-          <h1>Editar Talão</h1>
-          <p>Atualize as informações do Talão conforme necessário.</p>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <button class="btn btn-voltar" onclick="voltar()">
+        <i class="bi bi-arrow-left"></i> Voltar
+      </button>
+      <div class="w-100 text-center me-4 me-md-5">
+        <h1>Editar Talão</h1>
+        <p>Atualize as informações do Talão conforme necessário.</p>
+      </div>
+    </div>
+    <form id="talaoEditForm" onsubmit="salvarEdicaoTalao(event, ${id})">
+      <div class="mb-3">
+        <label for="lojaTalaoEdit" class="form-label">Loja</label>
+        ${lojaInput}
+      </div>
+      <div class="mb-3">
+        <label for="dataTalaoEdit" class="form-label">Data</label>
+        <input type="date" class="form-control" id="dataTalaoEdit" value="${data}" required>
+      </div>
+      <div class="mb-3">
+        <label for="horaTalaoEdit" class="form-label">Hora</label>
+        <input type="time" class="form-control" id="horaTalaoEdit" value="${hora}" required>
+      </div>
+      <div class="mb-3">
+        <label for="quantidadeTalaoEdit" class="form-label">Quantidade de Talões</label>
+        <input type="number" class="form-control" id="quantidadeTalaoEdit" value="${talao.quantidade}" min="1" required>
+      </div>
+      <div class="mb-3">
+        <label for="statusTalaoEdit" class="form-label">Status</label>
+        ${statusOptions}
+      </div>
+      <div class="text-center mb-4">
+        <div class="row justify-content-center">
+          <div class="col-12 col-sm-6 col-md-3 mb-2">
+            <button type="submit" class="btn btn-custom w-100">
+              <i class="fas fa-save"></i> Salvar Edição
+            </button>
+          </div>
         </div>
       </div>
-          <form id="talaoEditForm" onsubmit="salvarEdicaoTalao(event, ${id})">
-              <div class="mb-3">
-                  <label for="lojaTalaoEdit" class="form-label">Loja</label>
-                  ${lojaInput}
-              </div>
-              <div class="mb-3">
-                  <label for="dataTalaoEdit" class="form-label">Data</label>
-                  <input type="date" class="form-control" id="dataTalaoEdit" value="${data}" required>
-              </div>
-              <div class="mb-3">
-                  <label for="horaTalaoEdit" class="form-label">Hora</label>
-                  <input type="time" class="form-control" id="horaTalaoEdit" value="${hora}" required>
-              </div>
-              <div class="mb-3">
-                  <label for="quantidadeTalaoEdit" class="form-label">Quantidade de Talões</label>
-                  <input type="number" class="form-control" id="quantidadeTalaoEdit" value="${talao.quantidade}" min="1" required>
-              </div>
-              <div class="text-center mb-4">
-                <div class="row justify-content-center">
-                  <div class="col-12 col-sm-6 col-md-3 mb-2">
-                    <button type="submit" class="btn btn-custom w-100">
-                      <i class="fas fa-save"></i> Salvar Edição
-                    </button>
-                  </div>
-                </div>
-              </div>
-          </form>
-      </div>
+    </form>
   `;
 };
+
 
 // Salvar edição de talão
 window.salvarEdicaoTalao = function (event, id) {

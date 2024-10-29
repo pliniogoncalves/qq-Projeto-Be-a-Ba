@@ -96,7 +96,7 @@ window.showEstoque = function (paginaAtual = 1, termoBusca = "") {
     <div class="text-center mb-4">
       <div class="row justify-content-center">
         <div class="col-12 col-sm-6 col-md-3 mb-2">
-          <button class="btn btn-custom w-100" type="button" onclick="sinalizarNecessidadeTalao(event)">
+          <button class="btn btn-custom w-100" type="button" onclick="solicitarTalao()">
             <i class="fas fa-plus-circle"></i> Solicitar Talão
           </button>
         </div>    
@@ -161,8 +161,8 @@ window.editarEstoque = function (id_loja) {
 
 // Salvar as mudanças feitas no estoque mínimo, recomendado e na frequência de alerta
 window.submitEstoqueEdicao = function (id_loja) {
-  const quantidadeMinima = document.getElementById("quantidadeMinima").value;
-  const quantidadeRecomendada = document.getElementById("quantidadeRecomendada").value;
+  const quantidadeMinima = parseInt(document.getElementById("quantidadeMinima").value, 10);
+  const quantidadeRecomendada = parseInt(document.getElementById("quantidadeRecomendada").value, 10);
   const frequenciaAlerta = document.getElementById("frequenciaAlerta").value;
 
   let lojas = JSON.parse(localStorage.getItem("lojas")) || [];
@@ -173,11 +173,19 @@ window.submitEstoqueEdicao = function (id_loja) {
     loja.quantidadeRecomendada = quantidadeRecomendada;
     loja.frequenciaAlerta = frequenciaAlerta;
 
+    // Atualiza o status do estoque com base nas novas quantidades
+    if (quantidadeRecomendada > quantidadeMinima) {
+      loja.status = "Estoque baixo";
+    } else {
+      loja.status = "Estoque adequado";
+    }
+
     localStorage.setItem("lojas", JSON.stringify(lojas));
   }
 
   showEstoque();
 };
+
 
 // Função para sinalizar necessidade de talões
 window.solicitarTalao = function () {
@@ -246,18 +254,15 @@ window.solicitarTalao = function () {
   `;
 };
 
-// Função para atualizar o status do estoque para "estoque baixo" ao sinalizar a necessidade de talões
 window.sinalizarNecessidadeTalao = function (event) {
   event.preventDefault();
-  
-  const lojaNome = document.getElementById(loja.nome).value;
 
-  // Acessa as lojas e encontra a loja selecionada
+  const lojaNome = document.getElementById("lojaTalao").value; // Obtém o nome da loja selecionada
+
   let lojas = JSON.parse(localStorage.getItem("lojas")) || [];
   let loja = lojas.find((l) => l.nome === lojaNome);
 
   if (loja) {
-    // Atualiza o status para "estoque baixo" se não estiver já nesse estado
     if (loja.status !== "Estoque baixo") {
       loja.status = "Estoque baixo";
       mostrarModal(`A loja ${lojaNome} foi sinalizada como "necessitando de talões".`);
@@ -265,12 +270,10 @@ window.sinalizarNecessidadeTalao = function (event) {
       mostrarModal(`A loja ${lojaNome} já está sinalizada como "necessitando de talões".`);
     }
     
-    // Atualiza o armazenamento local e a exibição
     localStorage.setItem("lojas", JSON.stringify(lojas));
     showEstoque();
   } else {
     mostrarModal("Erro: Loja não encontrada.");
   }
 };
-
 
