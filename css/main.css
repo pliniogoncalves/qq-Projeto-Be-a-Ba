@@ -50,7 +50,7 @@ table thead {
   text-align: left; /* Alinhamento do texto */
 }
 
-/* Botão de alerta */
+/* Botão de alerta com notificações */
 .btn-alert-circle {
   background-color: #1f5d3d;
   color: white;
@@ -68,12 +68,36 @@ table thead {
   z-index: 1001;
 }
 
-.btn-alert-circle i {
-  font-size: 1.5rem;
+.notification-count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: yellow;
+  color: black;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  display: none; /* Inicialmente invisível */
 }
 
-.btn-alert-circle:hover {
-  background-color: #851306;
+.modal-footer .btn-marcar-todas {
+  background-color: #1f5d3d; /* Verde */
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 1rem;
+}
+
+.modal-footer .btn-cancelar {
+  background-color: #851306; /* Vermelho */
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 /*botão voltar*/

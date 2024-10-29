@@ -18,10 +18,16 @@
     <header>
       <span class="hamburger" onclick="toggleSidebar()">&#9776;</span>
       <img src="../logo.png" alt="Logo Quero-Quero" class="img-fluid" />
-      <button class="btn-alert-circle" onclick="mostrarAlerta()">
+
+    
+      <!-- Botão de alerta -->
+      <button class="btn-alert-circle" onclick="mostrarNotificacao()">
         <i class="fas fa-bell"></i>
+        <span id="notificationCount" class="notification-count">0</span>
       </button>
+
     </header>
+
     <div class="container-fluid">
       <div class="row">
         <nav class="sidebar col-md-2 col-lg-2" id="sidebar">
@@ -122,7 +128,9 @@
     <!-- Modal -->
     <div id="detalhesModal" class="modal">
       <div class="modal-content">
-        <span class="close" onclick="fecharModal('detalhesModal')">&times;</span>
+        <span class="close" onclick="fecharModal('detalhesModal')"
+          >&times;</span
+        >
         <div id="modalBody">
           <!-- Os conteudos dos modais serão inseridos aqui -->
         </div>
@@ -130,15 +138,38 @@
     </div>
 
     <!-- Modal de Confirmação -->
-<div id="modalConfirmacao" class="modal">
+    <div id="modalConfirmacao" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="fecharModal('modalConfirmacao')"
+          >&times;</span
+        >
+        <div id="modalConfirmacaoBody">
+          <!-- Mensagem de confirmação será inserida aqui -->
+        </div>
+        <div class="modal-footer">
+          <button
+            class="btn btn-cancelar"
+            onclick="fecharModal('modalConfirmacao')"
+          >
+            Cancelar
+          </button>
+          <button class="btn btn-danger" id="btnConfirmarAcao">
+            Confirmar
+          </button>
+        </div>
+      </div>
+    </div>
+
+ <!-- Modal de Notificações -->
+<div id="modalNotificacao" class="modal">
   <div class="modal-content">
-    <span class="close" onclick="fecharModal('modalConfirmacao')">&times;</span>
-    <div id="modalConfirmacaoBody">
-      <!-- Mensagem de confirmação será inserida aqui -->
+    <span class="close" onclick="fecharModal('modalNotificacao')">&times;</span>
+    <div id="modalNotificacaoBody">
+      <!-- Mensagens de notificação serão inseridas aqui -->
     </div>
     <div class="modal-footer">
-      <button class="btn btn-cancelar" onclick="fecharModal('modalConfirmacao')">Cancelar</button>
-      <button class="btn btn-danger" id="btnConfirmarAcao">Confirmar</button>
+      <button class="btn btn-marcar-todas" onclick="marcarTodasLidas()">Marcar todas como lidas</button>
+      <button class="btn btn-cancelar" onclick="fecharModal('modalNotificacao')">Fechar</button>
     </div>
   </div>
 </div>
@@ -150,7 +181,10 @@
     <script type="module" src="../js/controllers/perfilController.js"></script>
     <script type="module" src="../js/controllers/moduloController.js"></script>
     <script type="module" src="../js/controllers/lojaController.js"></script>
-    <script type="module" src="../js/controllers/dashboardController.js"></script>
+    <script
+      type="module"
+      src="../js/controllers/dashboardController.js"
+    ></script>
     <script
       type="module"
       src="../js/controllers/configuracaoController.js"

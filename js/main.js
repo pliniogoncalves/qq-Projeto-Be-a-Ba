@@ -123,10 +123,6 @@ function formatarDataHora(dataString) {
   return [dataFormatada, horaFormatada]; // Retorna um array com data e hora separadas
 }
 
-function mostrarAlerta() {
-  alert('Você clicou no botão de alerta!');
-}
-
 // Fechar o modal ao clicar fora do conteúdo
 window.onclick = function(event) {
   const modal = document.getElementById("detalhesModal");
@@ -184,3 +180,64 @@ window.voltar = function () {
     alert("Você está na tela inicial.");
   }
 };
+
+//notificações//
+
+let notificationCount = 0;
+const notifications = []; // Array para armazenar notificações
+
+function adicionarNotificacao(mensagem) {
+  notificationCount++;
+  notifications.push(mensagem); // Armazena a mensagem na lista de notificações
+  atualizarBotaoNotificacao();
+}
+
+// Atualiza o estado do botão de notificações
+function atualizarBotaoNotificacao() {
+  const notificationButton = document.querySelector('.btn-alert-circle');
+  const notificationCountEl = document.getElementById('notificationCount');
+  
+  if (notificationCount > 0) {
+    notificationButton.classList.add('has-notifications');
+    notificationButton.style.backgroundColor = '#851306'; // Botão vermelho com notificações
+    notificationCountEl.style.display = 'inline';
+    notificationCountEl.textContent = notificationCount;
+  } else {
+    notificationButton.classList.remove('has-notifications');
+    notificationButton.style.backgroundColor = '#1f5d3d'; // Botão verde sem notificações
+    notificationCountEl.style.display = 'none';
+  }
+}
+
+// Mostra o modal de notificações com as mensagens
+function mostrarNotificacao() {
+  const modal = document.getElementById('modalNotificacao');
+  const modalNotificacaoBody = document.getElementById('modalNotificacaoBody');
+  
+  modalNotificacaoBody.innerHTML = ''; // Limpa o conteúdo antes de adicionar
+
+  if (notifications.length > 0) {
+    notifications.forEach((notificacao) => {
+      const p = document.createElement('p'); // Usar <p> para cada notificação
+      p.textContent = notificacao; // Adiciona o texto da notificação
+      modalNotificacaoBody.appendChild(p); // Insere no corpo do modal
+    });
+  } else {
+    modalNotificacaoBody.innerHTML = '<p>Sem notificações</p>';
+  }
+
+  modal.style.display = 'flex'; // Exibe o modal
+}
+
+// Marca todas as notificações como lidas e fecha o modal
+function marcarTodasLidas() {
+  notificationCount = 0;
+  notifications.length = 0; // Limpa as notificações armazenadas
+  atualizarBotaoNotificacao();
+  fecharModal('modalNotificacao'); // Fecha o modal após marcar como lidas
+}
+
+// Exemplo de adição de notificações para testes
+adicionarNotificacao("Estoque baixo em loja X");
+adicionarNotificacao("Usuário solicitou talão");
+adicionarNotificacao("Novo login realizado");
