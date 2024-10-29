@@ -2,10 +2,10 @@ import { Usuario } from "../models/Usuario.js";
 import { Perfil } from "../models/Perfil.js";
 import { Loja } from "../models/Loja.js";
 
-// Função para exibir a lista de usuários
+// Exibe a lista de usuários com paginação
 window.showUsuarios = function (paginaAtual = 1) {
-
-  // Armazena o estado atual no histórico
+  
+  // Salva o estado atual para histórico de navegação
   historico.push({ funcao: showUsuarios, args: [paginaAtual] });
 
   const content = document.getElementById("mainContent");
@@ -15,36 +15,29 @@ window.showUsuarios = function (paginaAtual = 1) {
 
   let tableRows = "";
 
-  // Ajusta a quantidade de itens por página com base no tamanho da tela
+  // Define itens por página conforme tamanho da tela
   let itensPorPagina;
   if (window.innerWidth >= 1200) {
-    itensPorPagina = 10; // Telas grandes (desktops)
+    itensPorPagina = 10; // Desktop
   } else if (window.innerWidth >= 768) {
-    itensPorPagina = 6; // Telas médias (tablets)
+    itensPorPagina = 6; // Tablet
   } else {
-    itensPorPagina = 5; // Telas pequenas (smartphones)
+    itensPorPagina = 5; // Smartphone
   }
 
-  // Filtra usuários com base no perfil do usuário logado
+  // Filtra usuários conforme o perfil do usuário logado
   const usuariosFiltrados = usuarios.filter((user) => {
-    if (usuarioLogado.perfil === "AdminRoot") {
-      return true; // AdminRoot vê todos os usuários
-    } else {
-      return user.loja === usuarioLogado.loja; // Gerente e Caixa veem apenas os usuários da sua loja
-    }
+    return usuarioLogado.perfil === "AdminRoot" || user.loja === usuarioLogado.loja;
   });
 
-  // Calcula o número total de páginas
+  // Calcula número total de páginas
   const totalPaginas = Math.ceil(usuariosFiltrados.length / itensPorPagina);
 
-  // Paginação dos usuários
+  // Define intervalo de usuários da página atual
   const inicio = (paginaAtual - 1) * itensPorPagina;
-  const usuariosPaginados = usuariosFiltrados.slice(
-    inicio,
-    inicio + itensPorPagina
-  );
+  const usuariosPaginados = usuariosFiltrados.slice(inicio, inicio + itensPorPagina);
 
-  // Verifica se há usuários para exibir
+  // Gera linhas da tabela ou exibe mensagem se vazio
   if (usuariosPaginados.length === 0) {
     tableRows = `
       <tr>
@@ -54,18 +47,15 @@ window.showUsuarios = function (paginaAtual = 1) {
     usuariosPaginados.forEach((user) => {
       if (user) {
         let lojaNome = user.loja ? user.loja.nome : "Nenhuma loja";
-        if (user.perfil === "AdminRoot") {
-          lojaNome = "Matriz"; // Nome da loja padrão para AdminRoot
-        }
+        if (user.perfil === "AdminRoot") lojaNome = "Matriz";
 
-        const perfilDisplay =
-          !user.perfil || user.perfil === "Nenhuma" ? "" : user.perfil;
+        const perfilDisplay = !user.perfil || user.perfil === "Nenhuma" ? "" : user.perfil;
 
         tableRows += `
           <tr>
               <td>${user.nome}</td>
               <td>${perfilDisplay}</td>
-              <td>${lojaNome}</td> <!-- Exibindo o nome da loja -->
+              <td>${lojaNome}</td>
               <td>
                   <i class="fas fa-edit" style="cursor: pointer; margin-right: 10px;" onclick="editarUsuario(${user.id})" data-bs-toggle="tooltip" title="Editar"></i>
                   <i class="fas fa-trash" style="cursor: pointer;" onclick="excluirUsuario(${user.id})" data-bs-toggle="tooltip" title="Excluir"></i>
@@ -76,35 +66,24 @@ window.showUsuarios = function (paginaAtual = 1) {
     });
   }
 
-  // Geração da paginação dentro da tabela com setas "Previous" e "Next"
+  // Gera controle de paginação
   const paginacao = `
     <tr>
       <td colspan="4">
         <nav>
           <ul class="pagination justify-content-center custom-pagination">
             <li class="page-item ${paginaAtual === 1 ? "disabled" : ""}">
-              <a class="page-link" href="#" aria-label="Previous" onclick="showUsuarios(${
-                paginaAtual - 1
-              })">
+              <a class="page-link" href="#" aria-label="Previous" onclick="showUsuarios(${paginaAtual - 1})">
                 <span aria-hidden="true">&laquo;</span>
               </a>
             </li>
-            ${Array.from(
-              { length: totalPaginas },
-              (_, i) => `
+            ${Array.from({ length: totalPaginas }, (_, i) => `
               <li class="page-item ${i + 1 === paginaAtual ? "active" : ""}">
-                <a class="page-link" href="#" onclick="showUsuarios(${
-                  i + 1
-                })">${i + 1}</a>
+                <a class="page-link" href="#" onclick="showUsuarios(${i + 1})">${i + 1}</a>
               </li>
-            `
-            ).join("")}
-            <li class="page-item ${
-              paginaAtual === totalPaginas ? "disabled" : ""
-            }">
-              <a class="page-link" href="#" aria-label="Next" onclick="showUsuarios(${
-                paginaAtual + 1
-              })">
+            `).join("")}
+            <li class="page-item ${paginaAtual === totalPaginas ? "disabled" : ""}">
+              <a class="page-link" href="#" aria-label="Next" onclick="showUsuarios(${paginaAtual + 1})">
                 <span aria-hidden="true">&raquo;</span>
               </a>
             </li>
@@ -114,7 +93,7 @@ window.showUsuarios = function (paginaAtual = 1) {
     </tr>
   `;
 
-  // Renderização final do conteúdo HTML
+  // Renderiza HTML final na página
   content.innerHTML = `
       <div class="overlay" id="overlay"></div>
       <h1 class="text-center mb-4">Gestão de Usuários</h1>
@@ -145,7 +124,7 @@ window.showUsuarios = function (paginaAtual = 1) {
           </thead>
           <tbody id="userTableBody">
               ${tableRows}
-              ${paginacao} <!-- Adiciona paginação dentro da tabela -->
+              ${paginacao}
           </tbody>
           </table>
       </div>
@@ -164,90 +143,93 @@ window.showUsuarios = function (paginaAtual = 1) {
   setActiveButton("Usuários");
 };
 
+
 window.cadastrarUsuario = function () {
 
-  // Armazena o estado atual no histórico
+  // Salva o estado atual da função no histórico, permitindo navegação reversa
   historico.push({ funcao: cadastrarUsuario });
 
-
+  // Recupera os dados do usuário logado a partir do LocalStorage
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
 
-  // Controle de Acesso
+  // Verifica se o usuário tem permissão para cadastrar novos usuários (apenas "AdminRoot")
   if (!usuarioLogado || usuarioLogado.perfil !== "AdminRoot") {
     alert("Você não tem permissão para cadastrar novos usuários.");
     return;
   }
 
+  // Limpa o conteúdo atual da área principal
   const content = document.getElementById("mainContent");
   content.innerHTML = "";
 
-  // Recupera as lojas do LocalStorage
+  // Recupera a lista de lojas cadastradas no LocalStorage, ou inicializa como array vazio se não houver dados
   const lojas = JSON.parse(localStorage.getItem("lojas")) || [];
 
-  // Obter os perfis de acesso do LocalStorage
+  // Recupera os perfis de acesso do LocalStorage, ou inicializa como array vazio se não houver dados
   const perfis = JSON.parse(localStorage.getItem("perfis")) || [];
 
-  // Criar opções de função a partir dos perfis de acesso
+  // Cria as opções de função para o campo de seleção, com base nos perfis de acesso
   const opcoesFuncoes =
     perfis
       .map((perfil) => `<option value="${perfil.nome}">${perfil.nome}</option>`)
       .join("") + `<option value="Nenhum">Nenhum</option>`;
 
-      content.innerHTML = `
-      <div class="overlay" id="overlay"></div>
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <button class="btn btn-voltar" onclick="voltar()">
-          <i class="bi bi-arrow-left"></i> Voltar
-        </button>
-        <div class="w-100 text-center">
-          <h1>Cadastrar Novo Usuário</h1>
-        </div>
+  // Renderiza o formulário de cadastro de novo usuário, incluindo campos de entrada e botão de submissão
+  content.innerHTML = `
+    <div class="overlay" id="overlay"></div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <button class="btn btn-voltar" onclick="voltar()">
+        <i class="bi bi-arrow-left"></i> Voltar
+      </button>
+      <div class="w-100 text-center">
+        <h1>Cadastrar Novo Usuário</h1>
       </div>
-      <p class="text-center mb-4">Preencha as informações abaixo para cadastrar um novo usuário.</p>
-      <div class="form-container">
-        <form id="userForm">
-          <div class="mb-3">
-            <label for="nome" class="form-label">Nome do Usuário</label>
-            <input type="text" class="form-control" id="nome" placeholder="Digite o nome de usuário" required>
-          </div>
-          <div class="mb-3">
-            <label for="matricula" class="form-label">Matrícula</label>
-            <input type="number" class="form-control" id="matricula" placeholder="Digite a Matrícula" required>
-          </div>
-          <div class="mb-3">
-            <label for="email" class="form-label">E-mail</label>
-            <input type="email" class="form-control" id="email" placeholder="Digite o e-mail" required>
-          </div>
-          <div class="mb-3">
-            <label for="senha" class="form-label">Senha</label>
-            <input type="password" class="form-control" id="senha" placeholder="Digite a senha" required>
-          </div>
-          <div class="mb-3">
-            <label for="funcao" class="form-label">Função</label>
-            <select id="funcao" class="form-select" onchange="atualizarLojaCadastro()">
-              ${opcoesFuncoes}
-            </select>
-          </div>
-          <div class="mb-3" id="loja-container">
-            <!-- O campo de loja será atualizado pela função 'atualizarLojaCadastro' -->
-          </div>
-          <div class="text-center mb-4">
-            <div class="row justify-content-center">
-              <div class="col-12 col-sm-6 col-md-3 mb-2">
-                <button class="btn btn-custom w-100" type="button" onclick="submitCadastro()">
-                  <i class="fas fa-user-plus"></i> Cadastrar Usuário
-                </button>
-              </div>
+    </div>
+    <p class="text-center mb-4">Preencha as informações abaixo para cadastrar um novo usuário.</p>
+    <div class="form-container">
+      <form id="userForm">
+        <div class="mb-3">
+          <label for="nome" class="form-label">Nome do Usuário</label>
+          <input type="text" class="form-control" id="nome" placeholder="Digite o nome de usuário" required>
+        </div>
+        <div class="mb-3">
+          <label for="matricula" class="form-label">Matrícula</label>
+          <input type="number" class="form-control" id="matricula" placeholder="Digite a Matrícula" required>
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">E-mail</label>
+          <input type="email" class="form-control" id="email" placeholder="Digite o e-mail" required>
+        </div>
+        <div class="mb-3">
+          <label for="senha" class="form-label">Senha</label>
+          <input type="password" class="form-control" id="senha" placeholder="Digite a senha" required>
+        </div>
+        <div class="mb-3">
+          <label for="funcao" class="form-label">Função</label>
+          <select id="funcao" class="form-select" onchange="atualizarLojaCadastro()">
+            ${opcoesFuncoes}
+          </select>
+        </div>
+        <div class="mb-3" id="loja-container">
+          <!-- Campo de loja será preenchido pela função 'atualizarLojaCadastro' -->
+        </div>
+        <div class="text-center mb-4">
+          <div class="row justify-content-center">
+            <div class="col-12 col-sm-6 col-md-3 mb-2">
+              <button class="btn btn-custom w-100" type="button" onclick="submitCadastro()">
+                <i class="fas fa-user-plus"></i> Cadastrar Usuário
+              </button>
             </div>
           </div>
-        </form>
-      </div>
-    `;
-    
+        </div>
+      </form>
+    </div>
+  `;
 
-  // Inicializar o campo de loja com base no perfil inicial
+  // Chama a função para configurar o campo de loja conforme o perfil selecionado
   atualizarLojaCadastro();
 };
+
 
 
 window.atualizarLojaCadastro = function () {
