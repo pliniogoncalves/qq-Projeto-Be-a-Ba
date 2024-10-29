@@ -89,7 +89,7 @@ table thead {
   transition: background-color 0.3s ease; /* Suavização da transição */
 }
 
-/* icones */
+/* icones de ação*/
 .usuario i:hover{
   color: #f5d307;
 }
@@ -98,6 +98,13 @@ table thead {
   color: #f5d307;
 }
 
+.estoque i:hover{
+  color: #f5d307;
+}
+
+.loja i:hover{
+  color: #f5d307;
+}
 
 /* Sidebar */
 .sidebar {

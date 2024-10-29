@@ -2,6 +2,10 @@ import { Loja } from "../models/Loja.js";
 
 // Função para exibir a lista de lojas cadastradas
 window.showLojas = function (paginaAtual = 1) {
+
+  // Salva o estado atual para histórico de navegação
+  historico.push({ funcao: showLojas, args: [paginaAtual] });
+
   const content = document.getElementById("mainContent");
   const lojas = JSON.parse(localStorage.getItem("lojas")) || [];
 
@@ -37,7 +41,7 @@ window.showLojas = function (paginaAtual = 1) {
           <tr>
             <td>${loja.nome}</td>
             <td>${loja.numero}</td>
-            <td>
+            <td class="loja">
               <i class="fas fa-edit" style="cursor: pointer; margin-right: 10px;" onclick="editarLoja(${loja.id})"></i>
               <i class="fas fa-trash" style="cursor: pointer;" onclick="excluirLoja(${loja.id})"></i>
             </td>

@@ -1,10 +1,10 @@
-window.showAjuda = function () {
+window.showDashboard = function () {
   const content = document.getElementById("mainContent");
   content.innerHTML = `
         <div class="overlay" id="overlay"></div>
-        <h2>Ajuda</h2>
-        <p>Encontre respostas para suas dúvidas.</p>
+        <h2>Dashboard</h2>
+        <p>Visualize o DashBoard</p>
     `;
 
-  setActiveButton("Ajuda");
+  setActiveButton("Dashboard");
 };

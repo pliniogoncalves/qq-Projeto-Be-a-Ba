@@ -3,6 +3,10 @@ import { Loja } from "../models/Loja.js";
 
 
 window.showEstoque = function (paginaAtual = 1, termoBusca = "") {
+
+  // Salva o estado atual para histórico de navegação
+  historico.push({ funcao: showEstoque, args: [paginaAtual] });
+
   const content = document.getElementById("mainContent");
   let lojas = JSON.parse(localStorage.getItem("lojas")) || [];
 
@@ -54,7 +58,7 @@ window.showEstoque = function (paginaAtual = 1, termoBusca = "") {
           <td>${estoque.quantidade_atual}</td>
           <td>${estoque.quantidade_minima}</td>
           <td><span class="${badgeClass}">${statusEstoque}</span></td>
-          <td>
+          <td class="estoque">
             <i class="fas fa-pencil-alt" style="cursor: pointer; margin-right: 10px;" onclick="registrarUsoTalhoes(${loja.id_loja})"></i>
             <i class="fas fa-edit" style="cursor: pointer;" onclick="editarEstoque(${loja.id_loja})"></i>
           </td>
@@ -87,8 +91,8 @@ window.showEstoque = function (paginaAtual = 1, termoBusca = "") {
 
   content.innerHTML = `
     <div class="overlay" id="overlay"></div>
-    <h1 class="text-center mb-4">Controle de Estoque de Talões</h1>
-    <p class="text-center mb-4">Veja o estoque de talões de cada loja.</p>
+    <h1 class="text-center">Gestão de Estoque</h1>
+    <p class="text-center">Veja o estoque de talões de cada loja.</p>
 
     <div class="container mb-4">
       <div class="row justify-content-center">
@@ -128,11 +132,12 @@ window.showEstoque = function (paginaAtual = 1, termoBusca = "") {
 
 // Função para registrar o uso de talões
 window.registrarUsoTalhoes = function (id_loja) {
+
   const lojas = JSON.parse(localStorage.getItem("lojas")) || [];
   const loja = lojas.find((l) => l.id_loja === id_loja);
 
   if (!loja) {
-    alert("Loja não encontrada.");
+    mostrarModal("Loja não encontrada.");
     return;
   }
 
@@ -142,7 +147,7 @@ window.registrarUsoTalhoes = function (id_loja) {
     isNaN(quantidadeUsada) ||
     quantidadeUsada <= 0
   ) {
-    alert("Quantidade inválida.");
+    mostrarModal("Quantidade inválida.");
     return;
   }
 
@@ -158,7 +163,7 @@ window.registrarUsoTalhoes = function (id_loja) {
   loja.quantidade_atual = estoque.quantidade_atual;
   localStorage.setItem("lojas", JSON.stringify(lojas));
 
-  alert(`Uso registrado! Status do estoque: ${status}`);
+  mostrarModal(`Uso registrado! Status do estoque: ${status}`);
   showEstoque(); // Atualiza a lista após o registro do uso
 };
 
@@ -185,12 +190,16 @@ window.buscarLojaEstoque = function () {
 
 // Função para editar o estoque de uma loja
 window.editarEstoque = function (id_loja) {
+
+  // Salva o estado atual da função no histórico, permitindo navegação reversa
+  historico.push({ funcao: editarEstoque });
+
   const lojas = JSON.parse(localStorage.getItem("lojas")) || [];
   const loja = lojas.find((l) => l.id_loja === id_loja);
 
   // Verifica se a loja foi encontrada
   if (!loja) {
-    alert("Loja não encontrada.");
+    mostrarModal("Loja não encontrada.");
     return;
   }
 
@@ -215,8 +224,16 @@ window.editarEstoque = function (id_loja) {
   const content = document.getElementById("mainContent");
 
   content.innerHTML = `
-    <div class="form-container">
-      <h1 class="h4 mb-4">Editar Estoque</h1>
+    <div class="overlay" id="overlay"></div>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <button class="btn btn-voltar" onclick="voltar()">
+          <i class="bi bi-arrow-left"></i> Voltar
+        </button>
+        <div class="w-100 text-center me-4 me-md-5">
+          <h1>Editar Estoque</h1>
+          <p>Atualize as informações do Estoque conforme necessário.</p>
+        </div>
+      </div>
       <form id="estoqueForm">
         <div class="mb-3">
           <label for="estoqueAtual" class="form-label">Estoque Atual</label>
@@ -237,7 +254,7 @@ window.editarEstoque = function (id_loja) {
         <div class="text-center mb-4">
           <div class="row justify-content-center">
             <div class="col-12 col-sm-6 col-md-4 mb-2">
-              <button type="button" class="btn btn-custom w-100" style="background-color: #269447; color: white;" onclick="submitEstoqueEdicao(parseInt(${id_loja}))">
+              <button type="button" class="btn btn-custom w-100" onclick="submitEstoqueEdicao(parseInt(${id_loja}))">
                 <i class="fas fa-save"></i> Salvar Alterações
               </button>
             </div>
@@ -256,7 +273,7 @@ window.submitEstoqueEdicao = function (id_loja) {
     document.getElementById("estoqueRecomendado").value;
 
   if (!estoqueAtual || !estoqueMinimo || !estoqueRecomendado) {
-    alert("Preencha todos os campos.");
+    mostrarModal("Preencha todos os campos.");
     return;
   }
 
@@ -319,7 +336,7 @@ window.submitLojaComEstoque = function () {
   const estoqueMinimo = document.getElementById("estoqueMinimo").value;
 
   if (!nome || !numero || !estoqueAtual || !estoqueMinimo) {
-    alert("Preencha todos os campos.");
+    mostrarModal("Preencha todos os campos.");
     return;
   }
 
