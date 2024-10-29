@@ -43,7 +43,7 @@ function gerarLinhas(perfis) {
               .join(", ") || "Nenhuma"
           }
         </td>
-        <td>
+        <td class="perfil">
           <i class="fas fa-edit" style="cursor: pointer; margin-right: 10px;" onclick="editarPerfil(${
             perfil.id
           })" data-bs-toggle="tooltip" title="Editar"></i>

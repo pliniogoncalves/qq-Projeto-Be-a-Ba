@@ -89,6 +89,16 @@ table thead {
   transition: background-color 0.3s ease; /* Suavização da transição */
 }
 
+/* icones */
+.usuario i:hover{
+  color: #f5d307;
+}
+
+.perfil i:hover{
+  color: #f5d307;
+}
+
+
 /* Sidebar */
 .sidebar {
   height: 100vh;
@@ -246,6 +256,37 @@ table thead {
   color: white;
 }
 
+.btn-enviar {
+  background-color: #96bb39;
+  color: white;
+}
+
+
+.btn-recebimento {
+  background-color: #f7e800;
+  color: #20512e;
+}
+
+.btn-exportar {
+  background-color: #b30d14;
+  color: white;
+}
+
+.btn-enviar:hover{
+  background-color: #69a841;
+  color: white;
+}
+
+.btn-recebimento:hover{
+  background-color: #e7ae15;
+  color: #20512e;
+}
+
+.btn-exportar:hover {
+  background-color: #851306;
+  color: white;
+}
+
 /* Hamburger Menu */
 .hamburger {
   font-size: 2rem;
@@ -322,7 +363,7 @@ table thead {
 }
 
 .card-footer i:hover {
-  color: #007bff;
+  color: #f5d307;
 }
 
 .card.solicitado {

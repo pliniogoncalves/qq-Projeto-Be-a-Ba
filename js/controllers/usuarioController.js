@@ -62,7 +62,7 @@ window.showUsuarios = function (paginaAtual = 1) {
               <td>${user.nome}</td>
               <td>${perfilDisplay}</td>
               <td>${lojaNome}</td>
-              <td>
+              <td class="usuario">
                   <i class="fas fa-edit" style="cursor: pointer; margin-right: 10px;" onclick="editarUsuario(${user.id})" data-bs-toggle="tooltip" title="Editar"></i>
                   <i class="fas fa-trash" style="cursor: pointer;" onclick="excluirUsuario(${user.id})" data-bs-toggle="tooltip" title="Excluir"></i>
               </td>

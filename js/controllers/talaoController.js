@@ -113,8 +113,8 @@ window.showTaloes = function (paginaAtual = 1, taloesFiltrados = null) {
 
   content.innerHTML = `
     <div class="overlay" id="overlay"></div>
-    <h1 class="text-center mb-4">Gestão de Talões</h1>
-    <p class="text-center mb-4">Veja a lista de talões e suas respectivas situações.</p>
+    <h1 class="text-center">Gestão de Talões</h1>
+    <p class="text-center">Veja a lista de talões e suas respectivas situações.</p>
     <div class="container mb-4">
       <div class="row justify-content-center">
         <div class="col-md-8 col-sm-12 mb-4">
@@ -136,25 +136,26 @@ window.showTaloes = function (paginaAtual = 1, taloesFiltrados = null) {
     <div class="text-center mb-4">
       <div class="row justify-content-center">
         <div class="col-12 col-sm-6 col-md-3 mb-2">
-          <button class="btn btn-custom w-100" style="background-color: #269447; color: white;" type="button" onclick="solicitarTalao()">
+          <button class="btn btn-custom w-100" type="button" onclick="solicitarTalao()">
             <i class="fas fa-plus-circle"></i> Solicitar Talão
           </button>
         </div>
-        <div class="col-12 col-sm-6 col-md-3 mb-2">
-          <button class="btn w-100" style="background-color: #69a841; color: white;" type="button" onclick="registrarEnvio()">
-            <i class="fas fa-paper-plane"></i> Registrar Envio
-          </button>
-        </div>
-        <div class="col-12 col-sm-6 col-md-3 mb-2">
-          <button class="btn w-100" style="background-color: #f7e800; color: #20512e;" type="button" onclick="registrarRecebimento()">
-            <i class="fas fa-check-circle"></i> Registrar Recebimento
-          </button>
-        </div>
-        <div class="col-12 col-sm-6 col-md-3 mb-2">
-          <button class="btn w-100" style="background-color: #20512e; color: white;" type="button" onclick="exportarTodosTaloes()">
-            <i class="fas fa-file-export"></i> Exportar Todos
-          </button>
-        </div>
+         <div class="col-12 col-sm-6 col-md-3 mb-2">
+    <button class="btn btn-enviar w-100" type="button" onclick="registrarEnvio()" aria-label="Registrar Envio">
+      <i class="fas fa-paper-plane"></i> Registrar Envio
+    </button>
+  </div>
+  <div class="col-12 col-sm-6 col-md-3 mb-2">
+    <button class="btn btn-recebimento w-100" type="button" onclick="registrarRecebimento()" aria-label="Registrar Recebimento">
+      <i class="fas fa-check-circle"></i> Registrar Recebimento
+    </button>
+  </div>
+  <div class="col-12 col-sm-6 col-md-3 mb-2">
+    <button class="btn btn-exportar w-100" type="button" onclick="exportarTodosTaloes()" aria-label="Exportar Todos">
+      <i class="fas fa-file-export"></i> Exportar Todos
+    </button>
+  </div>
+       
       </div>
     </div>`;
 
