@@ -196,6 +196,10 @@ table thead {
   color: #f5d307;
 }
 
+.modulo i:hover{
+  color: #f5d307
+}
+
 /* Sidebar */
 .sidebar {
   height: 100vh;
