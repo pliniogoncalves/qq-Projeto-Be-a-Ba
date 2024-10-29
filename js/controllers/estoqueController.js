@@ -26,12 +26,13 @@ window.showEstoque = function (paginaAtual = 1, termoBusca = "") {
       const estoque = new Estoque(
         loja.id_estoque,
         loja.id,
-        loja.quantidadeRecomendada, // Ajuste
-        loja.quantidadeMinima // Ajuste
+        loja.quantidadeRecomendada,
+        loja.quantidadeMinima
       );
 
-      const statusEstoque = estoque.verificarEstoque();
-      const badgeClass = estoque.estoqueBaixo() ? "badge badge-low" : "badge badge-sufficient";
+      // Usa o status atualizado, ou "Estoque adequado" se estiver em um nível normal
+      const statusEstoque = loja.status || estoque.verificarEstoque();
+      const badgeClass = statusEstoque === "Estoque baixo" ? "badge badge-low" : "badge badge-sufficient";
 
       tableRows += `
         <tr>
@@ -95,7 +96,7 @@ window.showEstoque = function (paginaAtual = 1, termoBusca = "") {
     <div class="text-center mb-4">
       <div class="row justify-content-center">
         <div class="col-12 col-sm-6 col-md-3 mb-2">
-          <button class="btn btn-custom w-100" type="button" onclick="solicitarTalao()">
+          <button class="btn btn-custom w-100" type="button" onclick="sinalizarNecessidadeTalao(event)">
             <i class="fas fa-plus-circle"></i> Solicitar Talão
           </button>
         </div>    
@@ -105,6 +106,7 @@ window.showEstoque = function (paginaAtual = 1, termoBusca = "") {
 
   setActiveButton("Estoque");
 };
+
 
 // Função para editar o estoque mínimo, recomendado e a frequência de alerta
 window.editarEstoque = function (id_loja) {
@@ -177,16 +179,13 @@ window.submitEstoqueEdicao = function (id_loja) {
   showEstoque();
 };
 
-// Solicitar talão
+// Função para sinalizar necessidade de talões
 window.solicitarTalao = function () {
-  // Salva o estado atual da função no histórico, permitindo navegação reversa
-  historico.push({ funcao: solicitarTalao });
-
   const content = document.getElementById("mainContent");
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
 
   // Verificar se há lojas cadastradas
-  const lojasCadastradas = Loja.listarLojas(); // Presumindo que existe uma função para listar lojas
+  const lojasCadastradas = Loja.listarLojas();
 
   // Lógica para campo da loja, dependendo do perfil do usuário logado
   let lojaInput = "";
@@ -209,7 +208,7 @@ window.solicitarTalao = function () {
       <input type="text" class="form-control" id="lojaTalao" value="${usuarioLogado.loja}" readonly required>`;
   }
 
-  // Mostrar conteúdo dinâmico do formulário
+  // Formulário simplificado apenas para selecionar a loja
   content.innerHTML = `
     <div class="overlay" id="overlay"></div>
       <div class="d-flex justify-content-between align-items-center mb-4">
@@ -218,25 +217,13 @@ window.solicitarTalao = function () {
         </button>
         <div class="w-100 text-center me-4 me-md-5">
           <h1>Solicitar Talão</h1>
-          <p>Preencha os dados abaixo para Solicitar um novo Talão.</p>
+          <p>Selecione a loja que precisa de reposição de talões.</p>
         </div>
       </div>
-      <form id="talaoForm" onsubmit="salvarSolicitacaoTalao(event)">
+      <form id="talaoForm" onsubmit="sinalizarNecessidadeTalao(event)">
         <div class="mb-3">
           <label for="lojaTalao" class="form-label">Loja</label>
           ${lojaInput}
-        </div>
-        <div class="mb-3">
-          <label for="dataTalao" class="form-label">Data</label>
-          <input type="date" class="form-control" id="dataTalao" required>
-        </div>
-        <div class="mb-3">
-          <label for="horaTalao" class="form-label">Hora</label>
-          <input type="time" class="form-control" id="horaTalao" required>
-        </div>
-        <div class="mb-3">
-          <label for="quantidadeTalao" class="form-label">Quantidade de Talões</label>
-          <input type="number" class="form-control" id="quantidadeTalao" placeholder="Digite a quantidade" min="1" required>
         </div>
         <div class="text-center mb-4">
           <div class="row justify-content-center">
@@ -244,7 +231,7 @@ window.solicitarTalao = function () {
               <button type="submit" class="btn btn-custom w-100" ${
                 lojasCadastradas.length === 0 ? "disabled" : ""
               }>
-                <i class="fas fa-plus-circle"></i> Solicitar Talão
+                <i class="fas fa-exclamation-circle"></i> Sinalizar Necessidade
               </button>
             </div>
           </div>
@@ -259,25 +246,31 @@ window.solicitarTalao = function () {
   `;
 };
 
-// Salvar solicitação de talão
-window.salvarSolicitacaoTalao = function (event) {
+// Função para atualizar o status do estoque para "estoque baixo" ao sinalizar a necessidade de talões
+window.sinalizarNecessidadeTalao = function (event) {
   event.preventDefault();
-  const loja = document.getElementById("lojaTalao").value;
-  const data = document.getElementById("dataTalao").value; // Obtém a data
-  const hora = document.getElementById("horaTalao").value; // Obtém a hora
-  const quantidade = parseInt(
-    document.getElementById("quantidadeTalao").value,
-    10
-  );
-  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado")); // Adiciona o usuário logado
+  
+  const lojaNome = document.getElementById(loja.nome).value;
 
-  // Validação adicional
-  if (!loja || !data || !hora || isNaN(quantidade) || quantidade < 1) {
-    mostrarModal("Por favor, preencha todos os campos corretamente.");
-    return;
+  // Acessa as lojas e encontra a loja selecionada
+  let lojas = JSON.parse(localStorage.getItem("lojas")) || [];
+  let loja = lojas.find((l) => l.nome === lojaNome);
+
+  if (loja) {
+    // Atualiza o status para "estoque baixo" se não estiver já nesse estado
+    if (loja.status !== "Estoque baixo") {
+      loja.status = "Estoque baixo";
+      mostrarModal(`A loja ${lojaNome} foi sinalizada como "necessitando de talões".`);
+    } else {
+      mostrarModal(`A loja ${lojaNome} já está sinalizada como "necessitando de talões".`);
+    }
+    
+    // Atualiza o armazenamento local e a exibição
+    localStorage.setItem("lojas", JSON.stringify(lojas));
+    showEstoque();
+  } else {
+    mostrarModal("Erro: Loja não encontrada.");
   }
-
-  const dataHora = new Date(`${data}T${hora}`).toISOString();
-  Talao.criarTalao(loja, dataHora, quantidade, usuarioLogado.nome); // Passa o nome do funcionário
-  showTaloes();
 };
+
+

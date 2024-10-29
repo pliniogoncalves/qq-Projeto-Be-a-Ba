@@ -1,10 +1,13 @@
+// Estoque.js
+
 export class Estoque {
   constructor(id_estoque, id_loja, quantidade_recomendada, quantidade_minima, frequenciaAlerta = "mensal") {
-    this.id_estoque = id_estoque; // Identificador único do estoque
-    this.id_loja = id_loja; // Identificador da loja associada
+    this.id_estoque = id_estoque;
+    this.id_loja = id_loja;
     this.quantidade_recomendada = quantidade_recomendada;
     this.quantidade_minima = quantidade_minima;
-    this.frequenciaAlerta = frequenciaAlerta; // "semanal", "quinzenal" ou "mensal"
+    this.frequenciaAlerta = frequenciaAlerta;
+    this.status = this.verificarEstoque(); // Status inicial
   }
 
   // Verifica se o estoque está baixo
@@ -14,7 +17,7 @@ export class Estoque {
 
   // Configurações de alerta de estoque
   definirFrequenciaAlerta(frequencia) {
-    this.frequenciaAlerta = frequencia; // Opções: semanal, quinzenal, mensal
+    this.frequenciaAlerta = frequencia;
   }
 
   obterFrequenciaAlerta() {
@@ -30,13 +33,13 @@ export class Estoque {
     }
   }
 
-  // Exibe mensagem de alerta com a frequência configurada
+  // Verifica o nível do estoque
   verificarEstoque() {
-    if (this.estoqueBaixo()) {
-      const diasParaAlerta = this.obterFrequenciaAlerta();
-      return `Alerta: Estoque abaixo do recomendado! Atualize em ${diasParaAlerta} dias.`;
-    } else {
-      return `Estoque em nível adequado.`;
-    }
+    return this.estoqueBaixo() ? "Estoque baixo" : "Estoque adequado";
+  }
+
+  // Atualiza o status para "estoque baixo"
+  atualizarStatus(novoStatus) {
+    this.status = novoStatus;
   }
 }
