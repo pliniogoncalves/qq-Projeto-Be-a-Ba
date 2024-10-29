@@ -117,7 +117,7 @@ window.showUsuarios = function (paginaAtual = 1) {
           <thead>
               <tr>
                   <th>Nome</th>
-                  <th>Função</th>
+                  <th>Perfil</th>
                   <th>Loja</th>
                   <th>Ações</th>
               </tr>
@@ -205,7 +205,7 @@ window.cadastrarUsuario = function () {
           <input type="password" class="form-control" id="senha" placeholder="Digite a senha" required>
         </div>
         <div class="mb-3">
-          <label for="funcao" class="form-label">Função</label>
+          <label for="funcao" class="form-label">Perfil</label>
           <select id="funcao" class="form-select" onchange="atualizarLojaCadastro()">
             ${opcoesFuncoes}
           </select>
@@ -229,8 +229,6 @@ window.cadastrarUsuario = function () {
   // Chama a função para configurar o campo de loja conforme o perfil selecionado
   atualizarLojaCadastro();
 };
-
-
 
 window.atualizarLojaCadastro = function () {
   const perfilSelecionado = document.getElementById("funcao").value;
@@ -372,7 +370,7 @@ window.editarUsuario = function (id) {
                 <input type="password" class="form-control" id="senha" placeholder="Digite a nova senha (opcional)">
             </div>
             <div class="mb-3">
-                <label for="funcao" class="form-label">Função</label>
+                <label for="funcao" class="form-label">Perfil</label>
                 <select id="funcao" class="form-select" ${usuario.perfil === "AdminRoot" ? "disabled" : ""}>
                     ${opcoesPerfis}
                 </select>
