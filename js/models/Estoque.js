@@ -1,9 +1,10 @@
 export class Estoque {
-  constructor(id_estoque, id_loja, quantidade_recomendada, quantidade_minima) {
+  constructor(id_estoque, id_loja, quantidade_recomendada, quantidade_minima, frequenciaAlerta = "mensal") {
     this.id_estoque = id_estoque; // Identificador único do estoque
     this.id_loja = id_loja; // Identificador da loja associada
     this.quantidade_recomendada = quantidade_recomendada;
     this.quantidade_minima = quantidade_minima;
+    this.frequenciaAlerta = frequenciaAlerta; // "semanal", "quinzenal" ou "mensal"
   }
 
   // Verifica se o estoque está baixo
@@ -18,11 +19,11 @@ export class Estoque {
 
   obterFrequenciaAlerta() {
     switch (this.frequenciaAlerta) {
-      case 'semanal':
+      case "semanal":
         return 7;
-      case 'quinzenal':
+      case "quinzenal":
         return 15;
-      case 'mensal':
+      case "mensal":
         return 30;
       default:
         return null;

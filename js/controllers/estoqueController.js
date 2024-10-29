@@ -110,7 +110,8 @@ window.editarEstoque = function (id_loja) {
     loja.id_estoque,
     loja.id,
     loja.quantidadeRecomendada,
-    loja.quantidadeMinima
+    loja.quantidadeMinima,
+    loja.frequenciaAlerta
   );
 
   const content = document.getElementById("mainContent");
