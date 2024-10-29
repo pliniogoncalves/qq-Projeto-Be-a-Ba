@@ -131,8 +131,8 @@ if (taloesPaginados.length === 0) {
           </button>
         </div>
         <div class="col-12 col-sm-6 col-md-3 mb-2">
-          <button class="btn btn-exportar w-100" type="button" onclick="exportarTodosTaloes()" aria-label="Exportar Todos">
-            <i class="fas fa-file-export"></i> Exportar Dados
+          <button class="btn btn-secondary w-100" type="button" onclick="exportarTodosTaloes()" aria-label="Exportar Todos">
+            <i class="fas fa-file-export"></i> Exportar CSV
           </button>
         </div>
       </div>
