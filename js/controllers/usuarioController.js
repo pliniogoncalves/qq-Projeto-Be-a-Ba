@@ -4,7 +4,7 @@ import { Loja } from "../models/Loja.js";
 
 // Exibe a lista de usuários com paginação
 window.showUsuarios = function (paginaAtual = 1) {
-  
+
   // Salva o estado atual para histórico de navegação
   historico.push({ funcao: showUsuarios, args: [paginaAtual] });
 
@@ -27,7 +27,9 @@ window.showUsuarios = function (paginaAtual = 1) {
 
   // Filtra usuários conforme o perfil do usuário logado
   const usuariosFiltrados = usuarios.filter((user) => {
-    return usuarioLogado.perfil === "AdminRoot" || user.loja === usuarioLogado.loja;
+    return (
+      usuarioLogado.perfil === "AdminRoot" || user.loja === usuarioLogado.loja
+    );
   });
 
   // Calcula número total de páginas
@@ -35,7 +37,10 @@ window.showUsuarios = function (paginaAtual = 1) {
 
   // Define intervalo de usuários da página atual
   const inicio = (paginaAtual - 1) * itensPorPagina;
-  const usuariosPaginados = usuariosFiltrados.slice(inicio, inicio + itensPorPagina);
+  const usuariosPaginados = usuariosFiltrados.slice(
+    inicio,
+    inicio + itensPorPagina
+  );
 
   // Gera linhas da tabela ou exibe mensagem se vazio
   if (usuariosPaginados.length === 0) {
@@ -49,7 +54,8 @@ window.showUsuarios = function (paginaAtual = 1) {
         let lojaNome = user.loja ? user.loja.nome : "Nenhuma loja";
         if (user.perfil === "AdminRoot") lojaNome = "Matriz";
 
-        const perfilDisplay = !user.perfil || user.perfil === "Nenhuma" ? "" : user.perfil;
+        const perfilDisplay =
+          !user.perfil || user.perfil === "Nenhuma" ? "" : user.perfil;
 
         tableRows += `
           <tr>
@@ -73,17 +79,28 @@ window.showUsuarios = function (paginaAtual = 1) {
         <nav>
           <ul class="pagination justify-content-center custom-pagination">
             <li class="page-item ${paginaAtual === 1 ? "disabled" : ""}">
-              <a class="page-link" href="#" aria-label="Previous" onclick="showUsuarios(${paginaAtual - 1})">
+              <a class="page-link" href="#" aria-label="Previous" onclick="showUsuarios(${
+                paginaAtual - 1
+              })">
                 <span aria-hidden="true">&laquo;</span>
               </a>
             </li>
-            ${Array.from({ length: totalPaginas }, (_, i) => `
+            ${Array.from(
+              { length: totalPaginas },
+              (_, i) => `
               <li class="page-item ${i + 1 === paginaAtual ? "active" : ""}">
-                <a class="page-link" href="#" onclick="showUsuarios(${i + 1})">${i + 1}</a>
+                <a class="page-link" href="#" onclick="showUsuarios(${
+                  i + 1
+                })">${i + 1}</a>
               </li>
-            `).join("")}
-            <li class="page-item ${paginaAtual === totalPaginas ? "disabled" : ""}">
-              <a class="page-link" href="#" aria-label="Next" onclick="showUsuarios(${paginaAtual + 1})">
+            `
+            ).join("")}
+            <li class="page-item ${
+              paginaAtual === totalPaginas ? "disabled" : ""
+            }">
+              <a class="page-link" href="#" aria-label="Next" onclick="showUsuarios(${
+                paginaAtual + 1
+              })">
                 <span aria-hidden="true">&raquo;</span>
               </a>
             </li>
@@ -143,9 +160,7 @@ window.showUsuarios = function (paginaAtual = 1) {
   setActiveButton("Usuários");
 };
 
-
 window.cadastrarUsuario = function () {
-
   // Salva o estado atual da função no histórico, permitindo navegação reversa
   historico.push({ funcao: cadastrarUsuario });
 
@@ -177,15 +192,15 @@ window.cadastrarUsuario = function () {
   // Renderiza o formulário de cadastro de novo usuário, incluindo campos de entrada e botão de submissão
   content.innerHTML = `
     <div class="overlay" id="overlay"></div>
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <button class="btn btn-voltar" onclick="voltar()">
-        <i class="bi bi-arrow-left"></i> Voltar
-      </button>
-      <div class="w-100 text-center">
-        <h1>Cadastrar Novo Usuário</h1>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <button class="btn btn-voltar" onclick="voltar()">
+          <i class="bi bi-arrow-left"></i> Voltar
+        </button>
+        <div class="w-100 text-center">
+          <h1>Cadastrar Novo Usuário</h1>
+          <p class="mb-4">Preencha as informações abaixo para cadastrar um novo Usuário.</p>
+        </div>
       </div>
-    </div>
-    <p class="text-center mb-4">Preencha as informações abaixo para cadastrar um novo usuário.</p>
     <div class="form-container">
       <form id="userForm">
         <div class="mb-3">
@@ -288,7 +303,6 @@ window.submitCadastro = function () {
 };
 
 window.editarUsuario = function (id) {
-
   // Armazena o estado atual no histórico
   historico.push({ funcao: editarUsuario });
 
@@ -342,7 +356,7 @@ window.editarUsuario = function (id) {
     )
     .join("");
 
-    content.innerHTML = `
+  content.innerHTML = `
     <div class="form-container mt-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <button class="btn btn-voltar" onclick="voltar()">
@@ -350,20 +364,27 @@ window.editarUsuario = function (id) {
             </button>
             <div class="w-100 text-center">
               <h1>Editar Usuário</h1>
+              <p class="mb-4">Preencha as informações abaixo para Editar o Usuário.</p>
             </div>
         </div>
         <form id="userForm">
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome do Usuário</label>
-                <input type="text" class="form-control" id="nome" value="${usuario.nome}" required>
+                <input type="text" class="form-control" id="nome" value="${
+                  usuario.nome
+                }" required>
             </div>
             <div class="mb-3">
                 <label for="matricula" class="form-label">Matrícula</label>
-                <input type="text" class="form-control" id="matricula" value="${usuario.matricula}" required>
+                <input type="text" class="form-control" id="matricula" value="${
+                  usuario.matricula
+                }" required>
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">E-mail</label>
-                <input type="email" class="form-control" id="email" value="${usuario.email}" required>
+                <input type="email" class="form-control" id="email" value="${
+                  usuario.email
+                }" required>
             </div>
             <div class="mb-3">
                 <label for="senha" class="form-label">Senha</label>
@@ -371,16 +392,19 @@ window.editarUsuario = function (id) {
             </div>
             <div class="mb-3">
                 <label for="funcao" class="form-label">Perfil</label>
-                <select id="funcao" class="form-select" ${usuario.perfil === "AdminRoot" ? "disabled" : ""}>
+                <select id="funcao" class="form-select" ${
+                  usuario.perfil === "AdminRoot" ? "disabled" : ""
+                }>
                     ${opcoesPerfis}
                 </select>
             </div>
             <div class="mb-3" id="loja-container">
-                ${usuarioLogado.perfil === "Gerente" ? 
-                    `<input type="text" class="form-control" id="loja" value="${usuarioLogado.loja}" disabled>` : 
-                    usuario.perfil === "AdminRoot" ? 
-                    `<input type="text" class="form-control" id="loja" value="Matriz" disabled>` : 
-                    `<label for="loja" class="form-label">Loja</label>
+                ${
+                  usuarioLogado.perfil === "Gerente"
+                    ? `<input type="text" class="form-control" id="loja" value="${usuarioLogado.loja}" disabled>`
+                    : usuario.perfil === "AdminRoot"
+                    ? `<input type="text" class="form-control" id="loja" value="Matriz" disabled>`
+                    : `<label for="loja" class="form-label">Loja</label>
                     <select id="loja" class="form-select">
                         ${lojaOptions}
                     </select>`
@@ -398,7 +422,6 @@ window.editarUsuario = function (id) {
         </form>
     </div>
 `;
-
 };
 
 window.submitEdicao = function (id) {
@@ -435,14 +458,17 @@ window.excluirUsuario = function (id) {
 
   // Controle de Acesso
   if (!usuarioLogado || usuarioLogado.perfil !== "AdminRoot") {
-    mostrarModal("Você não tem permissão para excluir este usuário.");
+    mostrarModal("Você não tem permissão para excluir este Usuário.");
     return;
   }
 
-  mostrarConfirmacao("Você tem certeza que deseja excluir este usuário?", function() {
-    Usuario.excluirUsuario(id);
-    showUsuarios();
-  });
+  mostrarConfirmacao(
+    "Você tem certeza que deseja excluir este Usuário?",
+    function () {
+      Usuario.excluirUsuario(id);
+      showUsuarios();
+    }
+  );
 };
 
 window.buscarUsuario = function () {

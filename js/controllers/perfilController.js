@@ -1,4 +1,5 @@
 import { Perfil } from "../models/Perfil.js";
+import { Usuario } from "../models/Usuario.js";
 
 // Função para formatar o nome da permissão
 function formatarPermissao(permissao) {
@@ -57,6 +58,10 @@ function gerarLinhas(perfis) {
 
 // Função para exibir os perfis de acesso
 window.showPerfis = async function (paginaAtual = 1) {
+
+  // Salva o estado atual para histórico de navegação
+  historico.push({ funcao: showPerfis, args: [paginaAtual] });
+
   const content = document.getElementById("mainContent");
   const perfis = await Perfil.listarPerfis();
 
@@ -182,12 +187,23 @@ window.buscarPerfis = async function () {
 };
 
 window.cadastrarPerfil = function () {
+
+  // Salva o estado atual da função no histórico, permitindo navegação reversa
+  historico.push({ funcao: cadastrarPerfil });
+
   const content = document.getElementById("mainContent");
 
   content.innerHTML = `
     <div class="overlay" id="overlay"></div>
-    <h1 class="text-center mb-4">Novo Perfil de Acesso</h1>
-    <p class="text-center mb-4">Preencha os dados abaixo para cadastrar um novo perfil.</p>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <button class="btn btn-voltar" onclick="voltar()">
+          <i class="bi bi-arrow-left"></i> Voltar
+        </button>
+        <div class="w-100 text-center">
+          <h1>Cadastrar Novo Perfil</h1>
+          <p class="mb-3">Preencha os dados abaixo para cadastrar um novo perfil.</p>
+        </div>
+      </div>
     <div class="form-container">
       <form id="perfilForm">
         <div class="mb-3">
@@ -290,6 +306,10 @@ window.submitCadastroPerfil = function () {
 };
 
 window.editarPerfil = async function (id) {
+
+  // Salva o estado atual da função no histórico, permitindo navegação reversa
+  historico.push({ funcao: editarPerfil });
+
   const perfil = await Perfil.obterPerfilPorId(id); // Método para obter um perfil específico
   const content = document.getElementById("mainContent");
 
@@ -414,9 +434,20 @@ window.submitEdicaoPerfil = async function (id) {
 };
 
 window.excluirPerfil = function (id) {
-  const confirmacao = confirm("Tem certeza que deseja excluir este perfil?");
-  if (confirmacao) {
-    Perfil.excluirPerfil(id);
-    showPerfis();
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+  const usuario = Usuario.usuarios.find((user) => user.id === id);
+
+  // Controle de Acesso
+  if (!usuarioLogado || usuarioLogado.perfil !== "AdminRoot") {
+    mostrarModal("Você não tem permissão para excluir este usuário.");
+    return;
   }
+
+  mostrarConfirmacao(
+    "Tem certeza que deseja excluir este perfil?",
+    function () {
+      Perfil.excluirPerfil(id);
+      showPerfis();
+    }
+  );
 };
