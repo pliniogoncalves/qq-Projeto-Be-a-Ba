@@ -91,6 +91,16 @@ window.showEstoque = function (paginaAtual = 1, termoBusca = "") {
         </tbody>
       </table>
     </div>
+
+    <div class="text-center mb-4">
+      <div class="row justify-content-center">
+        <div class="col-12 col-sm-6 col-md-3 mb-2">
+          <button class="btn btn-custom w-100" type="button" onclick="solicitarTalao()">
+            <i class="fas fa-plus-circle"></i> Solicitar Talão
+          </button>
+        </div>    
+      </div>
+    </div>
   `;
 
   setActiveButton("Estoque");
@@ -165,4 +175,109 @@ window.submitEstoqueEdicao = function (id_loja) {
   }
 
   showEstoque();
+};
+
+// Solicitar talão
+window.solicitarTalao = function () {
+  // Salva o estado atual da função no histórico, permitindo navegação reversa
+  historico.push({ funcao: solicitarTalao });
+
+  const content = document.getElementById("mainContent");
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+
+  // Verificar se há lojas cadastradas
+  const lojasCadastradas = Loja.listarLojas(); // Presumindo que existe uma função para listar lojas
+
+  // Lógica para campo da loja, dependendo do perfil do usuário logado
+  let lojaInput = "";
+  if (usuarioLogado.perfil === "AdminRoot" && usuarioLogado.loja === "Matriz") {
+    if (lojasCadastradas.length > 0) {
+      lojaInput = `
+        <select class="form-select" id="lojaTalao" required>
+          ${lojasCadastradas
+            .map((loja) => `<option value="${loja.nome}">${loja.nome}</option>`)
+            .join("")}
+        </select>`;
+    } else {
+      lojaInput = `
+        <select class="form-select" id="lojaTalao" disabled>
+          <option value="">Nenhuma loja cadastrada</option>
+        </select>`;
+    }
+  } else {
+    lojaInput = `
+      <input type="text" class="form-control" id="lojaTalao" value="${usuarioLogado.loja}" readonly required>`;
+  }
+
+  // Mostrar conteúdo dinâmico do formulário
+  content.innerHTML = `
+    <div class="overlay" id="overlay"></div>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <button class="btn btn-voltar" onclick="voltar()">
+          <i class="bi bi-arrow-left"></i> Voltar
+        </button>
+        <div class="w-100 text-center me-4 me-md-5">
+          <h1>Solicitar Talão</h1>
+          <p>Preencha os dados abaixo para Solicitar um novo Talão.</p>
+        </div>
+      </div>
+      <form id="talaoForm" onsubmit="salvarSolicitacaoTalao(event)">
+        <div class="mb-3">
+          <label for="lojaTalao" class="form-label">Loja</label>
+          ${lojaInput}
+        </div>
+        <div class="mb-3">
+          <label for="dataTalao" class="form-label">Data</label>
+          <input type="date" class="form-control" id="dataTalao" required>
+        </div>
+        <div class="mb-3">
+          <label for="horaTalao" class="form-label">Hora</label>
+          <input type="time" class="form-control" id="horaTalao" required>
+        </div>
+        <div class="mb-3">
+          <label for="quantidadeTalao" class="form-label">Quantidade de Talões</label>
+          <input type="number" class="form-control" id="quantidadeTalao" placeholder="Digite a quantidade" min="1" required>
+        </div>
+        <div class="text-center mb-4">
+          <div class="row justify-content-center">
+            <div class="col-12 col-sm-6 col-md-3 mb-2">
+              <button type="submit" class="btn btn-custom w-100" ${
+                lojasCadastradas.length === 0 ? "disabled" : ""
+              }>
+                <i class="fas fa-plus-circle"></i> Solicitar Talão
+              </button>
+            </div>
+          </div>
+        </div>
+        ${
+          lojasCadastradas.length === 0
+            ? '<p class="text-danger mt-2">Nenhuma loja cadastrada. Por favor, cadastre uma loja para continuar.</p>'
+            : ""
+        }
+      </form>
+    </div>
+  `;
+};
+
+// Salvar solicitação de talão
+window.salvarSolicitacaoTalao = function (event) {
+  event.preventDefault();
+  const loja = document.getElementById("lojaTalao").value;
+  const data = document.getElementById("dataTalao").value; // Obtém a data
+  const hora = document.getElementById("horaTalao").value; // Obtém a hora
+  const quantidade = parseInt(
+    document.getElementById("quantidadeTalao").value,
+    10
+  );
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado")); // Adiciona o usuário logado
+
+  // Validação adicional
+  if (!loja || !data || !hora || isNaN(quantidade) || quantidade < 1) {
+    mostrarModal("Por favor, preencha todos os campos corretamente.");
+    return;
+  }
+
+  const dataHora = new Date(`${data}T${hora}`).toISOString();
+  Talao.criarTalao(loja, dataHora, quantidade, usuarioLogado.nome); // Passa o nome do funcionário
+  showTaloes();
 };

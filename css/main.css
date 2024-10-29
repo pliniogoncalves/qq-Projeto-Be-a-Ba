@@ -381,7 +381,7 @@ table thead {
   border: 2px solid #28a745; /* Verde */
 }
 
-.card.default {
+.card.enviado {
   border: 2px solid #ffc107; /* Amarelo */
 }
 
@@ -394,7 +394,7 @@ table thead {
   background-color: #28a745; /* Cor do badge para 'Recebido' */
 }
 
-.badge-default {
+.badge-enviado {
   background-color: #ffc107; /* Cor do badge para status padrão */
 }
 

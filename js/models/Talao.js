@@ -1,18 +1,17 @@
 export class Talao {
   static taloes = JSON.parse(localStorage.getItem("taloes")) || []; // Carregar do localStorage
 
-  constructor(loja, dataHora, quantidade, funcionario, status = "Solicitado") {
+  constructor(loja, dataHora, quantidade, funcionario) {
     this.id = Talao.gerarId(); // Gera um ID único
     this.loja = loja;
     this.dataHora = dataHora; // Data e hora no formato ISO
     this.quantidade = quantidade; // Quantidade de talões
-    this.status = status; // Status do talão (Solicitado, Enviado, Recebido)
+    this.status = "Enviado"; // Status inicial do talão
     this.timestamps = {
-      solicitado: {
+      enviado: {
         dataHora: dataHora,
         funcionario: funcionario,
       },
-      enviado: null,
       recebido: null,
     };
   }
@@ -30,24 +29,12 @@ export class Talao {
   }
 
   // CREATE: Adicionar um novo talão
-  static criarTalao(
-    loja,
-    dataHora,
-    quantidade,
-    funcionario,
-    status = "Solicitado"
-  ) {
-    const novoTalao = new Talao(
-      loja,
-      dataHora,
-      quantidade,
-      funcionario,
-      status
-    );
+  static criarTalao(loja, dataHora, quantidade, funcionario) {
+    const novoTalao = new Talao(loja, dataHora, quantidade, funcionario);
     Talao.taloes.push(novoTalao);
     Talao.salvarNoLocalStorage();
     mostrarModal(
-      `Talão solicitado para a ${loja} na data ${new Date(
+      `Talão enviado para a ${loja} na data ${new Date(
         dataHora
       ).toLocaleString()} com quantidade ${quantidade}!`
     );
@@ -114,7 +101,7 @@ export class Talao {
     }
   }
 
-  // EXPORT: Exportar todos os talões para CSV, incluindo as atualizações
+  // EXPORT: Exportar todos os talões para CSV
   static exportarTodosTaloesCSV() {
     if (Talao.taloes.length === 0) {
       mostrarModal("Não há talões para exportar.");
@@ -122,17 +109,9 @@ export class Talao {
     }
 
     const header =
-      "ID,Loja,Data Solicitado,Funcionario Solicitante,Data Enviado,Funcionario Enviou,Data Recebido,Funcionario Recebeu,Quantidade,Status\n";
+      "ID,Loja,Data Enviado,Funcionario Enviou,Data Recebido,Funcionario Recebeu,Quantidade,Status\n";
     const rows = Talao.taloes
       .map((talao) => {
-        const dataSolicitado = talao.timestamps.solicitado
-          ? new Date(talao.timestamps.solicitado.dataHora).toLocaleString(
-              "pt-BR"
-            )
-          : "";
-        const funcionarioSolicitante =
-          talao.timestamps.solicitado?.funcionario || "";
-
         const dataEnviado = talao.timestamps.enviado
           ? new Date(talao.timestamps.enviado.dataHora).toLocaleString("pt-BR")
           : "";
@@ -143,7 +122,7 @@ export class Talao {
           : "";
         const funcionarioRecebeu = talao.timestamps.recebido?.funcionario || "";
 
-        return `${talao.id},${talao.loja},${dataSolicitado},${funcionarioSolicitante},${dataEnviado},${funcionarioEnviou},${dataRecebido},${funcionarioRecebeu},${talao.quantidade},${talao.status}`;
+        return `${talao.id},${talao.loja},${dataEnviado},${funcionarioEnviou},${dataRecebido},${funcionarioRecebeu},${talao.quantidade},${talao.status}`;
       })
       .join("\n");
 
