@@ -93,15 +93,20 @@ window.showEstoque = function (paginaAtual = 1, termoBusca = "") {
       </table>
     </div>
 
-    <div class="text-center mb-4">
-      <div class="row justify-content-center">
-        <div class="col-12 col-sm-6 col-md-3 mb-2">
-          <button class="btn btn-custom w-100" type="button" onclick="solicitarTalao()">
-            <i class="fas fa-plus-circle"></i> Solicitar Talão
-          </button>
-        </div>    
-      </div>
-    </div>
+     <div class="text-center mb-4">
+            <div class="row justify-content-center">
+                <div class="col-12 col-sm-6 col-md-3 mb-2">
+                    <button class="btn btn-custom w-100" type="button" onclick="solicitarTalao()">
+                        <i class="fas fa-plus-circle"></i> Solicitar Talão
+                    </button>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3 mb-2">
+                    <button class="btn btn-secondary w-100" type="button" onclick="exportarEstoqueCSV()">
+                        <i class="fas fa-file-export"></i> Exportar CSV
+                    </button>
+                </div>    
+            </div>
+        </div>
   `;
 
   setActiveButton("Estoque");
@@ -275,5 +280,38 @@ window.sinalizarNecessidadeTalao = function (event) {
   } else {
     mostrarModal("Erro: Loja não encontrada.");
   }
+};
+
+// Função para exportar todos os dados de estoque como um arquivo CSV
+window.exportarEstoqueCSV = function () {
+  const lojas = JSON.parse(localStorage.getItem("lojas")) || [];
+
+  // Define cabeçalhos do CSV
+  let csvContent = "Nome da Loja,Estoque Mínimo,Estoque Recomendado,Status\n";
+
+  // Adiciona dados de cada loja
+  lojas.forEach(loja => {
+      const estoque = new Estoque(
+          loja.id_estoque,
+          loja.id,
+          loja.quantidadeRecomendada,
+          loja.quantidadeMinima
+      );
+      
+      // Verifica o status do estoque
+      const statusEstoque = loja.status || estoque.verificarEstoque();
+      
+      csvContent += `${loja.nome},${estoque.quantidade_minima},${estoque.quantidade_recomendada},${statusEstoque}\n`;
+  });
+
+  // Cria o arquivo CSV e faz download
+  const blob = new Blob([csvContent], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.setAttribute('href', url);
+  a.setAttribute('download', 'estoque.csv');
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 };
 
