@@ -158,14 +158,19 @@ window.showPerfis = async function (paginaAtual = 1) {
     </div>
 
     <div class="text-center mb-4">
-      <div class="row justify-content-center">
-        <div class="col-12 col-sm-6 col-md-3 mb-2">
-          <button class="btn btn-custom w-100" type="button" onclick="cadastrarPerfil()">
-            <i class="fas fa-plus-circle"></i> Cadastrar Novo Perfil
-          </button>
+            <div class="row justify-content-center">
+                <div class="col-12 col-sm-6 col-md-3 mb-2">
+                    <button class="btn btn-custom w-100" type="button" onclick="cadastrarPerfil()">
+                        <i class="fas fa-plus-circle"></i> Cadastrar Novo Perfil
+                    </button>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3 mb-2">
+                    <button class="btn btn-secondary w-100" type="button" onclick="exportarPerfisCSV()">
+                        <i class="fas fa-file-export"></i> Exportar CSV
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
   `;
 
   setActiveButton("Perfis de Acesso");
@@ -458,4 +463,29 @@ window.excluirPerfil = function (id) {
       showPerfis();
     }
   );
+};
+
+// Função para exportar todos os perfis como um arquivo CSV
+window.exportarPerfisCSV = function () {
+  const perfis = JSON.parse(localStorage.getItem("perfis")) || [];
+
+  // Define cabeçalhos do CSV
+  let csvContent = "ID,Nome do Perfil,Permissões\n";
+
+  // Adiciona dados de cada perfil
+  perfis.forEach(perfil => {
+      const permissoes = perfil.permissoes ? perfil.permissoes.join("; ") : "Nenhuma";
+      
+      csvContent += `${perfil.id},${perfil.nome},${permissoes}\n`;
+  });
+
+  // Cria o arquivo CSV e faz download
+  const blob = new Blob([csvContent], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.setAttribute('href', url);
+  a.setAttribute('download', 'perfis_acesso.csv');
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 };
