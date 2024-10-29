@@ -4,6 +4,10 @@ import { Loja } from "../models/Loja.js";
 
 // Função para exibir a lista de usuários
 window.showUsuarios = function (paginaAtual = 1) {
+
+  // Armazena o estado atual no histórico
+  historico.push({ funcao: showUsuarios, args: [paginaAtual] });
+
   const content = document.getElementById("mainContent");
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
   const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
@@ -149,7 +153,7 @@ window.showUsuarios = function (paginaAtual = 1) {
       <div class="text-center mb-4">
           <div class="row justify-content-center">
               <div class="col-12 col-sm-6 col-md-3 mb-2">
-                  <button class="btn btn-custom w-100" style="background-color: #269447; color: white;" type="button" onclick="cadastrarUsuario()">
+                  <button class="btn btn-custom w-100"  type="button" onclick="cadastrarUsuario()">
                       <i class="fas fa-plus-circle"></i> Cadastrar Novo Usuário
                   </button>
               </div>
@@ -161,6 +165,11 @@ window.showUsuarios = function (paginaAtual = 1) {
 };
 
 window.cadastrarUsuario = function () {
+
+  // Armazena o estado atual no histórico
+  historico.push({ funcao: cadastrarUsuario });
+
+
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
 
   // Controle de Acesso
@@ -184,53 +193,62 @@ window.cadastrarUsuario = function () {
       .map((perfil) => `<option value="${perfil.nome}">${perfil.nome}</option>`)
       .join("") + `<option value="Nenhum">Nenhum</option>`;
 
-  content.innerHTML = `
-    <div class="overlay" id="overlay"></div>
-    <h1 class="text-center mb-4">Cadastrar Novo Usuário</h1>
-    <p class="text-center mb-4">Preencha as informações abaixo para cadastrar um novo usuário.</p>
-    <div class="form-container">
-      <form id="userForm">
-        <div class="mb-3">
-          <label for="nome" class="form-label">Nome do Usuário</label>
-          <input type="text" class="form-control" id="nome" placeholder="Digite o nome de usuário" required>
+      content.innerHTML = `
+      <div class="overlay" id="overlay"></div>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <button class="btn btn-voltar" onclick="voltar()">
+          <i class="bi bi-arrow-left"></i> Voltar
+        </button>
+        <div class="w-100 text-center">
+          <h1>Cadastrar Novo Usuário</h1>
         </div>
-        <div class="mb-3">
-          <label for="matricula" class="form-label">Matrícula</label>
-          <input type="number" class="form-control" id="matricula" placeholder="Digite a Matrícula" required>
-        </div>
-        <div class="mb-3">
-          <label for="email" class="form-label">E-mail</label>
-          <input type="email" class="form-control" id="email" placeholder="Digite o e-mail" required>
-        </div>
-        <div class="mb-3">
-          <label for="senha" class="form-label">Senha</label>
-          <input type="password" class="form-control" id="senha" placeholder="Digite a senha" required>
-        </div>
-        <div class="mb-3">
-          <label for="funcao" class="form-label">Função</label>
-          <select id="funcao" class="form-select" onchange="atualizarLojaCadastro()">
-            ${opcoesFuncoes}
-          </select>
-        </div>
-        <div class="mb-3" id="loja-container">
-          <!-- O campo de loja será atualizado pela função 'atualizarLojaCadastro' -->
-        </div>
-        <div class="text-center mb-4">
-          <div class="row justify-content-center">
-            <div class="col-12 col-sm-6 col-md-3 mb-2">
-              <button class="btn btn-custom w-100" style="background-color: #269447; color: white;" type="button" onclick="submitCadastro()">
-                <i class="fas fa-user-plus"></i> Cadastrar Usuário
-              </button>
+      </div>
+      <p class="text-center mb-4">Preencha as informações abaixo para cadastrar um novo usuário.</p>
+      <div class="form-container">
+        <form id="userForm">
+          <div class="mb-3">
+            <label for="nome" class="form-label">Nome do Usuário</label>
+            <input type="text" class="form-control" id="nome" placeholder="Digite o nome de usuário" required>
+          </div>
+          <div class="mb-3">
+            <label for="matricula" class="form-label">Matrícula</label>
+            <input type="number" class="form-control" id="matricula" placeholder="Digite a Matrícula" required>
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">E-mail</label>
+            <input type="email" class="form-control" id="email" placeholder="Digite o e-mail" required>
+          </div>
+          <div class="mb-3">
+            <label for="senha" class="form-label">Senha</label>
+            <input type="password" class="form-control" id="senha" placeholder="Digite a senha" required>
+          </div>
+          <div class="mb-3">
+            <label for="funcao" class="form-label">Função</label>
+            <select id="funcao" class="form-select" onchange="atualizarLojaCadastro()">
+              ${opcoesFuncoes}
+            </select>
+          </div>
+          <div class="mb-3" id="loja-container">
+            <!-- O campo de loja será atualizado pela função 'atualizarLojaCadastro' -->
+          </div>
+          <div class="text-center mb-4">
+            <div class="row justify-content-center">
+              <div class="col-12 col-sm-6 col-md-3 mb-2">
+                <button class="btn btn-custom w-100" type="button" onclick="submitCadastro()">
+                  <i class="fas fa-user-plus"></i> Cadastrar Usuário
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      </form>
-    </div>
-  `;
+        </form>
+      </div>
+    `;
+    
 
   // Inicializar o campo de loja com base no perfil inicial
   atualizarLojaCadastro();
 };
+
 
 window.atualizarLojaCadastro = function () {
   const perfilSelecionado = document.getElementById("funcao").value;
@@ -290,6 +308,10 @@ window.submitCadastro = function () {
 };
 
 window.editarUsuario = function (id) {
+
+  // Armazena o estado atual no histórico
+  historico.push({ funcao: editarUsuario });
+
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
   const usuario = Usuario.usuarios.find((user) => user.id === id);
 
@@ -340,27 +362,28 @@ window.editarUsuario = function (id) {
     )
     .join("");
 
-  content.innerHTML = `
+    content.innerHTML = `
     <div class="form-container mt-4">
-        <h1 class="h4 mb-4">Editar Usuário</h1>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <button class="btn btn-voltar" onclick="voltar()">
+                <i class="bi bi-arrow-left"></i> Voltar
+            </button>
+            <div class="w-100 text-center">
+              <h1>Editar Usuário</h1>
+            </div>
+        </div>
         <form id="userForm">
             <div class="mb-3">
                 <label for="nome" class="form-label">Nome do Usuário</label>
-                <input type="text" class="form-control" id="nome" value="${
-                  usuario.nome
-                }" required>
+                <input type="text" class="form-control" id="nome" value="${usuario.nome}" required>
             </div>
             <div class="mb-3">
                 <label for="matricula" class="form-label">Matrícula</label>
-                <input type="text" class="form-control" id="matricula" value="${
-                  usuario.matricula
-                }" required>
+                <input type="text" class="form-control" id="matricula" value="${usuario.matricula}" required>
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">E-mail</label>
-                <input type="email" class="form-control" id="email" value="${
-                  usuario.email
-                }" required>
+                <input type="email" class="form-control" id="email" value="${usuario.email}" required>
             </div>
             <div class="mb-3">
                 <label for="senha" class="form-label">Senha</label>
@@ -368,38 +391,34 @@ window.editarUsuario = function (id) {
             </div>
             <div class="mb-3">
                 <label for="funcao" class="form-label">Função</label>
-                <select id="funcao" class="form-select" ${
-                  usuario.perfil === "AdminRoot" ? "disabled" : ""
-                }>
+                <select id="funcao" class="form-select" ${usuario.perfil === "AdminRoot" ? "disabled" : ""}>
                     ${opcoesPerfis}
                 </select>
             </div>
             <div class="mb-3" id="loja-container">
-                ${
-                  usuarioLogado.perfil === "Gerente"
-                    ? `<input type="text" class="form-control" id="loja" value="${usuarioLogado.loja}" disabled>`
-                    : usuario.perfil === "AdminRoot"
-                    ? `<input type="text" class="form-control" id="loja" value="Matriz" disabled>`
-                    : `
-                  <label for="loja" class="form-label">Loja</label>
-                  <select id="loja" class="form-select">
-                      ${lojaOptions}
-                  </select>
-                  `
+                ${usuarioLogado.perfil === "Gerente" ? 
+                    `<input type="text" class="form-control" id="loja" value="${usuarioLogado.loja}" disabled>` : 
+                    usuario.perfil === "AdminRoot" ? 
+                    `<input type="text" class="form-control" id="loja" value="Matriz" disabled>` : 
+                    `<label for="loja" class="form-label">Loja</label>
+                    <select id="loja" class="form-select">
+                        ${lojaOptions}
+                    </select>`
                 }
             </div>
             <div class="text-center mb-4">
-              <div class="row justify-content-center">
-                <div class="col-12 col-sm-6 col-md-3 mb-2">
-                  <button type="button" class="btn btn-custom w-100" style="background-color: #269447; color: white;" onclick="submitEdicao(${id})">
-                    <i class="fas fa-save"></i> Salvar Alterações
-                  </button>
+                <div class="row justify-content-center">
+                    <div class="col-12 col-sm-6 col-md-3 mb-2">
+                        <button type="button" class="btn btn-custom w-100" onclick="submitEdicao(${id})">
+                            <i class="fas fa-save"></i> Salvar Alterações
+                        </button>
+                    </div>
                 </div>
-              </div>
             </div>
         </form>
     </div>
-  `;
+`;
+
 };
 
 window.submitEdicao = function (id) {
@@ -436,14 +455,14 @@ window.excluirUsuario = function (id) {
 
   // Controle de Acesso
   if (!usuarioLogado || usuarioLogado.perfil !== "AdminRoot") {
-    alert("Você não tem permissão para excluir este usuário.");
+    mostrarModal("Você não tem permissão para excluir este usuário.");
     return;
   }
 
-  if (confirm("Você tem certeza que deseja excluir este usuário?")) {
+  mostrarConfirmacao("Você tem certeza que deseja excluir este usuário?", function() {
     Usuario.excluirUsuario(id);
     showUsuarios();
-  }
+  });
 };
 
 window.buscarUsuario = function () {

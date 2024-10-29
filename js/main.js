@@ -135,8 +135,52 @@ window.onclick = function(event) {
   }
 };
 
-// Função para fechar o modal
-function fecharModal() {
+window.mostrarModal = function(mensagem) {
+  const modalBody = document.getElementById("modalBody");
+  modalBody.innerHTML = `<p>${mensagem}</p>`; // Define a mensagem que será exibida
   const modal = document.getElementById("detalhesModal");
+  modal.style.display = "block"; // Exibe o modal
+}
+
+let callbackConfirmarAcao; // Variável para armazenar a função de callback
+
+window.mostrarConfirmacao = function(mensagem, callback) {
+  const modalConfirmacaoBody = document.getElementById("modalConfirmacaoBody");
+  modalConfirmacaoBody.innerHTML = `<p>${mensagem}</p>`;
+  
+  // Armazena a função de callback
+  callbackConfirmarAcao = callback;
+
+  const modalConfirmacao = document.getElementById("modalConfirmacao");
+  modalConfirmacao.style.display = "block"; // Exibe o modal
+
+  // Configura o botão de confirmação
+  document.getElementById("btnConfirmarAcao").onclick = function() {
+    if (callbackConfirmarAcao) {
+      callbackConfirmarAcao(); // Executa a função de callback
+    }
+    fecharModal('modalConfirmacao'); // Fecha o modal
+  };
+};
+
+// Função para fechar o modal
+function fecharModal(modalId) {
+  const modal = document.getElementById(modalId);
   modal.style.display = "none";
 }
+
+// Array para armazenar o histórico de navegação
+const historico = [];
+
+// Função de voltar
+window.voltar = function () {
+  // Remove o último estado do histórico
+  if (historico.length > 1) {
+    historico.pop(); // Remove a tela atual
+    const { funcao, args } = historico.pop(); // Obtém a tela anterior
+    funcao(...args); // Chama a função da tela anterior
+  } else {
+    // Se não houver tela anterior, talvez redirecionar ou exibir uma mensagem
+    alert("Você está na tela inicial.");
+  }
+};

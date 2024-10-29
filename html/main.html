@@ -122,12 +122,26 @@
     <!-- Modal -->
     <div id="detalhesModal" class="modal">
       <div class="modal-content">
-        <span class="close" onclick="fecharModal()">&times;</span>
+        <span class="close" onclick="fecharModal('detalhesModal')">&times;</span>
         <div id="modalBody">
           <!-- Os conteudos dos modais serão inseridos aqui -->
         </div>
       </div>
     </div>
+
+    <!-- Modal de Confirmação -->
+<div id="modalConfirmacao" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="fecharModal('modalConfirmacao')">&times;</span>
+    <div id="modalConfirmacaoBody">
+      <!-- Mensagem de confirmação será inserida aqui -->
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="fecharModal('modalConfirmacao')">Cancelar</button>
+      <button class="btn btn-danger" id="btnConfirmarAcao">Confirmar</button>
+    </div>
+  </div>
+</div>
 
     <script src="../js/main.js"></script>
     <script type="module" src="../js/controllers/estoqueController.js"></script>

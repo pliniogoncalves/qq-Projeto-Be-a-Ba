@@ -65,9 +65,9 @@ h2 {
 
 .modal-content {
   background-color: #fefefe;
-  margin: 5% auto; /* Margem automática para centralizar */
+  margin: 15% auto; /* Margem automática para centralizar */
   padding: 20px;
-  border: 4px solid #28a745;
+  border: 4px solid #1f5d3d;
   border-radius: 8px; /* Bordas arredondadas */
   width: 90%; /* Largura padrão do modal */
   max-width: 600px; /* Largura máxima do modal */

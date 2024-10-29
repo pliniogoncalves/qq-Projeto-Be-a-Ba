@@ -26,14 +26,14 @@ export class Usuario {
   // CREATE: Adicionar um novo usuário com validação
   static criarUsuario(nome, matricula, email, senha, perfil = null, loja = null) {
     if (Usuario.validarDuplicidade(matricula, email)) {
-      alert("Matrícula ou email já cadastrados.");
+      mostrarModal("Matrícula ou email já cadastrados.");
       return null;
     }
 
     const novoUsuario = new Usuario(nome, matricula, email, senha, perfil, loja);
     Usuario.usuarios.push(novoUsuario);
     Usuario.salvarNoLocalStorage();
-    alert(`Usuário ${nome} criado com sucesso!`);
+    mostrarModal(`Usuário ${nome} criado com sucesso!`);
     return novoUsuario;
   }
 
@@ -46,20 +46,20 @@ export class Usuario {
   static atualizarUsuario(id, novoNome, novaMatricula, novoEmail, novaSenha, novoPerfil = null, novaLoja = null, senhaAtual) {
     const usuario = Usuario.usuarios.find(user => user.id === id);
     if (!usuario) {
-      alert("Usuário não encontrado.");
+      mostrarModal("Usuário não encontrado.");
       return;
     }
 
     // Verificar se a senha atual está correta antes de permitir mudanças sensíveis
     if (senhaAtual && usuario.senha !== senhaAtual) {
-      alert("Senha atual incorreta.");
+      mostrarModal("Senha atual incorreta.");
       return;
     }
 
     // Verificar duplicação de email ou matrícula
     if ((novaMatricula && novaMatricula !== usuario.matricula && Usuario.validarDuplicidade(novaMatricula, null)) ||
       (novoEmail && novoEmail !== usuario.email && Usuario.validarDuplicidade(null, novoEmail))) {
-      alert("Matrícula ou email já cadastrados.");
+      mostrarModal("Matrícula ou email já cadastrados.");
       return;
     }
 
@@ -70,14 +70,14 @@ export class Usuario {
     usuario.perfil = novoPerfil || usuario.perfil;
     usuario.loja = novaLoja || usuario.loja;
     Usuario.salvarNoLocalStorage();
-    alert(`Usuário ${usuario.nome} atualizado com sucesso!`);
+    mostrarModal(`Usuário ${usuario.nome} atualizado com sucesso!`);
   }
 
   // DELETE: Remover um usuário
   static excluirUsuario(id) {
     Usuario.usuarios = Usuario.usuarios.filter(user => user.id !== id);
     Usuario.salvarNoLocalStorage();
-    alert("Usuário removido com sucesso!");
+    mostrarModal("Usuário removido com sucesso!");
   }
 
   // Método para garantir que sempre exista um AdminRoot no sistema
