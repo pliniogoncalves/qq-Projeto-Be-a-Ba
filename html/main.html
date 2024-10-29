@@ -159,7 +159,7 @@
     </div>
 
     <!-- Modal de Notificações -->
-    <div id="modalNotificacao" class="modal">
+    <div id="modalNotificacao" class="modal modal-notificacoes">
       <div class="modal-content">
         <span class="close" onclick="fecharModal('modalNotificacao')"
           >&times;</span
@@ -170,7 +170,8 @@
         </div>
         <div class="modal-footer">
           <button class="btn btn-marcar-todas" onclick="marcarTodasLidas()">
-            Marcar todas como lidas
+            <span class="d-none d-md-inline">Marcar todas como lidas</span>
+            <i class="fas fa-check d-md-none"></i>
           </button>
         </div>
       </div>

@@ -81,6 +81,15 @@ table thead {
   display: none; /* Inicialmente invisível */
 }
 
+/*conteudo do modal*/
+.modal-notificacoes .modal-content {
+  width: 90vw; /* Largura para telas menores */
+  max-width: 600px; /* Largura máxima para desktops */
+  margin-right: 28%; /* Centraliza o modal */
+  height: auto; /* Altura automática */
+}
+
+
 /* Título do modal */
 .modal-title {
   font-size: 1.5rem;
@@ -98,7 +107,7 @@ table thead {
 }
 
 #modalNotificacaoBody p:nth-child(odd) {
-  background-color: #f9f9f9; /* Cinza claro */
+  background-color: #cac6c6 /* lista das mensagens */
 }
 
 #modalNotificacaoBody p:nth-child(even) {
@@ -123,12 +132,27 @@ table thead {
 }
 
 .modal-footer .btn-marcar-todas {
-  background-color: #1f5d3d; /* Verde */
+  background-color: #269447; /* Verde */
   color: white;
   border: none;
-  padding: 0.5rem 1rem;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.modal-footer .btn-marcar-todas:hover {
+  background-color: #1f5d3d; /* Verde */
+  color: white;
+}
+
+.modal-footer .btn-marcar-todas {
+  padding: 0.5rem 1rem; /* Ajuste o padding conforme necessário */
+  font-size: 1rem; /* Tamanho do texto */
+  min-width: 120px; /* Defina uma largura mínima */
+  height: auto; /* Altura automática */
+}
+
+.modal-footer .btn-marcar-todas i {
+  font-size: 1.5rem; /* Ajuste o tamanho do ícone aqui */
 }
 
 /* modal cancelar*/
@@ -399,7 +423,7 @@ table thead {
 .modal-content {
   background-color: #fefefe;
   margin: 15% auto; /* 15% da parte superior e centralizado */
-  padding: 20px;
+  padding: 1.5rem;
   border: 4px solid #1f5d3d;
   width: 90%; /* Largura padrão do modal */
   max-width: 600px; /* Largura máxima do modal */
@@ -648,4 +672,21 @@ table thead {
   .btn-voltar{
     display: none;
   }
+
+  .modal-notificacoes .modal-content {
+    margin-top: 30%; 
+    margin-left: 22%;
+    width: 95vw; /* 90% para tablets e celulares */
+    height: 57%; /* Altura automática para celulares */
+    overflow: visible;
+  }
+
+  .modal-footer .btn-marcar-todas {
+    padding: 0.75rem 1.5rem; /* Aumenta o padding para o botão responsivo */
+    font-size: 1.25rem; /* Aumenta o tamanho do ícone no responsivo */
+}
+
+.modal-footer .btn-marcar-todas i {
+    font-size: 1.5rem; /* Ajuste o tamanho do ícone aqui */
+}
 }
