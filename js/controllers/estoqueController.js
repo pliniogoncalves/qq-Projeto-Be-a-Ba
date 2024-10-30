@@ -375,6 +375,7 @@ window.sinalizarNecessidadeTalao = function (event) {
   if (loja) {
     if (loja.status !== "Estoque baixo") {
       loja.status = "Estoque baixo";
+      loja.quantidadeAtual = 0
       mostrarModal(
         `A loja ${lojaNome} foi sinalizada como "necessitando de talões".`
       );
