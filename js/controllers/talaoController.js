@@ -650,9 +650,9 @@ window.visualizarDetalhes = function (id) {
 
 // Função para buscar talões
 window.buscarTalao = function () {
-  const searchInput = document
-    .getElementById("talaoSearchInput")
-    .value.toLowerCase();
+  const searchInputElement = document.getElementById("talaoSearchInput");
+  const searchInput = searchInputElement ? searchInputElement.value.toLowerCase() : ""; // Verifica se o elemento existe
+
   const todosTaloes = Talao.listarTaloes();
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
   const isAdminRootMatriz =
@@ -661,15 +661,12 @@ window.buscarTalao = function () {
   const taloesFiltrados = todosTaloes.filter(
     (talao) =>
       (isAdminRootMatriz || talao.loja === usuarioLogado.loja) &&
-      (talao.status === "Enviado" || talao.status === "Recebido") && // Filtra apenas os talões "Enviados" e "Recebidos"
+      (talao.status === "Enviado" || talao.status === "Recebido") &&
       talao.id.toString().includes(searchInput)
   );
 
-  if (searchInput) {
-    showTaloes(1, taloesFiltrados); // Exibe os resultados filtrados
-  } else {
-    showTaloes(1); // Volta à listagem original
-  }
+   // Exibe os resultados filtrados ou a lista completa conforme o input
+   showTaloes(1, searchInput ? taloesFiltrados : null);
 };
 
 // Função para formatar data e hora para os campos de input
@@ -689,3 +686,10 @@ function formatarDataHora(dataHoraISO) {
 
   return [dataFormatada, horaFormatada];
 }
+
+window.addEventListener("resize", function () {
+  // Verifique se o elemento do input de busca específico para talões está presente
+  if (document.getElementById("talaoSearchInput")) {
+    buscarTalao();
+  }
+});

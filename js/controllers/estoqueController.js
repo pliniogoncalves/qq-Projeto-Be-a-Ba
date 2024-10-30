@@ -77,7 +77,7 @@ window.showEstoque = function (paginaAtual = 1, lojasFiltradas = null) {
           <td>${estoque.quantidade_minima}</td>
           <td>${estoque.quantidade_recomendada}</td>
           <td><span class="badge ${badgeClass}">${statusEstoque}</span></td>
-          <td class="text-center">
+          <td class="text-center estoque">
             <i class="fas fa-edit mx-2" onclick="editarEstoque(${loja.id})" title="Editar"></i>
           </td>
         </tr>`;
@@ -410,7 +410,10 @@ window.exportarEstoqueCSV = function () {
 
 // Função para buscar lojas no estoque
 window.buscarEstoque = function () {
-  const searchInput = document.getElementById("estoqueSearchInput").value.toLowerCase();
+  const searchInputElement = document.getElementById("estoqueSearchInput");
+  if (!searchInputElement) return; // Sai da função se o elemento não existe
+
+  const searchInput = searchInputElement.value.toLowerCase();
   const todasLojas = JSON.parse(localStorage.getItem("lojas")) || [];
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
   const isAdminRootMatriz =
@@ -426,5 +429,9 @@ window.buscarEstoque = function () {
   showEstoque(1, searchInput ? lojasFiltradas : null);
 };
 
-// Adicione um listener para verificar a janela ao redimensionar
-window.addEventListener("resize", buscarEstoque);
+window.addEventListener("resize", function () {
+  // Verifique se o elemento do input de busca específico para estoque está presente
+  if (document.getElementById("estoqueSearchInput")) {
+    buscarEstoque();
+  }
+});
