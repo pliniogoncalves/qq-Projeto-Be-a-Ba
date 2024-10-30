@@ -4,110 +4,149 @@ import { Loja } from "../models/Loja.js";
 
 // Função para exibir o estoque
 window.showEstoque = function (paginaAtual = 1, termoBusca = "") {
+  // Salva o estado atual para histórico de navegação
+  historico.push({ funcao: showEstoque, args: [paginaAtual] });
+
   const content = document.getElementById("mainContent");
   let lojas = JSON.parse(localStorage.getItem("lojas")) || [];
 
-  if (termoBusca) {
-    lojas = lojas.filter((loja) =>
-      loja.nome.toLowerCase().includes(termoBusca.toLowerCase())
-    );
-  }
-
-  let tableRows = "";
+  // Ajusta a quantidade de itens por página com base no tamanho da tela
   const itensPorPagina = window.innerWidth >= 1200 ? 10 : window.innerWidth >= 768 ? 7 : 5;
   const totalPaginas = Math.ceil(lojas.length / itensPorPagina);
   const inicio = (paginaAtual - 1) * itensPorPagina;
   const lojasPaginadas = lojas.slice(inicio, inicio + itensPorPagina);
-
-  if (lojasPaginadas.length === 0) {
-    tableRows = `<tr><td colspan="5" class="text-center">Nenhuma loja encontrada.</td></tr>`;
-  } else {
-    lojasPaginadas.forEach((loja) => {
-      const estoque = new Estoque(
-        loja.id_estoque,
-        loja.id,
-        loja.quantidadeRecomendada,
-        loja.quantidadeMinima
-      );
-
-      // Usa o status atualizado, ou "Estoque adequado" se estiver em um nível normal
-      const statusEstoque = loja.status || estoque.verificarEstoque();
-      const badgeClass = statusEstoque === "Estoque baixo" ? "badge badge-low" : "badge badge-sufficient";
-
-      tableRows += `
-        <tr>
-          <td>${loja.nome}</td>
-          <td>${estoque.quantidade_minima}</td>
-          <td>${estoque.quantidade_recomendada}</td>
-          <td><span class="${badgeClass}">${statusEstoque}</span></td>
-          <td class="estoque">
-            <i class="fas fa-edit" style="cursor: pointer; margin-right: 10px;" onclick="editarEstoque(${loja.id})"></i>
-          </td>
-        </tr>
-      `;
-    });
-  }
-
-  const paginacao = `
-    <tr>
-      <td colspan="5">
-        <nav>
-          <ul class="pagination justify-content-center custom-pagination">
-            <li class="page-item ${paginaAtual === 1 ? "disabled" : ""}">
-              <a class="page-link" href="#" onclick="showEstoque(${paginaAtual - 1}, '${termoBusca}')">&laquo;</a>
-            </li>
-            ${Array.from({ length: totalPaginas }, (_, i) => `
-              <li class="page-item ${i + 1 === paginaAtual ? "active" : ""}">
-                <a class="page-link" href="#" onclick="showEstoque(${i + 1}, '${termoBusca}')">${i + 1}</a>
-              </li>
-            `).join("")}
-            <li class="page-item ${paginaAtual === totalPaginas ? "disabled" : ""}">
-              <a class="page-link" href="#" onclick="showEstoque(${paginaAtual + 1}, '${termoBusca}')">&raquo;</a>
-            </li>
-          </ul>
-        </nav>
-      </td>
-    </tr>
-  `;
 
   content.innerHTML = `
     <div class="overlay" id="overlay"></div>
     <h1 class="text-center">Gestão de Estoque</h1>
     <p class="text-center">Veja o estoque de talões de cada loja.</p>
 
-    <div class="table-responsive mb-4">
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Estoque Mínimo</th>
-            <th>Estoque Recomendado</th>
-            <th>Status</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="estoqueTableBody">
-          ${tableRows}
-          ${paginacao}
-        </tbody>
-      </table>
-    </div>
-
-     <div class="text-center mb-4">
-            <div class="row justify-content-center">
-                <div class="col-12 col-sm-6 col-md-3 mb-2">
-                    <button class="btn btn-custom w-100" type="button" onclick="solicitarTalao()">
-                        <i class="fas fa-plus-circle"></i> Solicitar Talão
-                    </button>
-                </div>
-                <div class="col-12 col-sm-6 col-md-3 mb-2">
-                    <button class="btn btn-secondary w-100" type="button" onclick="exportarEstoqueCSV()">
-                        <i class="fas fa-file-export"></i> Exportar CSV
-                    </button>
-                </div>    
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-8 col-sm-12 mb-4">
+          <div class="input-group">
+            <input type="text" id="estoqueSearchInput" placeholder="Buscar loja..." class="form-control" oninput="buscarEstoque()" />
+            <div class="input-icon">
+              <i class="fas fa-search"></i>
             </div>
+          </div>
         </div>
+      </div>
+    </div>
   `;
+
+  // Verifica se há lojas paginadas e exibe conforme o tamanho da tela
+  if (lojasPaginadas.length === 0) {
+    content.innerHTML += `<div class="text-center">Nenhuma loja encontrada.</div>`;
+  } else {
+    if (window.innerWidth < 768) { // Exibe como cartões em telas pequenas
+      let cardRows = lojasPaginadas.map((loja) => {
+        const estoque = new Estoque(
+          loja.id_estoque,
+          loja.id,
+          loja.quantidadeRecomendada,
+          loja.quantidadeMinima
+        );
+        const statusEstoque = loja.status || estoque.verificarEstoque();
+        const badgeClass = statusEstoque === "Estoque baixo" ? "badge badge-low" : "badge badge-sufficient";
+        
+        return `
+          <div class="card mb-3">
+            <div class="card-body">
+              <h5 class="card-title">${loja.nome}</h5>
+              <p class="card-text"><strong>Estoque Mínimo:</strong> ${estoque.quantidade_minima}</p>
+              <p class="card-text"><strong>Estoque Recomendado:</strong> ${estoque.quantidade_recomendada}</p>
+              <p class="card-text"><span class="${badgeClass}">${statusEstoque}</span></p>
+              <button class="btn btn-secondary" onclick="editarEstoque(${loja.id})">Editar Estoque</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+      content.innerHTML += cardRows;
+    } else { // Exibe como tabela em telas grandes
+      let tableRows = lojasPaginadas.map((loja) => {
+        const estoque = new Estoque(
+          loja.id_estoque,
+          loja.id,
+          loja.quantidadeRecomendada,
+          loja.quantidadeMinima
+        );
+        const statusEstoque = loja.status || estoque.verificarEstoque();
+        const badgeClass = statusEstoque === "Estoque baixo" ? "badge badge-low" : "badge badge-sufficient";
+        
+        return `
+          <tr>
+            <td>${loja.nome}</td>
+            <td>${estoque.quantidade_minima}</td>
+            <td>${estoque.quantidade_recomendada}</td>
+            <td><span class="${badgeClass}">${statusEstoque}</span></td>
+            <td class="estoque">
+              <i class="fas fa-edit" style="cursor: pointer; margin-right: 10px;" onclick="editarEstoque(${loja.id})"></i>
+            </td>
+          </tr>
+        `;
+      }).join("");
+      
+      const paginacao = `
+        <tr>
+          <td colspan="5">
+            <nav>
+              <ul class="pagination justify-content-center custom-pagination">
+                <li class="page-item ${paginaAtual === 1 ? "disabled" : ""}">
+                  <a class="page-link" href="#" onclick="showEstoque(${paginaAtual - 1}, '${termoBusca}')">&laquo;</a>
+                </li>
+                ${Array.from({ length: totalPaginas }, (_, i) => `
+                  <li class="page-item ${i + 1 === paginaAtual ? "active" : ""}">
+                    <a class="page-link" href="#" onclick="showEstoque(${i + 1}, '${termoBusca}')">${i + 1}</a>
+                  </li>
+                `).join("")}
+                <li class="page-item ${paginaAtual === totalPaginas ? "disabled" : ""}">
+                  <a class="page-link" href="#" onclick="showEstoque(${paginaAtual + 1}, '${termoBusca}')">&raquo;</a>
+                </li>
+              </ul>
+            </nav>
+          </td>
+        </tr>
+      `;
+
+      content.innerHTML += `
+        <div class="table-responsive mb-4">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Estoque Mínimo</th>
+                <th>Estoque Recomendado</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="estoqueTableBody">
+              ${tableRows}
+              ${paginacao}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+    
+    content.innerHTML += `
+      <div class="text-center mb-4">
+        <div class="row justify-content-center">
+          <div class="col-12 col-sm-6 col-md-3 mb-2">
+            <button class="btn btn-custom w-100" type="button" onclick="solicitarTalao()">
+              <i class="fas fa-plus-circle"></i> Solicitar Talão
+            </button>
+          </div>
+          <div class="col-12 col-sm-6 col-md-3 mb-2">
+            <button class="btn btn-secondary w-100" type="button" onclick="exportarEstoqueCSV()">
+              <i class="fas fa-file-export"></i> Exportar CSV
+            </button>
+          </div>    
+        </div>
+      </div>
+    `;
+  }
 
   setActiveButton("Estoque");
 };
@@ -115,6 +154,10 @@ window.showEstoque = function (paginaAtual = 1, termoBusca = "") {
 
 // Função para editar o estoque mínimo, recomendado e a frequência de alerta
 window.editarEstoque = function (id_loja) {
+
+  // Salva o estado atual da função no histórico, permitindo navegação reversa
+  historico.push({ funcao: editarEstoque });
+
   const lojas = JSON.parse(localStorage.getItem("lojas")) || [];
   const loja = lojas.find((l) => l.id === id_loja);
 
@@ -135,7 +178,15 @@ window.editarEstoque = function (id_loja) {
 
   content.innerHTML = `
     <div class="overlay" id="overlay"></div>
-    <h1>Editar Estoque</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <button class="btn btn-voltar" onclick="voltar()">
+          <i class="bi bi-arrow-left"></i> Voltar
+        </button>
+        <div class="w-100 text-center me-4 me-md-5">
+          <h1>Editar Estoque</h1>
+         <p>Preencha as informações abaixo para Editar o Estoque.</p>
+        </div>
+      </div>
     <form id="estoqueForm">
       <div class="mb-3">
         <label for="nomeLoja" class="form-label">Nome da Loja</label>
@@ -194,6 +245,10 @@ window.submitEstoqueEdicao = function (id_loja) {
 
 // Função para sinalizar necessidade de talões
 window.solicitarTalao = function () {
+
+  // Salva o estado atual da função no histórico, permitindo navegação reversa
+  historico.push({ funcao: solicitarTalao });
+
   const content = document.getElementById("mainContent");
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
 
@@ -314,4 +369,50 @@ window.exportarEstoqueCSV = function () {
   a.click();
   document.body.removeChild(a);
 };
+
+// Função para buscar lojas no estoque
+window.buscarEstoque = function () {
+  const searchInput = document.getElementById("estoqueSearchInput").value.toLowerCase();
+  const todasLojas = JSON.parse(localStorage.getItem("lojas")) || [];
+  const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
+
+  // Filtra as lojas
+  const lojasFiltradas = todasLojas.filter((loja) => {
+    const isAdminRootMatriz = usuarioLogado.perfil === "AdminRoot" && usuarioLogado.loja === "Matriz";
+    return (isAdminRootMatriz || loja.nome === usuarioLogado.loja) &&
+           loja.nome.toLowerCase().includes(searchInput);
+  });
+
+  // Atualiza a tabela de lojas no estoque
+  const lojaTableBody = document.getElementById("estoqueTableBody");
+  
+  // Gera as linhas da tabela com as lojas filtradas
+  let filteredRows = lojasFiltradas.map((loja) => {
+    const estoque = new Estoque(
+      loja.id_estoque,
+      loja.id,
+      loja.quantidadeRecomendada,
+      loja.quantidadeMinima
+    );
+    const statusEstoque = loja.status || estoque.verificarEstoque();
+    const badgeClass = statusEstoque === "Estoque baixo" ? "badge badge-low" : "badge badge-sufficient";
+
+    return `
+      <tr>
+        <td>${loja.nome}</td>
+        <td>${estoque.quantidade_minima}</td>
+        <td>${estoque.quantidade_recomendada}</td>
+        <td><span class="${badgeClass}">${statusEstoque}</span></td>
+        <td class="estoque">
+          <i class="fas fa-edit" style="cursor: pointer; margin-right: 10px;" onclick="editarEstoque(${loja.id})"></i>
+        </td>
+      </tr>
+    `;
+  }).join("");
+
+  // Atualiza o conteúdo do corpo da tabela
+  lojaTableBody.innerHTML = filteredRows;
+};
+
+
 
