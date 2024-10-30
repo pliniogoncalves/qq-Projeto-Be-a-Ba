@@ -24,11 +24,13 @@ window.showDashboard = function () {
 
     // Calcular estoque total de talões e verificar estoque por loja
     const taloesEmEstoque = lojas.reduce((acc, loja) => acc + (loja.quantidadeAtual || 0), 0);
-    const estoqueMinimo = 100; // Exemplo de estoque mínimo
 
-    // Definir valores de sessões ativas e timeout, caso não estejam salvos no localStorage
-    const sessoesAtivas = JSON.parse(localStorage.getItem('sessoesAtivas') || '0');
-    const timeout = localStorage.getItem('timeout') || '15 minutos';
+    // Calcular talões recebidos por loja
+    const taloesRecebidosPorLoja = lojas.reduce((acc, loja) => {
+        const taloesRecebidos = taloes.filter(talao => talao.loja === loja.nome && talao.status === "Recebido").reduce((sum, talao) => sum + talao.quantidade, 0);
+        acc[loja.nome] = taloesRecebidos;
+        return acc;
+    }, {});
 
     // Gerar conteúdo HTML do dashboard
     content.innerHTML = `
@@ -62,19 +64,22 @@ window.showDashboard = function () {
                     <div class="card bg-warning text-white">
                         <div class="card-body">
                             <h5>Talões em Estoque</h5>
-                            <p id="taloesEstoque">${taloesEmEstoque}</p>
-                            ${taloesEmEstoque < estoqueMinimo ? 
-                            '<small class="text-danger">Estoque baixo!</small>' : 
-                            '<small class="text-info">Estoque suficiente</small>'}
+                            <p id="taloesEstoque">Total: ${taloesEmEstoque}</p>
+                            <hr>
+                            <h6>Estoque por Loja:</h6>
+                            ${lojas.map(loja => `
+                                <small>${loja.nome}: ${loja.quantidadeAtual || 0}</small><br>
+                            `).join('')}
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3 mb-4">
                     <div class="card bg-info text-white">
                         <div class="card-body">
-                            <h5>Sessões Ativas</h5>
-                            <p id="sessoesAtivas">${sessoesAtivas}</p>
-                            <small>Timeout: ${timeout}</small>
+                            <h5>Talões Recebidos por Loja</h5>
+                            ${Object.keys(taloesRecebidosPorLoja).map(loja => `
+                                <small>${loja}: ${taloesRecebidosPorLoja[loja]}</small><br>
+                            `).join('')}
                         </div>
                     </div>
                 </div>
