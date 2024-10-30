@@ -200,6 +200,7 @@ window.editarEstoque = function (id_loja) {
     loja.id,
     loja.quantidadeRecomendada,
     loja.quantidadeMinima,
+    loja.quantidadeAtual || 0,
     loja.frequenciaAlerta
   );
 
@@ -219,34 +220,26 @@ window.editarEstoque = function (id_loja) {
     <form id="estoqueForm">
       <div class="mb-3">
         <label for="nomeLoja" class="form-label">Nome da Loja</label>
-        <input type="text" id="nomeLoja" class="form-control" value="${
-          loja.nome
-        }" readonly>
+        <input type="text" id="nomeLoja" class="form-control" value="${loja.nome}" readonly>
+      </div>
+      <div class="mb-3">
+        <label for="quantidadeAtual" class="form-label">Estoque Atual</label>
+        <input type="number" id="quantidadeAtual" class="form-control" value="${estoque.quantidade_atual}">
       </div>
       <div class="mb-3">
         <label for="quantidadeMinima" class="form-label">Estoque Mínimo</label>
-        <input type="number" id="quantidadeMinima" class="form-control" value="${
-          estoque.quantidade_minima
-        }">
+        <input type="number" id="quantidadeMinima" class="form-control" value="${estoque.quantidade_minima}">
       </div>
       <div class="mb-3">
         <label for="quantidadeRecomendada" class="form-label">Estoque Recomendado</label>
-        <input type="number" id="quantidadeRecomendada" class="form-control" value="${
-          estoque.quantidade_recomendada
-        }">
+        <input type="number" id="quantidadeRecomendada" class="form-control" value="${estoque.quantidade_recomendada}">
       </div>
       <div class="mb-3">
         <label for="frequenciaAlerta" class="form-label">Frequência de Alerta</label>
         <select id="frequenciaAlerta" class="form-control">
-          <option value="semanal" ${
-            estoque.frequenciaAlerta === "semanal" ? "selected" : ""
-          }>Semanal</option>
-          <option value="quinzenal" ${
-            estoque.frequenciaAlerta === "quinzenal" ? "selected" : ""
-          }>Quinzenal</option>
-          <option value="mensal" ${
-            estoque.frequenciaAlerta === "mensal" ? "selected" : ""
-          }>Mensal</option>
+          <option value="semanal" ${estoque.frequenciaAlerta === "semanal" ? "selected" : ""}>Semanal</option>
+          <option value="quinzenal" ${estoque.frequenciaAlerta === "quinzenal" ? "selected" : ""}>Quinzenal</option>
+          <option value="mensal" ${estoque.frequenciaAlerta === "mensal" ? "selected" : ""}>Mensal</option>
         </select>
       </div>
       <div class="text-center mb-4">
@@ -266,6 +259,11 @@ window.submitEstoqueEdicao = function (id_loja) {
     document.getElementById("quantidadeRecomendada").value,
     10
   );
+  const quantidadeAtual = parseInt(
+    document.getElementById("quantidadeAtual").value,
+    10
+  ); 
+  
   const frequenciaAlerta = document.getElementById("frequenciaAlerta").value;
 
   let lojas = JSON.parse(localStorage.getItem("lojas")) || [];
@@ -274,12 +272,15 @@ window.submitEstoqueEdicao = function (id_loja) {
   if (loja) {
     loja.quantidadeMinima = quantidadeMinima;
     loja.quantidadeRecomendada = quantidadeRecomendada;
+    loja.quantidadeAtual = quantidadeAtual;
     loja.frequenciaAlerta = frequenciaAlerta;
 
     // Atualiza o status do estoque com base nas novas quantidades
-    if (quantidadeRecomendada > quantidadeMinima) {
+    if (quantidadeAtual < quantidadeMinima) {
       loja.status = "Estoque baixo";
-    } else {
+    } else if (quantidadeAtual < quantidadeRecomendada) {
+      loja.status = "Estoque médio";
+    }else{
       loja.status = "Estoque adequado";
     }
 

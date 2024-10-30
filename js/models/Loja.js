@@ -8,6 +8,7 @@ export class Loja {
     this.numero = numero; // supondo que o número é uma string
     this.quantidadeMinima = quantidadeMinima;
     this.quantidadeRecomendada = quantidadeRecomendada;
+    this.quantidadeAtual = quantidadeAtual;
     this.frequenciaAlerta = frequenciaAlerta; // "semanal", "quinzenal" ou "mensal"
     Loja.nextId++;
   }
@@ -18,8 +19,8 @@ export class Loja {
   }
 
   // CREATE: Adicionar uma nova Loja
-  static criarLoja(nome, numero, quantidadeMinima = 0, quantidadeRecomendada = 0, frequenciaAlerta = "mensal") {
-    const novaLoja = new Loja(nome, numero, quantidadeMinima, quantidadeRecomendada, frequenciaAlerta);
+  static criarLoja(nome, numero, quantidadeMinima = 0, quantidadeRecomendada = 0, quantidadeAtual = 0, frequenciaAlerta = "mensal") {
+    const novaLoja = new Loja(nome, numero, quantidadeMinima, quantidadeRecomendada, quantidadeAtual, frequenciaAlerta);
     Loja.lojas.push(novaLoja);
     Loja.salvarNoLocalStorage();
     mostrarModal(`${nome} criada com sucesso!`);
@@ -32,7 +33,7 @@ export class Loja {
   }
 
   // UPDATE: Atualizar uma Loja existente
-  static atualizarLoja(id, novoNome, novoNumero, novaQuantidadeMinima, novaQuantidadeRecomendada, novaFrequenciaAlerta) {
+  static atualizarLoja(id, novoNome, novoNumero, novaQuantidadeMinima, novaQuantidadeRecomendada, novaQuantidadeAtual, novaFrequenciaAlerta) {
     const loja = Loja.lojas.find((l) => l.id === id);
     if (!loja) {
       mostrarModal("Loja não encontrada.");
@@ -43,6 +44,7 @@ export class Loja {
     loja.numero = novoNumero || loja.numero;
     loja.quantidadeMinima = novaQuantidadeMinima !== undefined ? novaQuantidadeMinima : loja.quantidadeMinima;
     loja.quantidadeRecomendada = novaQuantidadeRecomendada !== undefined ? novaQuantidadeRecomendada : loja.quantidadeRecomendada;
+    loja.quantidadeAtual = novaQuantidadeAtual !== undefined ? novaQuantidadeAtual : loja.quantidadeAtual;
     loja.frequenciaAlerta = novaFrequenciaAlerta || loja.frequenciaAlerta;
 
     Loja.salvarNoLocalStorage();

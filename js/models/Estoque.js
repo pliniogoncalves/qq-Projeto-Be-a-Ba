@@ -13,7 +13,12 @@ export class Estoque {
 
   // Verifica se o estoque está baixo
   estoqueBaixo() {
-    return this.quantidade_minima < this.quantidade_atual;
+    return this.quantidade_minima > this.quantidade_atual;
+  }
+
+   // Verifica se o estoque é médio
+   estoqueMedio() {
+    return this.quantidade_atual < this.quantidade_recomendada;
   }
 
   // Configurações de alerta de estoque
@@ -34,16 +39,16 @@ export class Estoque {
     }
   }
 
- // Verifica o nível do estoque
- verificarEstoque() {
-  if (this.quantidade_atual <= this.quantidade_minima) {
-    return "Estoque baixo";
-  } else if (this.quantidade_atual < this.quantidade_recomendada) {
-    return "Estoque médio";
-  } else {
-    return "Estoque adequado";
+   // Verifica o nível do estoque
+   verificarEstoque() {
+    if (this.estoqueBaixo()) {
+      return "Estoque baixo";
+    } else if (this.estoqueMedio()) {
+      return "Estoque médio";
+    } else {
+      return "Estoque adequado";
+    }
   }
-}
 
   // Atualiza o status para "estoque baixo"
   atualizarStatus(novoStatus) {
