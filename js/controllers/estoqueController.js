@@ -21,6 +21,8 @@ window.showEstoque = function (paginaAtual = 1, lojasFiltradas = null) {
   const itensPorPagina = window.innerWidth >= 768 ? 3 : 1;
   const totalPaginas = Math.ceil(lojas.length / itensPorPagina);
   const inicio = (paginaAtual - 1) * itensPorPagina;
+
+  // Configuração e exibição de conteúdo
   const lojasPaginadas = lojas.slice(inicio, inicio + itensPorPagina);
 
   let cardRows = "";
@@ -36,7 +38,8 @@ window.showEstoque = function (paginaAtual = 1, lojasFiltradas = null) {
         loja.id_estoque,
         loja.id,
         loja.quantidadeRecomendada,
-        loja.quantidadeMinima
+        loja.quantidadeMinima,
+        loja.quantidadeAtual
       );
       const statusEstoque = loja.status || estoque.verificarEstoque();
       
@@ -47,18 +50,22 @@ window.showEstoque = function (paginaAtual = 1, lojasFiltradas = null) {
       if (statusEstoque === "Estoque baixo") {
         borderClass = "low-stock";
         badgeClass = "badge-low";
+      }else if (statusEstoque === "Estoque médio") {
+        borderClass = "medium-stock";
+        badgeClass = "badge-medium";
       } else {
         borderClass = "sufficient-stock";
         badgeClass = "badge-sufficient";
       }
 
-      // Geração do card com os detalhes do estoque
+      // Geração do card com os detalhes do estoque, incluindo o número da loja
       cardRows += `
         <div class="col-md-4 col-sm-6 mb-4">
           <div class="card h-100 shadow-sm ${borderClass}">
             <div class="card-body">
-              <h5 class="card-title">Loja: ${loja.nome}</h5>
+              <h5 class="card-title">${loja.nome} - Nº ${loja.numero}</h5>
               <p class="card-text">
+                <strong>Estoque Atual:</strong> ${estoque.quantidade_atual}<br>
                 <strong>Estoque Mínimo:</strong> ${estoque.quantidade_minima}<br>
                 <strong>Estoque Recomendado:</strong> ${estoque.quantidade_recomendada}<br>
                 <span class="badge ${badgeClass}">${statusEstoque}</span>
@@ -70,10 +77,12 @@ window.showEstoque = function (paginaAtual = 1, lojasFiltradas = null) {
           </div>
         </div>`;
 
-      // Geração da linha da tabela
+      // Geração da linha da tabela, incluindo o número da loja
       tableRows += `
         <tr>
           <td>${loja.nome}</td>
+          <td>${loja.numero}</td>
+          <td>${estoque.quantidade_atual}</td>
           <td>${estoque.quantidade_minima}</td>
           <td>${estoque.quantidade_recomendada}</td>
           <td><span class="badge ${badgeClass}">${statusEstoque}</span></td>
@@ -92,6 +101,8 @@ window.showEstoque = function (paginaAtual = 1, lojasFiltradas = null) {
       <thead>
         <tr>
           <th>Nome</th>
+          <th>Número</th>
+           <th>Estoque Atual</th>
           <th>Estoque Mínimo</th>
           <th>Estoque Recomendado</th>
           <th>Status</th>
