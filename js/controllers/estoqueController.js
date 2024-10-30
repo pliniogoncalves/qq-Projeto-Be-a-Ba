@@ -57,7 +57,9 @@ window.showEstoque = function (paginaAtual = 1, termoBusca = "") {
               <p class="card-text"><strong>Estoque Mínimo:</strong> ${estoque.quantidade_minima}</p>
               <p class="card-text"><strong>Estoque Recomendado:</strong> ${estoque.quantidade_recomendada}</p>
               <p class="card-text"><span class="${badgeClass}">${statusEstoque}</span></p>
-              <button class="btn btn-secondary" onclick="editarEstoque(${loja.id})">Editar Estoque</button>
+              <div class="card-footer text-center">
+                <i class="fas fa-edit mx-2" onclick="editarEstoque(${loja.id})" data-bs-toggle="tooltip" title="Editar"></i>
+              </div>
             </div>
           </div>
         `;
