@@ -11,6 +11,7 @@ window.showTaloes = function (paginaAtual = 1, taloesFiltrados = null) {
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
 
   let cardRows = "";
+  let tableRows = "";
 
   // Define se o usuário tem perfil de AdminRoot e acesso à loja matriz
   const isAdminRootMatriz =
@@ -29,29 +30,31 @@ window.showTaloes = function (paginaAtual = 1, taloesFiltrados = null) {
   const inicio = (paginaAtual - 1) * itensPorPagina;
   const taloesPaginados = taloes.slice(inicio, inicio + itensPorPagina);
 
-  // Monta os cards de talões
-if (taloesPaginados.length === 0) {
-  cardRows = `<div class="col-12 text-center">
+  // Monta os detalhes dos talões em tabela ou cards
+  if (taloesPaginados.length === 0) {
+    cardRows = `<div class="col-12 text-center">
       <p>Nenhum talão encontrado.</p>
     </div>`;
-} else {
-  taloesPaginados.forEach((talao) => {
-    const [data, hora] = formatarDataHora(talao.dataHora);
+    tableRows = cardRows;
+  } else {
+    taloesPaginados.forEach((talao) => {
+      const [data, hora] = formatarDataHora(talao.dataHora);
+      const dataHoraRecebido = talao.timestamps.recebido ? formatarDataHora(talao.timestamps.recebido.dataHora) : ["", ""];
 
-    // Define as classes de status para borda e badge
-    let borderClass = "default"; // Classe padrão para borda
-    let badgeClass = "badge-default"; // Classe padrão do badge
-    
-    if (talao.status === "Enviado") {
-      borderClass = "enviado"; // Classe para status enviado
-      badgeClass = "badge-enviado"; // Badge para status enviado
-    } else if (talao.status === "Recebido") {
-      borderClass = "recebido"; // Classe para status recebido
-      badgeClass = "badge-recebido"; // Badge para status recebido
-    }
+      // Define as classes de status para borda e badge
+      let borderClass = "default"; // Classe padrão para borda
+      let badgeClass = "badge-default"; // Classe padrão do badge
 
-    // Geração do card com os detalhes do talão
-    cardRows += `<div class="col-md-4 col-sm-6 mb-4">
+      if (talao.status === "Enviado") {
+        borderClass = "enviado"; // Classe para status enviado
+        badgeClass = "badge-enviado"; // Badge para status enviado
+      } else if (talao.status === "Recebido") {
+        borderClass = "recebido"; // Classe para status recebido
+        badgeClass = "badge-recebido"; // Badge para status recebido
+      }
+
+      // Geração do card com os detalhes do talão
+      cardRows += `<div class="col-md-4 col-sm-6 mb-4">
         <div class="card h-100 shadow-sm ${borderClass}">
           <div class="card-body">
             <h5 class="card-title">Talão ID: ${talao.id}</h5>
@@ -71,9 +74,45 @@ if (taloesPaginados.length === 0) {
           </div>
         </div>
       </div>`;
-  });
-}
 
+      // Geração da linha da tabela
+      tableRows += `<tr>
+        <td>${talao.id}</td>
+        <td>${talao.loja}</td>
+        <td>${data}, ${hora}</td>
+        <td>${talao.timestamps.enviado.funcionario || 'N/A'}</td>
+        <td>${talao.timestamps.recebido ? dataHoraRecebido : 'Não Recebido'}</td>
+        <td>${talao.timestamps.recebido ? talao.timestamps.recebido.funcionario : 'N/A'}</td>
+        <td>${talao.quantidade}</td>
+        <td><span class="badge ${badgeClass}">${talao.status}</span></td>
+        <td class="text-center">
+          <i class="fas fa-eye mx-2" onclick="visualizarDetalhes(${talao.id})" data-bs-toggle="tooltip" title="Detalhes"></i>
+          <i class="fas fa-edit mx-2" onclick="editarTalao(${talao.id})" data-bs-toggle="tooltip" title="Editar"></i>
+          <i class="fas fa-trash mx-2" onclick="excluirTalao(${talao.id})" data-bs-toggle="tooltip" title="Excluir"></i>
+          <i class="fas fa-file-export mx-2" onclick="exportarTalao(${talao.id})" data-bs-toggle="tooltip" title="Exportar"></i>
+        </td>
+      </tr>`;
+    });
+  }
+
+  // Monta a tabela se a tela for grande
+  const isLargeScreen = window.innerWidth >= 768;
+  const displayRows = isLargeScreen ? `<table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Loja</th>
+          <th>Data de Envio</th>
+          <th>Funcionário que Enviou</th>
+          <th>Data de Recebimento</th>
+          <th>Funcionário que Recebeu</th>
+          <th>Quantidade</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>${tableRows}</tbody>
+    </table>` : `<div class="row">${cardRows}</div>`;
 
   // Paginação
   const paginacao = `
@@ -104,9 +143,7 @@ if (taloesPaginados.length === 0) {
       <div class="row justify-content-center">
         <div class="col-md-8 col-sm-12 mb-4">
           <div class="input-group">
-            <input type="text" class="form-control" id="talaoSearchInput" placeholder="Procurar por talão" oninput="buscarTalao()" value="${
-              document.getElementById("talaoSearchInput")?.value || ""
-            }">
+            <input type="text" class="form-control" id="talaoSearchInput" placeholder="Procurar por talão" oninput="buscarTalao()" value="${document.getElementById("talaoSearchInput")?.value || ""}">
             <div class="input-icon">
               <i class="fas fa-search"></i>
             </div>
@@ -115,7 +152,7 @@ if (taloesPaginados.length === 0) {
       </div>
     </div>
     <div class="container">
-      <div class="row">${cardRows}</div>
+      ${displayRows}
     </div>
     ${paginacao}
     <div class="text-center mb-4">
@@ -141,6 +178,7 @@ if (taloesPaginados.length === 0) {
   // Define o botão ativo na interface
   setActiveButton("Talões");
 };
+
 
 // Função para registrar envio de talões
 window.registrarEnvio = function () {
