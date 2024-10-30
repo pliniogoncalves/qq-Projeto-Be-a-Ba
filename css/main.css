@@ -497,19 +497,23 @@ table thead {
 }
 
 /* Classes para os status do estoque */
-.low-stock-border {
+.low-stock {
   border: 2px solid #dc3545; /* Vermelho */
 }
 
-.medium-stock-border {
+.medium-stock {
   border: 2px solid #ffc107; /* Amarelo */
 }
 
-.sufficient-stock-border {
+.sufficient-stock {
   border: 2px solid #28a745; /* Verde */
 }
 
 /* Classes para os badges */
+.badge-default {
+  background-color: #cccccc;
+}
+
 .badge-low {
   background-color: #dc3545; /* Vermelho */
   color: white;

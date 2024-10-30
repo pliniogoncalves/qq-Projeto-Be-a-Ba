@@ -10,8 +10,13 @@ window.showEstoque = function (paginaAtual = 1, lojasFiltradas = null) {
   const content = document.getElementById("mainContent");
   const todasLojas = JSON.parse(localStorage.getItem("lojas")) || [];
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
-  const isAdminRootMatriz = usuarioLogado.perfil === "AdminRoot" && usuarioLogado.loja === "Matriz";
-  const lojas = lojasFiltradas || todasLojas.filter(loja => isAdminRootMatriz || loja.nome === usuarioLogado.loja);
+  const isAdminRootMatriz =
+    usuarioLogado.perfil === "AdminRoot" && usuarioLogado.loja === "Matriz";
+  const lojas =
+    lojasFiltradas ||
+    todasLojas.filter(
+      (loja) => isAdminRootMatriz || loja.nome === usuarioLogado.loja
+    );
 
   const itensPorPagina = window.innerWidth >= 768 ? 3 : 1;
   const totalPaginas = Math.ceil(lojas.length / itensPorPagina);
@@ -26,14 +31,31 @@ window.showEstoque = function (paginaAtual = 1, lojasFiltradas = null) {
     cardRows = `<div class="col-12 text-center"><p>Nenhuma loja encontrada.</p></div>`;
     tableRows = cardRows;
   } else {
-    lojasPaginadas.forEach(loja => {
-      const estoque = new Estoque(loja.id_estoque, loja.id, loja.quantidadeRecomendada, loja.quantidadeMinima);
+    lojasPaginadas.forEach((loja) => {
+      const estoque = new Estoque(
+        loja.id_estoque,
+        loja.id,
+        loja.quantidadeRecomendada,
+        loja.quantidadeMinima
+      );
       const statusEstoque = loja.status || estoque.verificarEstoque();
-      const badgeClass = statusEstoque === "Estoque baixo" ? "badge badge-low" : "badge badge-sufficient";
+      
+      // Define a classe de borda e badge conforme o status do estoque
+      let borderClass = "default-border";
+      let badgeClass = "badge-default";
 
+      if (statusEstoque === "Estoque baixo") {
+        borderClass = "low-stock";
+        badgeClass = "badge-low";
+      } else {
+        borderClass = "sufficient-stock";
+        badgeClass = "badge-sufficient";
+      }
+
+      // Geração do card com os detalhes do estoque
       cardRows += `
         <div class="col-md-4 col-sm-6 mb-4">
-          <div class="card h-100 shadow-sm ${badgeClass}">
+          <div class="card h-100 shadow-sm ${borderClass}">
             <div class="card-body">
               <h5 class="card-title">Loja: ${loja.nome}</h5>
               <p class="card-text">
@@ -48,12 +70,13 @@ window.showEstoque = function (paginaAtual = 1, lojasFiltradas = null) {
           </div>
         </div>`;
 
+      // Geração da linha da tabela
       tableRows += `
         <tr>
           <td>${loja.nome}</td>
           <td>${estoque.quantidade_minima}</td>
           <td>${estoque.quantidade_recomendada}</td>
-          <td><span class="${badgeClass}">${statusEstoque}</span></td>
+          <td><span class="badge ${badgeClass}">${statusEstoque}</span></td>
           <td class="text-center">
             <i class="fas fa-edit mx-2" onclick="editarEstoque(${loja.id})" title="Editar"></i>
           </td>
@@ -63,7 +86,8 @@ window.showEstoque = function (paginaAtual = 1, lojasFiltradas = null) {
 
   // Alterna entre cards e tabela com base no tamanho da tela
   const isLargeScreen = window.innerWidth >= 768;
-  const displayRows = isLargeScreen ? `
+  const displayRows = isLargeScreen
+    ? `
     <table class="table table-striped">
       <thead>
         <tr>
@@ -75,21 +99,31 @@ window.showEstoque = function (paginaAtual = 1, lojasFiltradas = null) {
         </tr>
       </thead>
       <tbody>${tableRows}</tbody>
-    </table>` : `<div class="row">${cardRows}</div>`;
+    </table>`
+    : `<div class="row">${cardRows}</div>`;
 
   // Paginação
   const paginacao = `
     <nav class="d-flex justify-content-center">
       <ul class="pagination custom-pagination">
         <li class="page-item ${paginaAtual === 1 ? "disabled" : ""}">
-          <a class="page-link" href="#" onclick="showEstoque(${paginaAtual - 1})">&laquo;</a>
+          <a class="page-link" href="#" onclick="showEstoque(${
+            paginaAtual - 1
+          })">&laquo;</a>
         </li>
-        ${Array.from({ length: totalPaginas }, (_, i) => `
+        ${Array.from(
+          { length: totalPaginas },
+          (_, i) => `
           <li class="page-item ${i + 1 === paginaAtual ? "active" : ""}">
-            <a class="page-link" href="#" onclick="showEstoque(${i + 1})">${i + 1}</a>
-          </li>`).join("")}
+            <a class="page-link" href="#" onclick="showEstoque(${i + 1})">${
+            i + 1
+          }</a>
+          </li>`
+        ).join("")}
         <li class="page-item ${paginaAtual === totalPaginas ? "disabled" : ""}">
-          <a class="page-link" href="#" onclick="showEstoque(${paginaAtual + 1})">&raquo;</a>
+          <a class="page-link" href="#" onclick="showEstoque(${
+            paginaAtual + 1
+          })">&raquo;</a>
         </li>
       </ul>
     </nav>`;
@@ -103,7 +137,9 @@ window.showEstoque = function (paginaAtual = 1, lojasFiltradas = null) {
       <div class="row justify-content-center">
         <div class="col-md-8 col-sm-12 mb-4">
           <div class="input-group">
-            <input type="text" class="form-control" id="estoqueSearchInput" placeholder="Procurar por loja" oninput="buscarEstoque()" value="${document.getElementById("estoqueSearchInput")?.value || ""}">
+            <input type="text" class="form-control" id="estoqueSearchInput" placeholder="Procurar por loja" oninput="buscarEstoque()" value="${
+              document.getElementById("estoqueSearchInput")?.value || ""
+            }">
             <div class="input-icon">
               <i class="fas fa-search"></i>
             </div>
@@ -134,9 +170,9 @@ window.showEstoque = function (paginaAtual = 1, lojasFiltradas = null) {
   setActiveButton("Estoque");
 };
 
+
 // Função para editar o estoque mínimo, recomendado e a frequência de alerta
 window.editarEstoque = function (id_loja) {
-
   // Salva o estado atual da função no histórico, permitindo navegação reversa
   historico.push({ funcao: editarEstoque });
 
@@ -172,22 +208,34 @@ window.editarEstoque = function (id_loja) {
     <form id="estoqueForm">
       <div class="mb-3">
         <label for="nomeLoja" class="form-label">Nome da Loja</label>
-        <input type="text" id="nomeLoja" class="form-control" value="${loja.nome}" readonly>
+        <input type="text" id="nomeLoja" class="form-control" value="${
+          loja.nome
+        }" readonly>
       </div>
       <div class="mb-3">
         <label for="quantidadeMinima" class="form-label">Estoque Mínimo</label>
-        <input type="number" id="quantidadeMinima" class="form-control" value="${estoque.quantidade_minima}">
+        <input type="number" id="quantidadeMinima" class="form-control" value="${
+          estoque.quantidade_minima
+        }">
       </div>
       <div class="mb-3">
         <label for="quantidadeRecomendada" class="form-label">Estoque Recomendado</label>
-        <input type="number" id="quantidadeRecomendada" class="form-control" value="${estoque.quantidade_recomendada}">
+        <input type="number" id="quantidadeRecomendada" class="form-control" value="${
+          estoque.quantidade_recomendada
+        }">
       </div>
       <div class="mb-3">
         <label for="frequenciaAlerta" class="form-label">Frequência de Alerta</label>
         <select id="frequenciaAlerta" class="form-control">
-          <option value="semanal" ${estoque.frequenciaAlerta === 'semanal' ? 'selected' : ''}>Semanal</option>
-          <option value="quinzenal" ${estoque.frequenciaAlerta === 'quinzenal' ? 'selected' : ''}>Quinzenal</option>
-          <option value="mensal" ${estoque.frequenciaAlerta === 'mensal' ? 'selected' : ''}>Mensal</option>
+          <option value="semanal" ${
+            estoque.frequenciaAlerta === "semanal" ? "selected" : ""
+          }>Semanal</option>
+          <option value="quinzenal" ${
+            estoque.frequenciaAlerta === "quinzenal" ? "selected" : ""
+          }>Quinzenal</option>
+          <option value="mensal" ${
+            estoque.frequenciaAlerta === "mensal" ? "selected" : ""
+          }>Mensal</option>
         </select>
       </div>
       <div class="text-center mb-4">
@@ -199,8 +247,14 @@ window.editarEstoque = function (id_loja) {
 
 // Salvar as mudanças feitas no estoque mínimo, recomendado e na frequência de alerta
 window.submitEstoqueEdicao = function (id_loja) {
-  const quantidadeMinima = parseInt(document.getElementById("quantidadeMinima").value, 10);
-  const quantidadeRecomendada = parseInt(document.getElementById("quantidadeRecomendada").value, 10);
+  const quantidadeMinima = parseInt(
+    document.getElementById("quantidadeMinima").value,
+    10
+  );
+  const quantidadeRecomendada = parseInt(
+    document.getElementById("quantidadeRecomendada").value,
+    10
+  );
   const frequenciaAlerta = document.getElementById("frequenciaAlerta").value;
 
   let lojas = JSON.parse(localStorage.getItem("lojas")) || [];
@@ -224,10 +278,8 @@ window.submitEstoqueEdicao = function (id_loja) {
   showEstoque();
 };
 
-
 // Função para sinalizar necessidade de talões
 window.solicitarTalao = function () {
-
   // Salva o estado atual da função no histórico, permitindo navegação reversa
   historico.push({ funcao: solicitarTalao });
 
@@ -307,11 +359,15 @@ window.sinalizarNecessidadeTalao = function (event) {
   if (loja) {
     if (loja.status !== "Estoque baixo") {
       loja.status = "Estoque baixo";
-      mostrarModal(`A loja ${lojaNome} foi sinalizada como "necessitando de talões".`);
+      mostrarModal(
+        `A loja ${lojaNome} foi sinalizada como "necessitando de talões".`
+      );
     } else {
-      mostrarModal(`A loja ${lojaNome} já está sinalizada como "necessitando de talões".`);
+      mostrarModal(
+        `A loja ${lojaNome} já está sinalizada como "necessitando de talões".`
+      );
     }
-    
+
     localStorage.setItem("lojas", JSON.stringify(lojas));
     showEstoque();
   } else {
@@ -327,26 +383,26 @@ window.exportarEstoqueCSV = function () {
   let csvContent = "Nome da Loja,Estoque Mínimo,Estoque Recomendado,Status\n";
 
   // Adiciona dados de cada loja
-  lojas.forEach(loja => {
-      const estoque = new Estoque(
-          loja.id_estoque,
-          loja.id,
-          loja.quantidadeRecomendada,
-          loja.quantidadeMinima
-      );
-      
-      // Verifica o status do estoque
-      const statusEstoque = loja.status || estoque.verificarEstoque();
-      
-      csvContent += `${loja.nome},${estoque.quantidade_minima},${estoque.quantidade_recomendada},${statusEstoque}\n`;
+  lojas.forEach((loja) => {
+    const estoque = new Estoque(
+      loja.id_estoque,
+      loja.id,
+      loja.quantidadeRecomendada,
+      loja.quantidadeMinima
+    );
+
+    // Verifica o status do estoque
+    const statusEstoque = loja.status || estoque.verificarEstoque();
+
+    csvContent += `${loja.nome},${estoque.quantidade_minima},${estoque.quantidade_recomendada},${statusEstoque}\n`;
   });
 
   // Cria o arquivo CSV e faz download
-  const blob = new Blob([csvContent], { type: 'text/csv' });
+  const blob = new Blob([csvContent], { type: "text/csv" });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.setAttribute('href', url);
-  a.setAttribute('download', 'estoque.csv');
+  const a = document.createElement("a");
+  a.setAttribute("href", url);
+  a.setAttribute("download", "estoque.csv");
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -354,14 +410,18 @@ window.exportarEstoqueCSV = function () {
 
 // Função para buscar lojas no estoque
 window.buscarEstoque = function () {
-  const searchInput = document.getElementById("estoqueSearchInput").value.toLowerCase();
+  const searchInput = document
+    .getElementById("estoqueSearchInput")
+    .value.toLowerCase();
   const todasLojas = JSON.parse(localStorage.getItem("lojas")) || [];
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
-  const isAdminRootMatriz = usuarioLogado.perfil === "AdminRoot" && usuarioLogado.loja === "Matriz";
+  const isAdminRootMatriz =
+    usuarioLogado.perfil === "AdminRoot" && usuarioLogado.loja === "Matriz";
 
   const lojasFiltradas = todasLojas.filter(
-    (loja) => (isAdminRootMatriz || loja.nome === usuarioLogado.loja) &&
-              loja.nome.toLowerCase().includes(searchInput)
+    (loja) =>
+      (isAdminRootMatriz || loja.nome === usuarioLogado.loja) &&
+      loja.nome.toLowerCase().includes(searchInput)
   );
 
   // Exibe os resultados filtrados ou a lista completa conforme o input
@@ -369,8 +429,4 @@ window.buscarEstoque = function () {
 };
 
 // Adicione um listener para verificar a janela ao redimensionar
-window.addEventListener('resize', buscarEstoque);
-
-
-
-
+window.addEventListener("resize", buscarEstoque);
