@@ -120,15 +120,20 @@ window.showLojas = function (paginaAtual = 1) {
       </table>
     </div>
     
-    <div class="text-center mb-4">
-      <div class="row justify-content-center">
-        <div class="col-12 col-sm-6 col-md-3 mb-2">
-          <button class="btn btn-custom w-100" type="button" onclick="cadastrarLoja()">
-            <i class="fas fa-plus-circle"></i> Cadastrar Nova Loja
-          </button>
+     <div class="text-center mb-4">
+            <div class="row justify-content-center">
+                <div class="col-12 col-sm-6 col-md-3 mb-2">
+                    <button class="btn btn-custom w-100" type="button" onclick="cadastrarLoja()">
+                        <i class="fas fa-plus-circle"></i> Cadastrar Nova Loja
+                    </button>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3 mb-2">
+                    <button class="btn btn-secondary w-100" type="button" onclick="exportarLojasCSV()">
+                        <i class="fas fa-file-export"></i> Exportar CSV
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
   `;
 
   setActiveButton("Lojas");
@@ -304,4 +309,27 @@ window.excluirLoja = function (id) {
       showLojas();
     }
   );
+};
+
+// Função para exportar todas as lojas como um arquivo CSV
+window.exportarLojasCSV = function () {
+  const lojas = JSON.parse(localStorage.getItem("lojas")) || [];
+
+  // Define cabeçalhos do CSV
+  let csvContent = "Nome,Número\n";
+
+  // Adiciona dados de cada loja
+  lojas.forEach(loja => {
+      csvContent += `${loja.nome},${loja.numero}\n`;
+  });
+
+  // Cria o arquivo CSV e faz download
+  const blob = new Blob([csvContent], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.setAttribute('href', url);
+  a.setAttribute('download', 'lojas.csv');
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 };
