@@ -410,9 +410,7 @@ window.exportarEstoqueCSV = function () {
 
 // Função para buscar lojas no estoque
 window.buscarEstoque = function () {
-  const searchInput = document
-    .getElementById("estoqueSearchInput")
-    .value.toLowerCase();
+  const searchInput = document.getElementById("estoqueSearchInput").value.toLowerCase();
   const todasLojas = JSON.parse(localStorage.getItem("lojas")) || [];
   const usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado"));
   const isAdminRootMatriz =

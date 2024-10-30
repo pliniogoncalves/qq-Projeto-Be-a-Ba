@@ -9,7 +9,8 @@ window.showRelatorios = function (paginaAtual = 1) {
     { nome: "Relatório de Usuários Cadastrados", visualizar: "showRelatorioUsuarios", download: "exportarUsuariosCSV" },
     { nome: "Relatório de Perfis de Usuários", visualizar: "showRelatorioPerfis", download: "exportarPerfisCSV" },
     { nome: "Relatório de Manutenção e Recebimento de Talões", visualizar: "showRelatorioTaloes", download: "exportarTaloesCSV" },
-    { nome: "Relatório de Gestão de Estoque", visualizar: "showRelatorioEstoque", download: "exportarEstoqueCSV" }
+    { nome: "Relatório de Gestão de Estoque", visualizar: "showRelatorioEstoque", download: "exportarEstoqueCSV" },
+    { nome: "Relatório de Gestão de Loja", visualizar: "showRelatorioLoja", download: "exportarLojaCSV" }
   ];
 
   // Configuração de paginação
@@ -137,4 +138,12 @@ window.showRelatorioEstoque = function () {
 
 window.estoqueCSV = function () {
   exportarEstoqueCSV();
+};
+
+window.showRelatorioLoja = function () {
+  showLojas();
+};
+
+window.lojaCSV = function () {
+  exportarLojasCSV();
 };
