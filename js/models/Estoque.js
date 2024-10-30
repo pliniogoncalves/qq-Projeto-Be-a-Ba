@@ -13,12 +13,17 @@ export class Estoque {
 
   // Verifica se o estoque está baixo
   estoqueBaixo() {
-    return this.quantidade_minima > this.quantidade_atual;
+    return this.quantidade_atual <= this.quantidade_minima;
   }
 
    // Verifica se o estoque é médio
    estoqueMedio() {
-    return this.quantidade_atual < this.quantidade_recomendada;
+    return this.quantidade_atual > this.quantidade_minima && this.quantidade_atual < this.quantidade_recomendada;
+  }
+
+   // Verifica se o estoque está adequado
+   estoqueAdequado() {
+    return this.quantidade_atual >= this.quantidade_recomendada;
   }
 
   // Configurações de alerta de estoque

@@ -275,14 +275,18 @@ window.submitEstoqueEdicao = function (id_loja) {
     loja.quantidadeAtual = quantidadeAtual;
     loja.frequenciaAlerta = frequenciaAlerta;
 
-    // Atualiza o status do estoque com base nas novas quantidades
-    if (quantidadeAtual < quantidadeMinima) {
-      loja.status = "Estoque baixo";
-    } else if (quantidadeAtual < quantidadeRecomendada) {
-      loja.status = "Estoque médio";
-    }else{
-      loja.status = "Estoque adequado";
-    }
+    // Instanciando o objeto Estoque para verificar o status
+    const estoqueAtualizado = new Estoque(
+      loja.id_estoque,
+      loja.id,
+      loja.quantidadeRecomendada,
+      loja.quantidadeMinima,
+      loja.quantidadeAtual,
+      loja.frequenciaAlerta
+    );
+
+    // Atualiza o status do estoque
+    loja.status = estoqueAtualizado.verificarEstoque();
 
     localStorage.setItem("lojas", JSON.stringify(lojas));
   }
