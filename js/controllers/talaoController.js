@@ -76,7 +76,7 @@ window.showTaloes = function (paginaAtual = 1, taloesFiltrados = null) {
       </div>`;
 
       // Geração da linha da tabela
-      tableRows += `<tr>
+      tableRows += `<tr class="talao">
         <td>${talao.id}</td>
         <td>${talao.loja}</td>
         <td>${data}, ${hora}</td>

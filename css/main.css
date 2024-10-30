@@ -197,7 +197,11 @@ table thead {
 }
 
 .modulo i:hover{
-  color: #f5d307
+  color: #f5d307;
+}
+
+.talao i:hover{
+  color: #f5d307;
 }
 
 /* Sidebar */
