@@ -40,7 +40,8 @@ window.showEstoque = function (paginaAtual = 1, termoBusca = "") {
     content.innerHTML += `<div class="text-center">Nenhuma loja encontrada.</div>`;
   } else {
     if (window.innerWidth < 768) { // Exibe como cartões em telas pequenas
-      let cardRows = lojasPaginadas.map((loja) => {
+      const searchInput = termoBusca.toLowerCase();
+      let cardRows = lojasPaginadas.filter(loja => loja.nome.toLowerCase().includes(searchInput)).map((loja) => {
         const estoque = new Estoque(
           loja.id_estoque,
           loja.id,
@@ -49,9 +50,10 @@ window.showEstoque = function (paginaAtual = 1, termoBusca = "") {
         );
         const statusEstoque = loja.status || estoque.verificarEstoque();
         const badgeClass = statusEstoque === "Estoque baixo" ? "badge badge-low" : "badge badge-sufficient";
-        
+        const borderClass = statusEstoque === "Estoque baixo" ? "border-danger" : "border-success"; // Mudança na borda
+
         return `
-          <div class="card mb-3">
+          <div class="card mb-3 ${borderClass}">
             <div class="card-body">
               <h5 class="card-title">${loja.nome}</h5>
               <p class="card-text"><strong>Estoque Mínimo:</strong> ${estoque.quantidade_minima}</p>
@@ -64,7 +66,7 @@ window.showEstoque = function (paginaAtual = 1, termoBusca = "") {
           </div>
         `;
       }).join("");
-      content.innerHTML += cardRows;
+      content.innerHTML += cardRows || `<div class="text-center">Nenhuma loja encontrada com esse critério.</div>`;
     } else { // Exibe como tabela em telas grandes
       let tableRows = lojasPaginadas.map((loja) => {
         const estoque = new Estoque(
@@ -152,7 +154,6 @@ window.showEstoque = function (paginaAtual = 1, termoBusca = "") {
 
   setActiveButton("Estoque");
 };
-
 
 // Função para editar o estoque mínimo, recomendado e a frequência de alerta
 window.editarEstoque = function (id_loja) {
@@ -387,7 +388,8 @@ window.buscarEstoque = function () {
 
   // Atualiza a tabela de lojas no estoque
   const lojaTableBody = document.getElementById("estoqueTableBody");
-  
+  const lojaCardsContainer = document.getElementById("estoqueCardsContainer"); // Adicione um container para os cards
+
   // Gera as linhas da tabela com as lojas filtradas
   let filteredRows = lojasFiltradas.map((loja) => {
     const estoque = new Estoque(
@@ -402,8 +404,8 @@ window.buscarEstoque = function () {
     return `
       <tr>
         <td>${loja.nome}</td>
-        <td>${estoque.quantidade_minima}</td>
-        <td>${estoque.quantidade_recomendada}</td>
+        <td>${estoque.quantidadeMinima}</td>
+        <td>${estoque.quantidadeRecomendada}</td>
         <td><span class="${badgeClass}">${statusEstoque}</span></td>
         <td class="estoque">
           <i class="fas fa-edit" style="cursor: pointer; margin-right: 10px;" onclick="editarEstoque(${loja.id})"></i>
@@ -414,7 +416,50 @@ window.buscarEstoque = function () {
 
   // Atualiza o conteúdo do corpo da tabela
   lojaTableBody.innerHTML = filteredRows;
+
+  // Gera os cards para lojas filtradas
+  const filteredCards = lojasFiltradas.map((loja) => {
+    const estoque = new Estoque(
+      loja.id_estoque,
+      loja.id,
+      loja.quantidadeRecomendada,
+      loja.quantidadeMinima
+    );
+    const statusEstoque = loja.status || estoque.verificarEstoque();
+    const badgeClass = statusEstoque === "Estoque baixo" ? "badge badge-low" : "badge badge-sufficient";
+
+    return `
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">${loja.nome}</h5>
+          <p class="card-text">Quantidade Mínima: ${estoque.quantidadeMinima}</p>
+          <p class="card-text">Quantidade Recomendada: ${estoque.quantidadeRecomendada}</p>
+          <span class="${badgeClass}">${statusEstoque}</span>
+          <div class="card-actions">
+            <i class="fas fa-edit" style="cursor: pointer;" onclick="editarEstoque(${loja.id})"></i>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  // Atualiza o container de cards
+  lojaCardsContainer.innerHTML = filteredCards;
+
+  // Exibe a tabela ou os cards com base na largura da tela
+  const isMobile = window.innerWidth < 768; // Defina o breakpoint para considerar mobile
+  if (isMobile) {
+    lojaTableBody.style.display = "none"; // Esconde a tabela em dispositivos móveis
+    lojaCardsContainer.style.display = "block"; // Exibe os cards em dispositivos móveis
+  } else {
+    lojaTableBody.style.display = "table-row-group"; // Exibe a tabela em dispositivos desktop
+    lojaCardsContainer.style.display = "none"; // Esconde os cards em desktop
+  }
 };
+
+// Adicione um listener para verificar a janela ao redimensionar
+window.addEventListener('resize', buscarEstoque);
+
 
 
 
