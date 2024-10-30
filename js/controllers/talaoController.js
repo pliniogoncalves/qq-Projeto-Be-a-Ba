@@ -17,7 +17,7 @@ window.showTaloes = function (paginaAtual = 1, taloesFiltrados = null) {
   const isAdminRootMatriz =
     usuarioLogado.perfil === "AdminRoot" && usuarioLogado.loja === "Matriz";
 
-  let itensPorPagina = window.innerWidth >= 768 ? 3 : 1;
+  let itensPorPagina = window.innerWidth >= 768 ? 10 : 1;
 
   // Filtra os talões conforme o perfil do usuário
   const taloes =
@@ -264,7 +264,7 @@ window.preencherQuantidadeNecessaria = function () {
   
   if (loja) {
     // Calcula a quantidade necessária como diferença entre quantidade recomendada e mínima
-    const quantidadeNecessaria = loja.quantidadeRecomendada - loja.quantidadeMinima;
+    const quantidadeNecessaria = loja.quantidadeRecomendada - loja.quantidadeAtual;
     document.getElementById("quantidadeTalao").value = quantidadeNecessaria > 0 ? quantidadeNecessaria : 1;
   }
 };
@@ -287,7 +287,10 @@ window.salvarRegistroEnvio = function (event) {
   const dataHoraEnvio = new Date(`${data}T${hora}`).toISOString();
   
   // Criar talão com status "Enviado" e data/hora de envio
-  Talao.criarTalao(loja, dataHoraEnvio, quantidade, usuarioLogado.nome, "Enviado"); 
+  Talao.criarTalao(loja, dataHoraEnvio, quantidade, usuarioLogado.nome, "Enviado");
+  
+
+
   mostrarModal(`Talão enviado para ${loja}.`);
   showTaloes(); // Atualiza a lista de talões
 };
@@ -385,7 +388,7 @@ function atualizarEstoqueLoja(lojaNome, quantidadeRecebida) {
 
   if (loja) {
     // Atualiza o estoque mínimo da loja com a quantidade recebida
-    loja.quantidadeMinima = loja.quantidadeRecomendada;
+    loja.quantidadeAtual += quantidadeRecebida;
     
     // Atualiza o status do estoque para "Estoque adequado" após o recebimento
     loja.status = "Estoque adequado";
