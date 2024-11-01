@@ -53,7 +53,7 @@ window.login = function () {
 
 // Função para mostrar a ajuda
 window.showAjuda = function () {
-  mostrarModal("Entre em contato com o suporte para ajuda com o login.");
+  mostrarModal("Entre em contato com o suporte via Workplace para ajuda com o login.");
 };
 
 window.mostrarModal = function(mensagem) {

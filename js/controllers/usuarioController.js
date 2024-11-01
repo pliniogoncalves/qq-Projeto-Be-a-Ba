@@ -174,7 +174,7 @@ window.cadastrarUsuario = function () {
 
   // Verifica se o usuário tem permissão para cadastrar novos usuários (apenas "AdminRoot")
   if (!usuarioLogado || usuarioLogado.perfil !== "AdminRoot") {
-    alert("Você não tem permissão para cadastrar novos usuários.");
+    mostrarlModal("Você não tem permissão para cadastrar novos usuários.");
     return;
   }
 
@@ -298,7 +298,7 @@ window.submitCadastro = function () {
   const loja = lojas.find((l) => l.nome === lojaNome) || { nome: "Matriz" }; // Se não encontrar, assume "Matriz"
 
   if (!nome || !matricula || !email || !senha || !loja) {
-    alert("Preencha todos os campos.");
+    mostrarModal("Preencha todos os campos.");
     return;
   }
 
